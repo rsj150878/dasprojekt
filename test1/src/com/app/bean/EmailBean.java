@@ -13,7 +13,7 @@ public class EmailBean implements Serializable {
     private String from ="";
 
     public String getFrom() {
-		return from;
+		return from;   
 	}
 
 	public void setFrom(String from) {

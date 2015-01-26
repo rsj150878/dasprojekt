@@ -2,6 +2,7 @@ package com.app.Components;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,6 +12,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.apache.commons.io.FileUtils;
 
 import com.app.EmailSender.EmailSender;
 import com.app.bean.EmailBean;
@@ -31,7 +34,6 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.DefaultFieldFactory;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.GridLayout;
@@ -69,7 +71,7 @@ public class Email extends Form implements ClickListener {
 	private String successMessage = "Message Sent Successfully";
 	private String failureMessage = "Message Sending failed";
 	/* Components */
-	final private String inputFieldWidth = "100%";
+
 	final private String DISPLAY_CAPTION_PROPERTY = "name";
 	private final GridLayout rootLayout = new GridLayout(5, 22);
 	private final String[] visibleColumns = new String[] { "to", "cc", "bcc",
@@ -95,6 +97,8 @@ public class Email extends Form implements ClickListener {
 	private final ListSelect filesListSelect = new ListSelect();
 	private final Window popUpWindowForFileRemoval = new Window();
 	private List<File> files;
+
+	RowId Emailid = null;
 
 	public Email() {
 
@@ -170,39 +174,6 @@ public class Email extends Form implements ClickListener {
 	public void addComponent_(Component field, int fromColumn, int fromRow,
 			int toColumn, int toRow) {
 		rootLayout.addComponent(field, fromColumn, fromRow, toColumn, toRow);
-	}
-
-	class EmailFormFieldFactory extends DefaultFieldFactory {
-
-		public EmailFormFieldFactory() {
-		}
-
-		public Field createField(Item item, Object propertyId,
-				Component uiContext) {
-
-			if ("to".equals(propertyId)) {
-				TextField tf = new TextField();
-				tf.setWidth(inputFieldWidth);
-				return tf;
-			} else if ("cc".equals(propertyId)) {
-				TextField tf = new TextField();
-				tf.setWidth(inputFieldWidth);
-				return tf;
-			} else if ("bcc".equals(propertyId)) {
-				TextField tf = new TextField();
-				tf.setWidth(inputFieldWidth);
-				return tf;
-			} else if ("subject".equals(propertyId)) {
-				subjectTxtField = new TextField();
-				subjectTxtField.setWidth(inputFieldWidth);
-				return subjectTxtField;
-			} else if ("body".equals(propertyId)) {
-				return editor;
-			}
-
-			return null;
-
-		}
 	}
 
 	class FileUpload extends Upload implements Upload.SucceededListener,
@@ -376,10 +347,17 @@ public class Email extends Form implements ClickListener {
 				DBConnection.INSTANCE.getConnectionPool());
 		aq.setVersionColumn("version");
 
+		TableQuery attTQ = new TableQuery("emailattachment",DBConnection.INSTANCE.getConnectionPool());
+		attTQ.setVersionColumn("version");
+		
 		try {
 			SQLContainer sqlc = new SQLContainer(aq);
+			
+			SQLContainer attc = new SQLContainer(attTQ);
+			
 			Object newObject = sqlc.addItem();
 			Item newItem = sqlc.getItem(newObject);
+
 			newItem.getItemProperty("an").setValue(EmailObject.getTo());
 			newItem.getItemProperty("bc").setValue(EmailObject.getCc());
 			newItem.getItemProperty("bcc").setValue(EmailObject.getBcc());
@@ -387,27 +365,39 @@ public class Email extends Form implements ClickListener {
 					EmailObject.getSubject());
 			newItem.getItemProperty("inhalt").setValue(EmailObject.getBody());
 
+			newItem.getItemProperty("attachement").setValue(" ");
+			
 			String nameSeperator = "";
 			String filenames = "";
-			for (File file : files) {
-				filenames = filenames + nameSeperator + file.getName();
-				nameSeperator = ";";
+			try {
+				for (File file : files) {
+					filenames = filenames + nameSeperator + file.getName();
+					nameSeperator = ";";
+
+					String byteFile = FileUtils.readFileToString(file);
+					
+					Item newAttItem = attc.getItem(sqlc.addItem());
+					
+					newAttItem.getItemProperty("emailid").setValue(Emailid.toString());
+					newAttItem.getItemProperty("filename").setValue(file.getName());
+					newAttItem.getItemProperty("datei").setValue(byteFile);
+
+				}
+			} catch (IOException e) {
 
 			}
 
-			newItem.getItemProperty("attachement").setValue(filenames);
-			
-			final RowId Emailid = null;
-			
+			// newItem.getItemProperty("attachement").setValue(filenames);
+
 			sqlc.addRowIdChangeListener(new QueryDelegate.RowIdChangeListener() {
 
 				@Override
 				public void rowIdChange(RowIdChangeEvent event) {
 					// TODO Auto-generated method stub
-					//Emailid = event.getNewRowId();
-					
+					Emailid = event.getNewRowId();
+
 				}
-				
+
 			});
 
 		} catch (SQLException ex) {

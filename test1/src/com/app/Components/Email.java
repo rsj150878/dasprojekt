@@ -51,7 +51,7 @@ import com.vaadin.ui.Window;
  *
  * @author patnaikv
  */
-public class Email extends Form implements ClickListener {
+public class Email extends Form implements ClickListener, QueryDelegate.RowIdChangeListener {
 
 	/* Email Details */
 	private String emailHost;
@@ -347,14 +347,15 @@ public class Email extends Form implements ClickListener {
 				DBConnection.INSTANCE.getConnectionPool());
 		aq.setVersionColumn("version");
 
-		TableQuery attTQ = new TableQuery("emailattachment",DBConnection.INSTANCE.getConnectionPool());
+		TableQuery attTQ = new TableQuery("emailattachment",
+				DBConnection.INSTANCE.getConnectionPool());
 		attTQ.setVersionColumn("version");
-		
+
 		try {
 			SQLContainer sqlc = new SQLContainer(aq);
-			
+
 			SQLContainer attc = new SQLContainer(attTQ);
-			
+
 			Object newObject = sqlc.addItem();
 			Item newItem = sqlc.getItem(newObject);
 
@@ -366,7 +367,9 @@ public class Email extends Form implements ClickListener {
 			newItem.getItemProperty("inhalt").setValue(EmailObject.getBody());
 
 			newItem.getItemProperty("attachement").setValue(" ");
-			
+			sqlc.addRowIdChangeListener(this);
+			sqlc.commit();
+
 			String nameSeperator = "";
 			String filenames = "";
 			try {
@@ -375,11 +378,13 @@ public class Email extends Form implements ClickListener {
 					nameSeperator = ";";
 
 					String byteFile = FileUtils.readFileToString(file);
-					
-					Item newAttItem = attc.getItem(sqlc.addItem());
-					
-					newAttItem.getItemProperty("emailid").setValue(Emailid.toString());
-					newAttItem.getItemProperty("filename").setValue(file.getName());
+
+					Item newAttItem = attc.getItem(attc.addItem());
+
+					newAttItem.getItemProperty("emailid").setValue(
+							new Integer(Emailid.getId()[0].toString()));
+					newAttItem.getItemProperty("filename").setValue(
+							file.getName());
 					newAttItem.getItemProperty("datei").setValue(byteFile);
 
 				}
@@ -526,6 +531,14 @@ public class Email extends Form implements ClickListener {
 
 		String[] emailIds = data.split(SEPERATOR);
 		return Arrays.asList(emailIds);
+
+	}
+	
+	@Override
+	public void rowIdChange(RowIdChangeEvent event) {
+		// TODO Auto-generated method stub
+		System.out.println("event " + event.getNewRowId());
+		Emailid = event.getNewRowId();
 
 	}
 

@@ -90,7 +90,8 @@ public class Email extends Form implements ClickListener, QueryDelegate.RowIdCha
 	private final Button removeAllFilesButtonInPopUp = new Button(
 			removeAllFilesWindowCaption);
 	private final RichTextArea editor = new RichTextArea();
-	private final FileUpload upload = new FileUpload("", new FileReceiver());
+	private final FileReceiver receiver = new FileReceiver();
+	private final FileUpload upload = new FileUpload("", receiver);
 	private final Label attachementDetails = new Label(attachmentText);
 	private final ProgressBar indicator = new ProgressBar();
 	private final Label status = new Label("", Label.CONTENT_RAW);
@@ -130,6 +131,7 @@ public class Email extends Form implements ClickListener, QueryDelegate.RowIdCha
 		/* Layout attributes */
 
 		upload.setButtonCaption("Upload File");
+		upload.setReceiver(receiver);
 		rootLayout.addComponent(upload, 0, 16);
 		rootLayout.setComponentAlignment(upload, Alignment.MIDDLE_LEFT);
 
@@ -180,10 +182,14 @@ public class Email extends Form implements ClickListener, QueryDelegate.RowIdCha
 			Upload.FailedListener, Upload.StartedListener,
 			Upload.FinishedListener, Upload.ProgressListener {
 
-		public FileUpload(String caption, Receiver uploadReceiver) {
+		public FileUpload(String caption, FileReceiver uploadReceiver) {
 			super(caption, uploadReceiver);
 			setImmediate(true);
 			setButtonCaption(caption);
+			System.out.println("bin in fileupload");
+			setReceiver(uploadReceiver);
+			
+			
 
 			addSucceededListener(this);
 			addFailedListener(this);
@@ -247,6 +253,7 @@ public class Email extends Form implements ClickListener, QueryDelegate.RowIdCha
 
 		@Override
 		public OutputStream receiveUpload(String fileName, String MIMEType) {
+			System.out.println("bin in receive upload");
 			this.fileName = fileName;
 			FileOutputStream fos = null;
 			file = new File(fileName);

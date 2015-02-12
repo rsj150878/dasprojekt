@@ -268,7 +268,7 @@ public class Email extends Form implements ClickListener, QueryDelegate.RowIdCha
 			}
 			return fos;
 
-		}
+		} 
 
 		public File getFile() {
 			return file;

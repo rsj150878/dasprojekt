@@ -30,7 +30,7 @@ class EmailFormFieldFactory extends DefaultFieldFactory {
 			tf.setWidth(inputFieldWidth);
 			return tf;
 		} else if ("subject".equals(propertyId)) {
-			TextField tf = new TextField();
+			TextField tf = new TextField();   
 			tf.setWidth(inputFieldWidth);
 			return tf;
 		} else if ("body".equals(propertyId)) {

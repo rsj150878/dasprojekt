@@ -54,7 +54,7 @@ import com.vaadin.ui.Window;
 public class Email extends Form implements ClickListener, QueryDelegate.RowIdChangeListener {
 
 	/* Email Details */
-	private String emailHost;
+	private String emailHost;    
 	private int emailHostPort = 25;
 	private String username;
 	private String password;

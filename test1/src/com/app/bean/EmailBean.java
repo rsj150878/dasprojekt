@@ -1,6 +1,8 @@
 package com.app.bean;
 
+import java.io.File;
 import java.io.Serializable;
+import java.util.List;
 
 public class EmailBean implements Serializable {
 
@@ -11,8 +13,17 @@ public class EmailBean implements Serializable {
     private String subject ="";
     private String attachment ="";
     private String from ="";
+    private List<File> files;
 
-    public String getFrom() {
+    public List<File> getFiles() {
+		return files;
+	}
+
+	public void setFiles(List<File> files) {
+		this.files = files;
+	}
+
+	public String getFrom() {
 		return from;   
 	}
 

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="Kursteilnemer" type="kursteilnehmer"/>
+
+  <xs:complexType name="hund">
+    <xs:sequence>
+      <xs:element name="ahnenTafelName" type="xs:string" minOccurs="0"/>
+      <xs:element name="chipnummer" type="xs:string" minOccurs="0"/>
+      <xs:element name="farbe" type="xs:string" minOccurs="0"/>
+      <xs:element name="geschlecht" type="xs:string" minOccurs="0"/>
+      <xs:element name="rasse" type="xs:string" minOccurs="0"/>
+      <xs:element name="rufname" type="xs:string" minOccurs="0"/>
+      <xs:element name="wurfDatum" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="zuchtbuchnummer" type="xs:string" minOccurs="0"/>
+      <xs:element name="zuechter" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="kursart">
+    <xs:sequence>
+      <xs:element name="apportieren" type="xs:string" minOccurs="0"/>
+      <xs:element name="efa" type="xs:string" minOccurs="0"/>
+      <xs:element name="junghunde" type="xs:string" minOccurs="0"/>
+      <xs:element name="mittwochsKurs" type="xs:string" minOccurs="0"/>
+      <xs:element name="sonntagsKurs" type="xs:string" minOccurs="0"/>
+      <xs:element name="welpen1" type="xs:string" minOccurs="0"/>
+      <xs:element name="welpen2" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="kursteilnehmer">
+    <xs:sequence>
+      <xs:element name="hund" type="hund" minOccurs="0"/>
+      <xs:element name="hundeBesitzer" type="person" minOccurs="0"/>
+      <xs:element name="kursTeilnehmer" type="person" minOccurs="0"/>
+      <xs:element name="kursart" type="kursart" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="person">
+    <xs:sequence>
+      <xs:element name="adresse" type="xs:string" minOccurs="0"/>
+      <xs:element name="emailAdresse" type="xs:string" minOccurs="0"/>
+      <xs:element name="geburtsDatum" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="mobNR" type="xs:string" minOccurs="0"/>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+      <xs:element name="oercMitgliedsNummer" type="xs:int" minOccurs="0"/>
+      <xs:element name="telNR" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+

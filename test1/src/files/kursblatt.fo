@@ -34,7 +34,7 @@
         <fo:block></fo:block>        </fo:table-cell>
         <fo:table-cell    number-columns-spanned="1">
       <!-- 8ed9a31dd2a0430f84cc8cfac47850b6 -->
-      <fo:block     margin-left="0.0cm" margin-right="8.3cm"  margin-top="0.0cm"  font-size="12pt"  font-family="SansSerif"  font-weight="bold"  color="#009933"   text-align="left">%c3%96sterreichischer Retrieverclub</fo:block>
+      <fo:block   white-space="pre"   margin-left="0.0cm" margin-right="8.3cm"  margin-top="0.0cm"  font-size="12pt"  font-family="SansSerif"  font-weight="bold"  color="#009933"   text-align="left">%c3%96sterreichischer Retrieverclub</fo:block>
         </fo:table-cell>
     </fo:table-row>
     </fo:table-body>
@@ -50,7 +50,7 @@
         <fo:block></fo:block>        </fo:table-cell>
         <fo:table-cell    number-columns-spanned="1">
       <!-- f40fe537b7ec4cfba32e3507061695d3 -->
-      <fo:block     margin-left="0.0cm" margin-right="8.16cm"  margin-top="0.0cm"  font-size="12pt"  font-family="SansSerif"  font-weight="bold"  color="#339933"   text-align="left">Retriever in Ebreichsdorf</fo:block>
+      <fo:block  white-space="pre"    margin-left="0.0cm" margin-right="8.16cm"  margin-top="0.0cm"  font-size="12pt"  font-family="SansSerif"  font-weight="bold"  color="#339933"   text-align="left">Retriever in Ebreichsdorf</fo:block>
         </fo:table-cell>
     </fo:table-row>
     </fo:table-body>
@@ -141,11 +141,11 @@
         <fo:block></fo:block>        </fo:table-cell>
         <fo:table-cell    number-columns-spanned="1">
       <!-- 169dfa57b08a4b07b50ff062229d73ae -->
-      <fo:block   border-color="#000000" border-style="solid" border-width="medium"     margin-left="0.0cm" margin-right="0.0cm"  margin-top="0.0cm"  font-size="10pt"  font-family="SansSerif"  color="#000000"   text-align="left"><xsl:value-of select="Kursteilnemer/kursart/welpen1"></xsl:value-of></fo:block>
+      <fo:block  white-space="pre"  border-color="#000000" border-style="solid" border-width="medium"     margin-left="0.0cm" margin-right="0.0cm"  margin-top="0.0cm"  font-size="10pt"  font-family="SansSerif"  color="#000000"   text-align="left"><xsl:value-of select="Kursteilnemer/kursart/welpen1"></xsl:value-of></fo:block>
         </fo:table-cell>
         <fo:table-cell    number-columns-spanned="1">
       <!-- d4f21f260f534999a31c01bfb612d0bb -->
-      <fo:block   border-color="#000000" border-style="solid" border-width="medium"     margin-left="0.0cm" margin-right="12.05cm"  margin-top="0.0cm"  font-size="10pt"  font-family="SansSerif"  color="#000000"   text-align="left">Welpen I</fo:block>
+      <fo:block  white-space="pre"  border-color="#000000" border-style="solid" border-width="medium"     margin-left="0.0cm" margin-right="12.05cm"  margin-top="0.0cm"  font-size="10pt"  font-family="SansSerif"  color="#000000"   text-align="left">Welpen I</fo:block>
         </fo:table-cell>
     </fo:table-row>
     </fo:table-body>
@@ -161,7 +161,7 @@
         <fo:block></fo:block>        </fo:table-cell>
         <fo:table-cell    number-columns-spanned="1">
       <!-- 169dfa57b08a4b07b50ff062229d73ae -->
-      <fo:block   border-color="#000000" border-style="solid" border-width="medium"     margin-left="0.0cm" margin-right="15.93cm"  margin-top="0.0cm"  font-size="10pt"  font-family="SansSerif"  color="#000000"   text-align="left"><xsl:value-of select="Kursteilnemer/kursart/welpen2"></xsl:value-of></fo:block>
+      <fo:block  white-space="pre"  border-color="#000000" border-style="solid" border-width="medium"     margin-left="0.0cm" margin-right="15.93cm"  margin-top="0.0cm"  font-size="10pt"  font-family="SansSerif"  color="#000000"   text-align="left"><xsl:value-of select="Kursteilnemer/kursart/welpen2"></xsl:value-of></fo:block>
         </fo:table-cell>
     </fo:table-row>
     </fo:table-body>
@@ -177,7 +177,7 @@
         <fo:block></fo:block>        </fo:table-cell>
         <fo:table-cell    number-columns-spanned="1">
       <!-- ac24f63a6eae463789970b00c1446563 -->
-      <fo:block     margin-left="0.0cm" margin-right="10.89cm"  margin-top="0.0cm"  font-size="10pt"  font-family="SansSerif"  color="#000000"   text-align="left">RVField313</fo:block>
+      <fo:block     margin-left="0.0cm" margin-right="10.89cm"  margin-top="0.0cm"  font-size="10pt"  font-family="SansSerif"  color="#000000"   text-align="left"><xsl:value-of select="Kursteilnemer/kursTeilnehmer/name"></xsl:value-of></fo:block>
         </fo:table-cell>
     </fo:table-row>
     </fo:table-body>

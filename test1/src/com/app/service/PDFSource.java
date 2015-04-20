@@ -3,16 +3,14 @@ package com.app.service;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Date;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXResult;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
@@ -24,6 +22,7 @@ import com.app.printClasses.Hund;
 import com.app.printClasses.Kursart;
 import com.app.printClasses.Kursteilnehmer;
 import com.app.printClasses.Person;
+import com.java4less.xreport.fop.FOProcessor;
 import com.vaadin.server.StreamResource.StreamSource;
 
 public class PDFSource implements StreamSource {
@@ -47,7 +46,7 @@ public class PDFSource implements StreamSource {
 		Kursart kursart = new Kursart();
 		person.setName("test");
 		kursart.setWelpen1("x");
-		kursart.setWelpen2("x");
+		kursart.setWelpen2(" ");
 
 		Kursteilnehmer kursteilnehmer = new Kursteilnehmer();
 		kursteilnehmer.setHund(hund);
@@ -81,16 +80,29 @@ public class PDFSource implements StreamSource {
 									"/files/kursblatt.fo")));
 			JAXBContext jc = JAXBContext.newInstance(Kursteilnehmer.class);
 
+		
+			//System.out.println(jc);
 			Marshaller marshaller = jc.createMarshaller();
-			// ByteArrayOutputStream ba = new ByteArrayOutputStream();
-			// marshaller.marshal(kursteilnehmer, ba);
-			ByteArrayInOutStream bos = new ByteArrayInOutStream();
-			marshaller.marshal(kursteilnehmer, bos);
-			Source src = new javax.xml.transform.stream.StreamSource(
-					bos.getInputStream());
-			Result res = new SAXResult(fop.getDefaultHandler());
-			transformer.transform(src, res);
+			System.out.println(marshaller);
+			 ByteArrayOutputStream ba = new ByteArrayOutputStream();
+			 marshaller.marshal(kursteilnehmer, ba);
+			//ByteArrayInOutStream bos = new ByteArrayInOutStream();
+			//System.out.println("xml of data" + new String(bos.toByteArray()));
+			//marshaller.marshal(kursteilnehmer, bos);
+			
+			System.out.println("xml of data" + new String(ba.toByteArray()));
+			//Source src = new javax.xml.transform.stream.StreamSource(
+			//		bos.getInputStream());
+			//Result res = new SAXResult(fop.getDefaultHandler());
+			//transformer.transform(src, res);
 			fopOut.close();
+			
+			FOProcessor processor=new FOProcessor();
+			processor.process(new ByteArrayInputStream(ba.toByteArray()), new FileInputStream(PathHandler.INSTANCE.getPathName()+
+					"/files/kursblatt.fo"), fopOut);
+		
+			fopOut.close();
+			//ByteArrayInOutStream boa1 = new ByteArrayInOutStream(fopOut);
 			return new ByteArrayInputStream(fopOut.toByteArray());
 		} catch (Exception e) {
 			e.printStackTrace();

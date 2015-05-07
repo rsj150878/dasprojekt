@@ -3,10 +3,9 @@ package com.app.service;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import org.apache.tools.ant.taskdefs.Property;
+//import org.apache.tools.ant.taskdefs.Property;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;

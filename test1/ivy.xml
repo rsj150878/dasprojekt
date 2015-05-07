@@ -23,11 +23,15 @@
 		<!-- Vaadin themes -->
 		<dependency org="com.vaadin" name="vaadin-themes" rev="&vaadin.version;" />
 
-		<!-- Push support -->
+		<!-- Push support --> 
 		<dependency org="com.vaadin" name="vaadin-push" rev="&vaadin.version;" />
 
 		<!-- Servlet 3.0 API -->
 		<dependency org="javax.servlet" name="javax.servlet-api" rev="3.0.1" conf="nodeploy->default" />
+
+		<!-- itextpdf - drucken -->
+		<dependency org="com.itextpdf" name="itextpdf" rev="5.1.1"/>
+		
 
 		<!-- mail -->
 		<dependency org="com.sun.mail" name="javax.mail" rev="1.5.2"/>

@@ -23,5 +23,17 @@ public enum Rassen {
 	public String getRassenKurzBezeichnung() {
 		return this.RassenKurzBezeichnung;
 	}
+	
+	public String getLangBezeichnungFuerKurzBezeichnung(String kurzbezeichnung) {
+		
+		for (Rassen o: this.values()) {
+			if (o.RassenKurzBezeichnung.equals(kurzbezeichnung)) {
+				return o.RassenLangBezeichnung;
+			}
+			
+		}
+		return "";
+	}
+	
 
 }

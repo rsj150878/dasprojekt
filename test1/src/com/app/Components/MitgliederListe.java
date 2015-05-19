@@ -39,7 +39,8 @@ public class MitgliederListe extends CustomComponent implements Action.Handler,
 	private static final Action ADDPerson = new Action("Neue Person");
 	private static final Action ADDHund = new Action("Neuer Hund");
 	private static final Action PRINTKursBlatt = new Action("Kursblatt drucken");
-	private static final Action[] actions = new Action[] { ADDPerson, ADDHund, PRINTKursBlatt};
+	private static final Action[] actions = new Action[] { ADDPerson, ADDHund,
+			PRINTKursBlatt };
 
 	/**
 	 * The constructor should first build the main layout, set the composition
@@ -243,13 +244,14 @@ public class MitgliederListe extends CustomComponent implements Action.Handler,
 			// tree.setValue(id);
 			// editor.focus();
 		} else if (action == PRINTKursBlatt) {
-			// Kursblatt nur mal für Hund möglihc
+			// Kursblatt nur mal fï¿½r Hund mï¿½glihc
 			if (container.getItem(target).getItemProperty("KnotenArt")
 					.getValue().equals(1)) {
-				
-				Kursblatt x = new Kursblatt((Item) container.getParent(target),(Item) target);
+
+				Kursblatt x = new Kursblatt((Item) container.getParent(target),
+						(Item) target);
 				this.horizontalSplitPanel_1.setSecondComponent(x);
-				
+
 			}
 
 		}
@@ -271,7 +273,9 @@ public class MitgliederListe extends CustomComponent implements Action.Handler,
 		} else if (container.getItem(Mitglieder.getValue())
 				.getItemProperty("KnotenArt").getValue().equals(new Integer(1))) {
 
-			HundDetail hundDetail = new HundDetail((Item) Mitglieder.getValue());
+			HundDetail hundDetail = new HundDetail(
+					(Item) Mitglieder.getValue(),
+					(Item) container.getParent(Mitglieder.getValue()));
 			this.horizontalSplitPanel_1.setSecondComponent(hundDetail);
 		}
 

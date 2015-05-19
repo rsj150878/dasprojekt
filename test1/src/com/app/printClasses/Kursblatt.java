@@ -11,6 +11,7 @@ import com.app.bean.RassenBean;
 import com.app.enumPackage.Rassen;
 import com.app.service.TemporaryFileDownloadResource;
 import com.itextpdf.text.pdf.AcroFields;
+import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.vaadin.data.Item;
@@ -45,6 +46,7 @@ public class Kursblatt extends CustomComponent {
 	private FileOutputStream fos;
 	/** The original PDF file. */
 	public static final String DATASHEET = "files/Kursblatt NEU_Formular.pdf";
+	public static final String FONT = "files/arialuni.ttf";
 
 	public static final String RESULT = "kursblattprint1.pdf";
 
@@ -61,6 +63,8 @@ public class Kursblatt extends CustomComponent {
 			stamper = new PdfStamper(reader, fos);
 			AcroFields fields = stamper.getAcroFields();
 
+			BaseFont unicode = BaseFont.createFont(FONT,BaseFont.IDENTITY_H,BaseFont.EMBEDDED);
+			fields.addSubstitutionFont(unicode);
 			// besitzer-block
 
 			if (!(besitzer.getItemProperty("email").getValue() == null)) {
@@ -94,7 +98,7 @@ public class Kursblatt extends CustomComponent {
 			}
 
 			if (!(besitzer.getItemProperty("oerc_mitgliedsnummer").getValue() == null)) {
-				fields.setField("ï¿½RC-Mitgliedsnummer", besitzer
+				fields.setField("Ã–RC-Mitgliedsnummer", besitzer
 						.getItemProperty("oerc_mitgliedsnummer").getValue()
 						.toString());
 			}
@@ -122,9 +126,9 @@ public class Kursblatt extends CustomComponent {
 
 			if (hund.getItemProperty("geschlecht").getValue().toString()
 					.equals("R")) {
-				fields.setField("Geschlecht", "Rüde");
+				fields.setField("Geschlecht", "RÃ¼de");
 			} else {
-				fields.setField("Geschlecht", "Hündin");
+				fields.setField("Geschlecht", "HÃ¼ndin");
 			}
 
 			if (!(hund.getItemProperty("zuchtbuchnummer").getValue() == null)) {
@@ -137,7 +141,7 @@ public class Kursblatt extends CustomComponent {
 					.getValue().toString());
 
 			if (!(hund.getItemProperty("zuechter").getValue() == null)) {
-				fields.setField("Züchter", hund.getItemProperty("zuechter")
+				fields.setField("ZÃ¼chter", hund.getItemProperty("zuechter")
 						.getValue().toString());
 			}
 

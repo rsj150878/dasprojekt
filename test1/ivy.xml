@@ -32,6 +32,9 @@
 		<!-- itextpdf - drucken -->
 		<dependency org="com.itextpdf" name="itextpdf" rev="5.1.1"/>
 		
+		<!-- filtertable -->
+		<dependency org="org.vaadin.addons" name="filteringtable" rev="0.9.12.v7"/>
+		 
 
 		<!-- mail -->
 		<dependency org="com.sun.mail" name="javax.mail" rev="1.5.2"/>

@@ -7,6 +7,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.springframework.format.datetime.DateFormatter;
+
 import com.app.bean.RassenBean;
 import com.app.enumPackage.Rassen;
 import com.app.service.TemporaryFileDownloadResource;
@@ -63,7 +65,8 @@ public class Kursblatt extends CustomComponent {
 			stamper = new PdfStamper(reader, fos);
 			AcroFields fields = stamper.getAcroFields();
 
-			BaseFont unicode = BaseFont.createFont(FONT,BaseFont.IDENTITY_H,BaseFont.EMBEDDED);
+			BaseFont unicode = BaseFont.createFont(FONT, BaseFont.IDENTITY_H,
+					BaseFont.EMBEDDED);
 			fields.addSubstitutionFont(unicode);
 			// besitzer-block
 
@@ -91,10 +94,12 @@ public class Kursblatt extends CustomComponent {
 					+ besitzer.getItemProperty("vorname").getValue() + " "
 					+ besitzer.getItemProperty("nachname").getValue());
 
+			Date currentDate = new Date();
+			DateFormat dateFormat1 = new SimpleDateFormat("dd.MM.yyyy");
+
 			if (!(besitzer.getItemProperty("geb_dat").getValue() == null)) {
-				fields.setField("geburtsdatum",
-						besitzer.getItemProperty("geb_dat").getValue()
-								.toString());
+				fields.setField("Geburtsdatum", dateFormat1.format(besitzer
+						.getItemProperty("geb_dat").getValue()));
 			}
 
 			if (!(besitzer.getItemProperty("oerc_mitgliedsnummer").getValue() == null)) {
@@ -110,19 +115,24 @@ public class Kursblatt extends CustomComponent {
 				fields.setField("Check Box NEIN", "Ja");
 			}
 
-			if (!(besitzer.getItemProperty("telnr").getValue() == null)) {
+			if (!(besitzer.getItemProperty("mobnr").getValue() == null)) {
 				fields.setField("Mobiltelefonnummer",
+						besitzer.getItemProperty("mobnr").getValue().toString());
+			}
+
+			if (!(besitzer.getItemProperty("telnr").getValue() == null)) {
+				fields.setField("Telefonnummer",
 						besitzer.getItemProperty("telnr").getValue().toString());
 			}
-			Date currentDate = new Date();
-			DateFormat dateFormat1 = new SimpleDateFormat("dd.MM.yyyy");
+
 			fields.setField("Schranawand am", dateFormat1.format(currentDate));
 
 			// ende besitzer
 
 			// beginn hund
-			fields.setField("Wurfdatum", hund.getItemProperty("wurfdatum")
-					.getValue().toString());
+
+			fields.setField("Wurfdatum", dateFormat1.format(hund
+					.getItemProperty("wurfdatum").getValue()));
 
 			if (hund.getItemProperty("geschlecht").getValue().toString()
 					.equals("R")) {
@@ -132,7 +142,7 @@ public class Kursblatt extends CustomComponent {
 			}
 
 			if (!(hund.getItemProperty("zuchtbuchnummer").getValue() == null)) {
-				fields.setField("zuchtbuchnummer",
+				fields.setField("Zuchtbuchnummer",
 						hund.getItemProperty("zuchtbuchnummer").getValue()
 								.toString());
 			}

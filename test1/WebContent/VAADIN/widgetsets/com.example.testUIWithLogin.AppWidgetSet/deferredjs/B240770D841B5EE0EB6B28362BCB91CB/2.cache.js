@@ -1,0 +1,1 @@
+$wnd.com_example_testUIWithLogin_AppWidgetSet.runAsyncCallback2('qab(831,1,swd);_.wc=function K1b(){ISb((!BSb&&(BSb=new NSb),BSb),this.b.e)};Xqd(Vh)(2);\n//# sourceURL=com.example.testUIWithLogin.AppWidgetSet-2.js\n')

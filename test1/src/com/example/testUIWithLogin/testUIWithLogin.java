@@ -28,7 +28,7 @@ public class testUIWithLogin extends UI {
 	private ApplicationContext applicationContext;
 
 	@WebServlet(value = "/*", asyncSupported = true)
-	@VaadinServletConfiguration(productionMode = false, ui = testUIWithLogin.class)
+	@VaadinServletConfiguration(productionMode = false, ui = testUIWithLogin.class, widgetset = "com.example.testUIWithLogin.AppWidgetSet")
 	public static class Servlet extends VaadinServlet {
 	}
 
@@ -41,7 +41,8 @@ public class testUIWithLogin extends UI {
 		applicationContext = WebApplicationContextUtils
 				.getRequiredWebApplicationContext(servletContext);
 
-		PathHandler.INSTANCE.setPathName(servletContext.getRealPath("WEB-INF/classes"));
+		PathHandler.INSTANCE.setPathName(servletContext
+				.getRealPath("WEB-INF/classes"));
 
 		System.out.println("xxx + "
 				+ servletContext.getRealPath("WEB-INF/files/kursblat.xml"));

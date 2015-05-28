@@ -2,7 +2,7 @@ package com.app.enumPackage;
 
 public enum LandEnum {
 	
-	OESTERREICH("AT","Österreich"),
+	OESTERREICH("AT","Ã–sterreich"),
 	DEUTSCHLAND("DE","Deutschland"),
 	SCHWEIZ("CH","Schweiz");
 	

@@ -176,9 +176,6 @@ public class HundDetail extends CustomComponent {
 			RassenBean addObject = new RassenBean(o.getRassenKurzBezeichnung(),
 					o.getRassenLangBezeichnung());
 
-			System.out.println("in schleife" + o.getRassenKurzBezeichnung()
-					+ o.getRassenLangBezeichnung());
-
 			rassenContainer.addItem(addObject);
 			if (hundItem.getItemProperty("rasse").getValue() != null
 					&& o.getRassenKurzBezeichnung().equals(
@@ -192,9 +189,6 @@ public class HundDetail extends CustomComponent {
 		comboBox_4.setContainerDataSource(rassenContainer);
 		comboBox_4.setItemCaptionMode(ItemCaptionMode.PROPERTY);
 		comboBox_4.setItemCaptionPropertyId("rassenLangBezeichnung");
-
-		System.out.println(" nach setzen "
-				+ comboBox_4.getItemCaptionPropertyId());
 
 		if (selItem != null) {
 

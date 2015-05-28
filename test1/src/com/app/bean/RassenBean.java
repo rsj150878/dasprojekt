@@ -27,10 +27,7 @@ public class RassenBean {
 	}
 
 	public boolean equals(String rassenKurzbezeichnung) {
-		System.out.println("bin in equals");
 		return this.rassenKurzBezeichnung.equals(rassenKurzBezeichnung);
 	}
 
-	
-	
 }

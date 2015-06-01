@@ -195,23 +195,6 @@ public class Kursblatt extends CustomComponent {
 
 			}
 
-			// StreamSource s = new StreamResource.StreamSource() {
-			//
-			// @Override
-			// public InputStream getStream() {
-			// try {
-			// File f = new File(RESULT);
-			// FileInputStream fis = new FileInputStream(f);
-			// return fis;
-			// } catch (Exception e) {
-			// e.printStackTrace();
-			// return null;
-			// }
-			// }
-			// };
-
-			// StreamResource r = new StreamResource(s, RESULT);
-
 			BrowserFrame e = new BrowserFrame("kursblatt", s);
 			mainLayout.addComponent(e);
 

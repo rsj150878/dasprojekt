@@ -1,16 +1,22 @@
 package com.app.enumPackage;
 
+
 public enum VeranstaltungsStufen {
 
-	STUFE_BH(1, "BH"), STUFE_BGH1(2, "BGH1"), STUFE_BGH2(3, "BGH2"), STUFE_BGH3(
-			4, "BGH3");
-	
+	STUFE_BH(1, "BH"), 
+	STUFE_BGH1(2, "BGH1",1,2,3,4,5), 
+	STUFE_BGH2(3, "BGH2",1,2,3,4,5), 
+	STUFE_BGH3(4, "BGH3",1,2,3,4,5);
+
 	private Integer veranstaltungsStufeId;
 	private String bezeichnung;
+	private Integer[] bewertung;
 
-	private VeranstaltungsStufen(Integer id, String bezeichnung) {
+	private VeranstaltungsStufen(Integer id, String bezeichnung,
+			Integer... bewertung) {
 		this.veranstaltungsStufeId = id;
 		this.bezeichnung = bezeichnung;
+		this.bewertung = bewertung;
 
 	}
 
@@ -39,6 +45,16 @@ public enum VeranstaltungsStufen {
 		}
 
 		return null;
+	}
+	
+	public String getBewertung(Integer punkte) {
+		for(Integer x: bewertung) {
+			BewertungEnum bwEnum = BewertungEnum.getBewertung(x);
+			if (bwEnum.von <= punkte && bwEnum.bis >= punkte) {
+				return bwEnum.bewertung;
+			}
+		}
+		return "";
 	}
 
 }

@@ -271,7 +271,7 @@ public class MitgliederListe extends CustomComponent implements Action.Handler,
 			// tree.setValue(id);
 			// editor.focus();
 		} else if (action == PRINTKursBlatt) {
-			// Kursblatt nur mal f�r Hund m�glihc
+			// Kursblatt nur mal für Hund möglich
 			if (container.getItem(target).getItemProperty("KnotenArt")
 					.getValue().equals(1)) {
 

@@ -77,6 +77,7 @@ public class BewertungsListeBGH extends CustomComponent {
 
 			fos = new FileOutputStream(RESULT);
 			PdfCopyFields copy = new PdfCopyFields(fos);
+			copy.open();
 
 			for (int i = 0; i < teilnehmerContainer.size(); i = i + 8) {
 				List<Object> list = teilnehmerContainer.getItemIds(i, 8);

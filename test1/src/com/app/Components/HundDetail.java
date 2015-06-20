@@ -141,7 +141,7 @@ public class HundDetail extends CustomComponent {
 		this.zuechter.setPropertyDataSource(hundItem
 				.getItemProperty("zuechter"));
 
-		this.geschlecht.select(hundItem.getItemProperty("geschlecht") == null
+		this.geschlecht.select(hundItem.getItemProperty("geschlecht").getValue() == null
 				|| hundItem.getItemProperty("geschlecht").getValue().toString()
 						.equals(new String("R")) ? "Rüde" : "Hündin");
 

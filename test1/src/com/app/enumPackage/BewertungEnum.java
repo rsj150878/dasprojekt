@@ -4,9 +4,9 @@ public enum BewertungEnum {
 
 	BGH_MANGELHAFT(1,0,69,"mangelhaft"),
 	BGH_BEFRIEDIGEND(2,70,79,"befriedigend"),
-	BGH_GUT(3,80,89,"Gut"),
-	BGH_SEHRGUT(4,90,95,"Sehr gut"),
-	BGH_VORZÜGLICH(5,96,100,"Vorzüglich");
+	BGH_GUT(3,80,89,"gut"),
+	BGH_SEHRGUT(4,90,95,"sehr gut"),
+	BGH_VORZÜGLICH(5,96,100,"vorzüglich");
 	
 	public Integer id;
 	public Integer von;

@@ -3,20 +3,22 @@ package com.app.enumPackage;
 
 public enum VeranstaltungsStufen {
 
-	STUFE_BH(1, "BH"), 
-	STUFE_BGH1(2, "BGH1",1,2,3,4,5), 
-	STUFE_BGH2(3, "BGH2",1,2,3,4,5), 
-	STUFE_BGH3(4, "BGH3",1,2,3,4,5);
+	STUFE_BH(1, "BH", "Begleithundeprüfung"), 
+	STUFE_BGH1(2, "BGH1", "Begleithundeprüfung 1",1,2,3,4,5), 
+	STUFE_BGH2(3, "BGH2","Begleithundeprüfung 2",1,2,3,4,5), 
+	STUFE_BGH3(4, "BGH3","Begleithundeprüfung 3", 1,2,3,4,5);
 
 	private Integer veranstaltungsStufeId;
 	private String bezeichnung;
+	private String langBezeichnung;
 	private Integer[] bewertung;
 
-	private VeranstaltungsStufen(Integer id, String bezeichnung,
+	private VeranstaltungsStufen(Integer id, String bezeichnung, String langBezeichnung,
 			Integer... bewertung) {
 		this.veranstaltungsStufeId = id;
 		this.bezeichnung = bezeichnung;
 		this.bewertung = bewertung;
+		this.langBezeichnung = langBezeichnung;
 
 	}
 
@@ -55,6 +57,14 @@ public enum VeranstaltungsStufen {
 			}
 		}
 		return "";
+	}
+
+	public String getLangBezeichnung() {
+		return langBezeichnung;
+	}
+
+	public void setLangBezeichnung(String langBezeichnung) {
+		this.langBezeichnung = langBezeichnung;
 	}
 
 }

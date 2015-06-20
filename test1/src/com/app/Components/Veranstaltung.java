@@ -13,6 +13,7 @@ import com.app.bean.VeranstaltungsTypenBean;
 import com.app.dbIO.DBConnection;
 import com.app.enumPackage.VeranstaltungsStufen;
 import com.app.enumPackage.VeranstaltungsTypen;
+import com.app.printClasses.BGH1RichterBlatt;
 import com.app.printClasses.BHRichterBlatt;
 import com.app.printClasses.BewertungsListeBGH;
 import com.app.printClasses.Urkunde;
@@ -38,8 +39,10 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
@@ -64,11 +67,11 @@ public class Veranstaltung extends CustomComponent implements
 	private TextField veranstalter;
 	private TextField veranstaltungsOrt;
 	private PopupDateField datumVeranstaltung;
-	
+
 	private TextField telnrLeiter;
 	private TextField plzLeiter;
 	private TextField strasseLeiter;
-	private TextField ortLeiter; 
+	private TextField ortLeiter;
 
 	private FilterTreeTable mitglieder;
 
@@ -333,7 +336,7 @@ public class Veranstaltung extends CustomComponent implements
 	private Panel createSecondPanel() {
 		Panel secondLine = new Panel();
 
-		GridLayout secondLineLayout = new GridLayout(5,2);
+		GridLayout secondLineLayout = new GridLayout(5, 2);
 		secondLineLayout.setWidth("100%");
 		secondLineLayout.setHeight("100%");
 
@@ -346,9 +349,8 @@ public class Veranstaltung extends CustomComponent implements
 		nameVeranstaltung.setPropertyDataSource(currentVeranstaltungsItem
 				.getItemProperty("name"));
 
-		secondLineLayout.addComponent(nameVeranstaltung,0,0);
+		secondLineLayout.addComponent(nameVeranstaltung, 0, 0);
 
-		
 		datumVeranstaltung = new PopupDateField("Datum der Veranstaltung");
 		datumVeranstaltung.setImmediate(true);
 		datumVeranstaltung.setWidth("-1px");
@@ -356,7 +358,7 @@ public class Veranstaltung extends CustomComponent implements
 		datumVeranstaltung.setPropertyDataSource(currentVeranstaltungsItem
 				.getItemProperty("datum"));
 
-		secondLineLayout.addComponent(datumVeranstaltung,1,0);
+		secondLineLayout.addComponent(datumVeranstaltung, 1, 0);
 
 		nameRichter = new TextField("Name Richter");
 		nameRichter.setImmediate(true);
@@ -366,7 +368,7 @@ public class Veranstaltung extends CustomComponent implements
 		nameRichter.setNullRepresentation("neuer Richter");
 		nameRichter.setPropertyDataSource(currentVeranstaltungsItem
 				.getItemProperty("richter"));
-		secondLineLayout.addComponent(nameRichter,2,0);
+		secondLineLayout.addComponent(nameRichter, 2, 0);
 
 		veranstalter = new TextField("Veranstalter");
 		veranstalter.setImmediate(true);
@@ -376,7 +378,7 @@ public class Veranstaltung extends CustomComponent implements
 		veranstalter.setNullRepresentation("Veranstalter");
 		veranstalter.setPropertyDataSource(currentVeranstaltungsItem
 				.getItemProperty("veranstalter"));
-		secondLineLayout.addComponent(veranstalter,3,0);
+		secondLineLayout.addComponent(veranstalter, 3, 0);
 
 		veranstaltungsOrt = new TextField("Veranstaltungsort");
 		veranstaltungsOrt.setImmediate(true);
@@ -386,7 +388,7 @@ public class Veranstaltung extends CustomComponent implements
 		veranstaltungsOrt.setNullRepresentation("neuer Veranstaltungsort");
 		veranstaltungsOrt.setPropertyDataSource(currentVeranstaltungsItem
 				.getItemProperty("veranstaltungsort"));
-		secondLineLayout.addComponent(veranstaltungsOrt,4,0);
+		secondLineLayout.addComponent(veranstaltungsOrt, 4, 0);
 
 		nameVeranstaltungsLeiter = new TextField(
 				"Veranstaltungs-/Prüfungsleiter");
@@ -399,59 +401,47 @@ public class Veranstaltung extends CustomComponent implements
 		nameVeranstaltungsLeiter
 				.setPropertyDataSource(currentVeranstaltungsItem
 						.getItemProperty("veranstaltungsleiter"));
-		secondLineLayout.addComponent(nameVeranstaltungsLeiter,0,1);
-		
-		strasseLeiter = new TextField(
-				"Strasse Prüfungsleiter");
+		secondLineLayout.addComponent(nameVeranstaltungsLeiter, 0, 1);
+
+		strasseLeiter = new TextField("Strasse Prüfungsleiter");
 		strasseLeiter.setImmediate(true);
 		strasseLeiter.setWidth("-1px");
 		strasseLeiter.setHeight("-1px");
 		strasseLeiter.setMaxLength(45);
-		strasseLeiter
-				.setNullRepresentation("strasse Leiter");
-		strasseLeiter
-				.setPropertyDataSource(currentVeranstaltungsItem
-						.getItemProperty("strasse_leiter"));
-		secondLineLayout.addComponent(strasseLeiter,1,1);
-		
-		plzLeiter = new TextField(
-				"PLZ Prüfungsleiter");
+		strasseLeiter.setNullRepresentation("strasse Leiter");
+		strasseLeiter.setPropertyDataSource(currentVeranstaltungsItem
+				.getItemProperty("strasse_leiter"));
+		secondLineLayout.addComponent(strasseLeiter, 1, 1);
+
+		plzLeiter = new TextField("PLZ Prüfungsleiter");
 		plzLeiter.setImmediate(true);
 		plzLeiter.setWidth("-1px");
 		plzLeiter.setHeight("-1px");
 		plzLeiter.setMaxLength(45);
-		plzLeiter
-				.setNullRepresentation("plz Leiter");
-		plzLeiter
-				.setPropertyDataSource(currentVeranstaltungsItem
-						.getItemProperty("plz_leiter"));
-		secondLineLayout.addComponent(plzLeiter,2,1);
-		
-		ortLeiter = new TextField(
-				"Ort Prüfungsleiter");
+		plzLeiter.setNullRepresentation("plz Leiter");
+		plzLeiter.setPropertyDataSource(currentVeranstaltungsItem
+				.getItemProperty("plz_leiter"));
+		secondLineLayout.addComponent(plzLeiter, 2, 1);
+
+		ortLeiter = new TextField("Ort Prüfungsleiter");
 		ortLeiter.setImmediate(true);
 		ortLeiter.setWidth("-1px");
 		ortLeiter.setHeight("-1px");
 		ortLeiter.setMaxLength(45);
-		ortLeiter
-				.setNullRepresentation("ort Leiter");
-		ortLeiter
-				.setPropertyDataSource(currentVeranstaltungsItem
-						.getItemProperty("ort_leiter"));
-		secondLineLayout.addComponent(ortLeiter,3,1);
-		
-		telnrLeiter = new TextField(
-				"Telefon Prüfungsleiter");
+		ortLeiter.setNullRepresentation("ort Leiter");
+		ortLeiter.setPropertyDataSource(currentVeranstaltungsItem
+				.getItemProperty("ort_leiter"));
+		secondLineLayout.addComponent(ortLeiter, 3, 1);
+
+		telnrLeiter = new TextField("Telefon Prüfungsleiter");
 		telnrLeiter.setImmediate(true);
 		telnrLeiter.setWidth("-1px");
 		telnrLeiter.setHeight("-1px");
 		telnrLeiter.setMaxLength(45);
-		telnrLeiter
-				.setNullRepresentation("telnr Leiter");
-		telnrLeiter
-				.setPropertyDataSource(currentVeranstaltungsItem
-						.getItemProperty("tel_nr_leiter"));
-		secondLineLayout.addComponent(telnrLeiter,4,1);
+		telnrLeiter.setNullRepresentation("telnr Leiter");
+		telnrLeiter.setPropertyDataSource(currentVeranstaltungsItem
+				.getItemProperty("tel_nr_leiter"));
+		secondLineLayout.addComponent(telnrLeiter, 4, 1);
 		secondLine.setContent(secondLineLayout);
 
 		return secondLine;
@@ -533,6 +523,7 @@ public class Veranstaltung extends CustomComponent implements
 									.getValue().toString())).getBezeichnung());
 
 		}
+
 		veranstaltungsStufenContainer.removeAllContainerFilters();
 		horizontalSplitPanel_1.setSecondComponent(stufenSheet);
 
@@ -678,6 +669,9 @@ public class Veranstaltung extends CustomComponent implements
 
 		Table anmeldungsTable;
 		VerticalLayout anmeldungsPanelLayout;
+		VerticalLayout tableLayout;
+		HorizontalLayout buttonLeiste;
+		Component currentPrintComponent = null;
 
 		HashMap<Object, Item> itemMap = new HashMap<Object, Item>();
 		HashMap<Object, Object> delMap = new HashMap<Object, Object>();
@@ -691,54 +685,93 @@ public class Veranstaltung extends CustomComponent implements
 
 			anmeldungsPanelLayout = new VerticalLayout();
 			anmeldungsPanelLayout.setWidth("750px");
-			anmeldungsPanelLayout.setHeight("250px");
+			anmeldungsPanelLayout.setHeight("-1px");
 			
+			buttonLeiste = new HorizontalLayout();
+			buttonLeiste.setHeight("-1px");
+			tableLayout = new VerticalLayout();
+			tableLayout.setWidth("100%");
+			tableLayout.setHeight("80%");
+
 			Button printBewertungsListeButton = new Button();
 			printBewertungsListeButton.setCaption("Bewertungsliste");
+			printBewertungsListeButton.setWidth("-1px");
+			printBewertungsListeButton.setHeight("-1px");
 			printBewertungsListeButton.addClickListener(new ClickListener() {
 
 				@Override
 				public void buttonClick(ClickEvent event) {
-					BewertungsListeBGH bewertungsListe = new BewertungsListeBGH(veranstaltung, veranstaltungsStufe);
+					if (!(currentPrintComponent == null)) {
+						anmeldungsPanelLayout
+								.removeComponent(currentPrintComponent);
+					}
+					BewertungsListeBGH bewertungsListe = new BewertungsListeBGH(
+							veranstaltung, veranstaltungsStufe);
 					anmeldungsPanelLayout.addComponent(bewertungsListe);
-					
+					currentPrintComponent = bewertungsListe;
+
 				}
-				
+
 			});
-			anmeldungsPanelLayout.addComponent(printBewertungsListeButton);
+			buttonLeiste
+					.addComponent(printBewertungsListeButton);
 
 			Button printRichterBlattButton = new Button();
 			printRichterBlattButton.setCaption("Richterblatt");
+			printRichterBlattButton.setWidth("-1px");
+			printRichterBlattButton.setHeight("-1px");
+			
 			printRichterBlattButton.addClickListener(new ClickListener() {
 
 				@Override
 				public void buttonClick(ClickEvent event) {
-					if (defStufe.equals(VeranstaltungsStufen.STUFE_BH)) {
-						BHRichterBlatt bhBlatt = new BHRichterBlatt(veranstaltung, veranstaltungsStufe);
-						anmeldungsPanelLayout.addComponent(bhBlatt);
-						
+					if (!(currentPrintComponent == null)) {
+						anmeldungsPanelLayout
+								.removeComponent(currentPrintComponent);
 					}
-					
+
+					if (defStufe.equals(VeranstaltungsStufen.STUFE_BH)) {
+						BHRichterBlatt bhBlatt = new BHRichterBlatt(
+								veranstaltung, veranstaltungsStufe);
+						anmeldungsPanelLayout.addComponent(bhBlatt);
+						currentPrintComponent = bhBlatt;
+
+					} else if (defStufe.equals(VeranstaltungsStufen.STUFE_BGH1)) {
+						BGH1RichterBlatt bgh1Blatt = new BGH1RichterBlatt(
+								veranstaltung, veranstaltungsStufe);
+						anmeldungsPanelLayout.addComponent(bgh1Blatt);
+						currentPrintComponent = bgh1Blatt;
+
+					}
+
 				}
-				
+
 			});
-			
-			anmeldungsPanelLayout.addComponent(printRichterBlattButton);
-			
+
+			buttonLeiste.addComponent(printRichterBlattButton);
+
 			Button printUrkundenButton = new Button();
 			printUrkundenButton.setCaption("Urkunden");
+			printUrkundenButton.setWidth("-1px");
+			printUrkundenButton.setHeight("-1px");
 			printUrkundenButton.addClickListener(new ClickListener() {
 
 				@Override
 				public void buttonClick(ClickEvent event) {
-						Urkunde urkunde = new Urkunde(veranstaltung, veranstaltungsStufe);
-						anmeldungsPanelLayout.addComponent(urkunde);
-						
-					
+					if (!(currentPrintComponent == null)) {
+						anmeldungsPanelLayout
+								.removeComponent(currentPrintComponent);
+					}
+
+					Urkunde urkunde = new Urkunde(veranstaltung,
+							veranstaltungsStufe);
+					anmeldungsPanelLayout.addComponent(urkunde);
+					currentPrintComponent = urkunde;
+
 				}
-				
+
 			});
-			anmeldungsPanelLayout.addComponent(printUrkundenButton);
+			buttonLeiste.addComponent(printUrkundenButton);
 			anmeldungsTable = new Table();
 			anmeldungsTable.setHeightUndefined();
 			anmeldungsTable.addContainerProperty("besitzer", String.class, "",
@@ -787,7 +820,10 @@ public class Veranstaltung extends CustomComponent implements
 			// anmeldungsTable.setPageLength(anmeldungsTable.size());
 			anmeldungsTable.setSizeFull();
 			anmeldungsTable.setImmediate(true);
-			anmeldungsPanelLayout.addComponent(anmeldungsTable);
+			anmeldungsPanelLayout.addComponent(buttonLeiste);
+			tableLayout.addComponent(anmeldungsTable);
+			anmeldungsPanelLayout.addComponent(tableLayout);
+			anmeldungsPanelLayout.setSpacing(false);
 
 			setCompositionRoot(anmeldungsPanelLayout);
 		}

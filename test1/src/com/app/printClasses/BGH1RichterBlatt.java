@@ -9,8 +9,6 @@ import java.util.Set;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import com.app.dbIO.DBConnection;
-import com.app.enumPackage.Rassen;
-import com.app.enumPackage.VeranstaltungsStufen;
 import com.app.service.TemporaryFileDownloadResource;
 import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.BaseFont;
@@ -25,15 +23,16 @@ import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.CustomComponent;
 
-public class Urkunde extends CustomComponent {
+public class BGH1RichterBlatt extends CustomComponent {
+
 	private PdfReader reader;
 	private PdfStamper stamper;
 	private FileOutputStream fos;
 	/** The original PDF file. */
-	public static final String DATASHEET = "files/Urkunde_NEU_F.pdf";
+	public static final String DATASHEET = "files/BGH1-NEU_FORMULAR.pdf";
 	public static final String FONT = "files/arialuni.ttf";
 
-	public static final String RESULT = "Urkunde.pdf";
+	public static final String RESULT = "RichterBlatt.pdf";
 
 	private AbsoluteLayout mainLayout;
 	private TableQuery q3;
@@ -44,7 +43,8 @@ public class Urkunde extends CustomComponent {
 	private SQLContainer hundContainer;
 	private SQLContainer teilnehmerContainer;
 
-	public Urkunde(Item veranstaltung, Item veranstaltungsStufe) {
+	public BGH1RichterBlatt(Item veranstaltung, Item veranstaltungsStufe) {
+
 		try {
 			reader = new PdfReader(DATASHEET);
 			// Get the fields from the reader (read-only!!!)
@@ -52,21 +52,14 @@ public class Urkunde extends CustomComponent {
 			// Loop over the fields and get info about them
 			Set<String> fields = form.getFields().keySet();
 			for (String key : fields) {
-				System.out.println("#" + key + "#");
-				System.out.println(form.getFieldType(key));
+				System.out.println(key);
+
 			}
 
-			String[] states = form.getAppearanceStates("RÜDE");
-			for (int i = 0; i < states.length; i++) {
-				System.out.println(states[i]);
-			}
-			states = form.getAppearanceStates("HÜNDIN");
-			for (int i = 0; i < states.length; i++) {
-				System.out.println(states[i]);
-			}
 		} catch (Exception ee) {
 
 		}
+
 		q3 = new TableQuery("veranstaltungs_teilnehmer",
 				DBConnection.INSTANCE.getConnectionPool());
 		q3.setVersionColumn("version");
@@ -115,11 +108,8 @@ public class Urkunde extends CustomComponent {
 
 			}
 
-			
 			BrowserFrame e = new BrowserFrame("BGHBewertungsblatt", s);
 			mainLayout.addComponent(e);
-			
-			//e.addDetachListener(mainLayout.getp);
 
 		} catch (Exception ee) {
 			ee.printStackTrace();
@@ -128,6 +118,7 @@ public class Urkunde extends CustomComponent {
 
 	private byte[] bauPdf(Item veranstaltung, Item veranstaltungsStufe,
 			Item teilnehmerItem) throws Exception {
+
 		PdfReader reader = new PdfReader(DATASHEET);
 		// fos = new FileOutputStream(RESULT);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -144,14 +135,70 @@ public class Urkunde extends CustomComponent {
 		personContainer.addContainerFilter(new Equal("idperson", teilnehmerItem
 				.getItemProperty("id_person").getValue()));
 
+		fields.setField("Prüfungsleiter",
+				veranstaltung.getItemProperty("veranstaltungsleiter")
+						.getValue().toString());
+		
+		SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd.MM.yyyy");
+		fields.setField("Prüfung am", dateFormat1.format(veranstaltung
+				.getItemProperty("datum").getValue()));
+		fields.setField("Veranstaltung am", dateFormat1.format(veranstaltung
+				.getItemProperty("datum").getValue()));
+
+		
+		fields.setField("Rasse",
+				hundContainer.getItem(hundContainer.firstItemId())
+						.getItemProperty("rasse").getValue().toString());
+		fields.setField("Verbandsverein", "Österreichischer Retrieverclub");
+
+		if (!(hundContainer.getItem(hundContainer.firstItemId())
+				.getItemProperty("zuchtbuchnummer").getValue() == null)) {
+			fields.setField("Zuchtbuch / Reg.-Nr",
+					hundContainer.getItem(hundContainer.firstItemId())
+							.getItemProperty("zuchtbuchnummer").getValue()
+							.toString());
+		}
+		fields.setField("Name des Hundes",
+				hundContainer.getItem(hundContainer.firstItemId())
+						.getItemProperty("zwingername").getValue().toString());
+
+		fields.setField("Name des Hundes_2",
+				hundContainer.getItem(hundContainer.firstItemId())
+						.getItemProperty("zwingername").getValue().toString());
+
+		fields.setField(
+				"Wurftag",
+				dateFormat1.format(hundContainer
+						.getItem(hundContainer.firstItemId())
+						.getItemProperty("wurfdatum").getValue()));
+
+		fields.setField("Mikrochip",
+				hundContainer.getItem(hundContainer.firstItemId())
+						.getItemProperty("chipnummer").getValue().toString());
+		fields.setField("Mikrochip_2",
+				hundContainer.getItem(hundContainer.firstItemId())
+						.getItemProperty("chipnummer").getValue().toString());
+
 		if (teilnehmerItem.getItemProperty("hundefuehrer").getValue() != null) {
 
-			fields.setField("HUNDEFÜHRERIN",
-					teilnehmerItem.getItemProperty("hundefuehrer").getValue()
-							.toString());
+			fields.setField("Name des Hundeführers", teilnehmerItem
+					.getItemProperty("hundefuehrer").getValue().toString());
+			fields.setField("Name des Hundeführers_2", teilnehmerItem
+					.getItemProperty("hundefuehrer").getValue().toString());
 		} else {
 			fields.setField(
-					"HUNDEFÜHRERIN",
+					"Name des Hundeführers",
+					personContainer.getItem(personContainer.firstItemId())
+							.getItemProperty("nachname").getValue().toString()
+							+ " "
+							+ personContainer
+									.getItem(personContainer.firstItemId())
+									.getItemProperty("vorname").getValue()
+									.toString()
+
+			);
+			fields.setField(
+					"Name des Hundeführers_2",
 					personContainer.getItem(personContainer.firstItemId())
 							.getItemProperty("nachname").getValue().toString()
 							+ " "
@@ -163,102 +210,62 @@ public class Urkunde extends CustomComponent {
 			);
 		}
 
-		fields.setField("CHIP-NR",
+		fields.setField("Geschlecht",
 				hundContainer.getItem(hundContainer.firstItemId())
-						.getItemProperty("chipnummer").getValue().toString());
+						.getItemProperty("geschlecht").getValue().toString());
 
-		SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd.MM.yyyy");
-		fields.setField(
-				"GEWORFEN AM",
-				dateFormat1.format(hundContainer
-						.getItem(hundContainer.firstItemId())
-						.getItemProperty("wurfdatum").getValue()));
-		if (!(hundContainer.getItem(hundContainer.firstItemId())
-				.getItemProperty("zuchtbuchnummer") == null)) {
+		fields.setField("Ortsgruppe", "Retriever in Ebreichsdorf");
+		fields.setField("Veranstalter",
+				veranstaltung.getItemProperty("veranstalter").getValue()
+						.toString());
+		fields.setField("Leistungsrichter  B",
+				veranstaltung.getItemProperty("richter").getValue().toString());
 
-			fields.setField("ÖHZB-NR",
-					hundContainer.getItem(hundContainer.firstItemId())
-							.getItemProperty("zuchtbuchnummer").getValue()
-							.toString());
-		}
- 	
-		if ("R".equals(hundContainer.getItem(hundContainer.firstItemId())
-				.getItemProperty("geschlecht").getValue().toString())) {
-			fields.setField("HÜNDIN","");
-			fields.setField("RÜDE", "Ja");
-
-		} else {
-			fields.setField("RÜDE", "");
-			fields.setField("HÜNDIN", "Ja");
-
-		}
-
-		fields.setField(
-				"RASSE",
-				Rassen.getUrkundenBezeichnungFuerKurzBezeichnung(hundContainer
-						.getItem(hundContainer.firstItemId())
-						.getItemProperty("rasse").getValue().toString()));
-
-		fields.setField("NAME DES HUNDES",
-				hundContainer.getItem(hundContainer.firstItemId())
-						.getItemProperty("zwingername").getValue().toString());
-
-		fields.setField(
-				"Ort  Datum",
+		fields.setField("Prüfung in",
 				veranstaltung.getItemProperty("veranstaltungsort").getValue()
-						.toString()
-						+ " "
-						+ dateFormat1.format(veranstaltung.getItemProperty(
-								"datum").getValue()));
+						.toString());
+		fields.setField("Veranstaltung in_2",
+				veranstaltung.getItemProperty("veranstaltungsort").getValue()
+						.toString());
 
-		VeranstaltungsStufen defStufe = VeranstaltungsStufen
-				.getBezeichnungForId(new Integer(veranstaltungsStufe
-						.getItemProperty("stufen_typ").getValue().toString()));
-
-		fields.setField("PRÜFUNGSZEILE", defStufe.getLangBezeichnung());
-
-		fields.setField("ZEILE 3", "");
-		fields.setField("ZEILE 1", defStufe.getBezeichnung());
-
-		if ("N".equals(teilnehmerItem.getItemProperty("bestanden").getValue().toString())) {
-			fields.setField("ZEILE 2", "leider nicht bestanden");
-		} else if (defStufe == VeranstaltungsStufen.STUFE_BH) {
-			fields.setField("ZEILE 2", "erfolgreich bestanden");
-
-		} else if (defStufe == VeranstaltungsStufen.STUFE_BGH1) {
-			fields.setField(
-					"ZEILE 2",
-					"erfolgreich mit "
-							+ teilnehmerItem.getItemProperty("ges_punkte")
-									.getValue().toString()
-							+ " Punkten und "
-							+ defStufe.getBewertung(new Integer(teilnehmerItem
-									.getItemProperty("ges_punkte").getValue()
-									.toString())));
-			fields.setField("ZEILE 3", "bestanden");
-
-		}
 		hundContainer.removeAllContainerFilters();
 		personContainer.removeAllContainerFilters();
 
 		stamper.close();
 		reader.close();
 		return baos.toByteArray();
-
 	}
+	// Prüfungsleiter
+	// Prüfung am
+	// Name des Hundes_2
+	// Los Nr
+	// Rasse
+	// Name des Hundes
+	// TätowierNr_2
+	// Wurftag
+	// Kat.Nr_2
+	// Kat.Nr
+	// Name des Hundeführers
+	// Tätowier-Nr
+	// Geschlecht
+	// Zuchtbuch / Reg.-Nr
+	// Veranstaltung am
+	// Veranstalter
+	// Leistungsrichter B
+	// Prüfung in
+	// Mikrochip
+	// Name des Hundeführers_2
+	// Los Nr_2
+	// Veranstaltung in_2
+	// Mikrochip_2
 
-	// HUNDEFÜHRERIN
-	// CHIP-NR
-	// GEWORFEN AM
-	// ÖHZB-NR
-	// RÜDE
-	// RASSE
-	// Ort Datum
-	// NAME DES HUNDES
-	// HÜNDIN
-	// ZEILE 3
-	// PRÜFUNGSZEILE
-	// ZEILE 1
-	// ZEILE 2
+	// PdfReader reader = new PdfReader(DATASHEET);
+	// // Get the fields from the reader (read-only!!!)
+	// AcroFields form = reader.getAcroFields();
+	// // Loop over the fields and get info about them
+	// Set<String> fields = form.getFields().keySet();
+	// for (String key : fields) {
+	// System.out.println(key);
+	// }
 
 }

@@ -76,6 +76,7 @@ public class BHRichterBlatt extends CustomComponent {
 
 			fos = new FileOutputStream(RESULT);
 			PdfCopyFields copy = new PdfCopyFields(fos);
+			copy.open();
 
 			for (Object id : teilnehmerContainer.getItemIds()) {
 				PdfReader zwReader = new PdfReader(bauPdf(veranstaltung,

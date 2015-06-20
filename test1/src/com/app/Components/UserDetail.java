@@ -171,7 +171,7 @@ public class UserDetail extends CustomComponent {
 		this.mobnr.setPropertyDataSource(personItem.getItemProperty("mobnr"));
 		
 		this.newsletter
-				.setValue(personItem.getItemProperty("newsletter") == null
+				.setValue(personItem.getItemProperty("newsletter").getValue() == null
 						|| personItem.getItemProperty("newsletter").getValue()
 								.toString().equals(new String("J")) ? true
 						: false);

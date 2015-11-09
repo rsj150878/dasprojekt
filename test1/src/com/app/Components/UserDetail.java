@@ -5,12 +5,21 @@ import java.util.Locale;
 
 import microsoft.exchange.webservices.data.ConflictResolutionMode;
 import microsoft.exchange.webservices.data.Contact;
+import microsoft.exchange.webservices.data.EmailAddress;
+import microsoft.exchange.webservices.data.EmailAddressDictionary;
+import microsoft.exchange.webservices.data.EmailAddressKey;
 import microsoft.exchange.webservices.data.ExchangeCredentials;
 import microsoft.exchange.webservices.data.ExchangeService;
 import microsoft.exchange.webservices.data.ExchangeVersion;
+import microsoft.exchange.webservices.data.FindItemsResults;
+import microsoft.exchange.webservices.data.Folder;
 import microsoft.exchange.webservices.data.IAutodiscoverRedirectionUrl;
 import microsoft.exchange.webservices.data.ItemId;
+import microsoft.exchange.webservices.data.ItemView;
+import microsoft.exchange.webservices.data.PhysicalAddressEntry;
+import microsoft.exchange.webservices.data.PhysicalAddressKey;
 import microsoft.exchange.webservices.data.WebCredentials;
+import microsoft.exchange.webservices.data.WellKnownFolderName;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -18,6 +27,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.app.Components.Listener.HundDetailListener;
 import com.app.Components.Listener.UserDetailListener;
+import com.app.EmailSender.EwsReplClass;
 import com.app.bean.LandBean;
 import com.app.dbIO.DBConnection;
 import com.app.enumPackage.LandEnum;
@@ -29,6 +39,7 @@ import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.filter.Compare.Equal;
 import com.vaadin.data.util.sqlcontainer.SQLContainer;
 import com.vaadin.data.util.sqlcontainer.query.TableQuery;
+import com.vaadin.server.UserError;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.AbstractSelect.ItemCaptionMode;
@@ -147,30 +158,7 @@ public class UserDetail extends CustomComponent {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				// TODO Auto-generated method stub
-				ExchangeService service = new ExchangeService(
-						ExchangeVersion.Exchange2010_SP2);
-				try {
-					System.out.println("beginne repl");
-					ExchangeCredentials credentials = new WebCredentials("stefan@retrieverebreichsdorf.at", "LVwbf2005");
-					service.setCredentials(credentials);
-
-					System.out.println("vor autodiscover");
-					service.autodiscoverUrl("stefan@retrieverebreichsdorf.at");
-					Contact contact = Contact.bind(service, new ItemId(
-							personItem.getItemProperty("idperson").getValue()
-									.toString()));
-					contact.setGivenName(personItem
-							.getItemProperty("vorname").getValue().toString());
-					
-					contact.setSurname(personItem
-							.getItemProperty("nachname").getValue().toString());
-					contact.setSubject("Contact Details");
-					contact.update(ConflictResolutionMode.AlwaysOverwrite);
-					System.out.println("bin fertig");
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				EwsReplClass.INSTANCE.speichereVerknuefung(personItem);
 
 			}
 
@@ -203,35 +191,8 @@ public class UserDetail extends CustomComponent {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				// TODO Auto-generated method stub
-				ExchangeService service = new ExchangeService(
-						ExchangeVersion.Exchange2010_SP2);
-				try {
-					
-					System.out.println("beginne repl");
-					ExchangeCredentials credentials = new WebCredentials("stefan@retrieverebreichsdorf.at", "LVwbf2005");
-					service.setCredentials(credentials); 
-					//service.setTraceEnabled(true);
-					
-					System.out.println("autodiscover beginn");
-					service.autodiscoverUrl("stefan@retrieverebreichsdorf.at", new RedirectionUrlCallback());
-					System.out.println("autodiscover");
-					Contact contact = Contact.bind(service, new ItemId(
-							personItem.getItemProperty("idperson").getValue()
-									.toString()));
-					contact.setGivenName(personItem
-							.getItemProperty("vorname").getValue().toString());
-					
-					contact.setSurname(personItem
-							.getItemProperty("nachname").getValue().toString());
-					contact.setSubject("Contact Details");
-					System.out.println("vor update");
-					contact.update(ConflictResolutionMode.AlwaysOverwrite);
-					System.out.println("bin fertig");
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
+				EwsReplClass.INSTANCE.speichereVerknuefung(personItem);
+//				
 			}
 
 		});
@@ -539,6 +500,8 @@ public class UserDetail extends CustomComponent {
 		Abbruch.setWidth("-1px");
 		Abbruch.setHeight("-1px");
 		mainLayout.addComponent(Abbruch, "top:320.0px;left:220.0px;");
+		
+		
 
 		return mainLayout;
 	}
@@ -549,5 +512,7 @@ public class UserDetail extends CustomComponent {
             return redirectionUrl.toLowerCase().startsWith("https://");
         }
     }
+	
+	
 
 }

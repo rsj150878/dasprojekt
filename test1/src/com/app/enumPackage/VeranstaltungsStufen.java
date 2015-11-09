@@ -6,8 +6,13 @@ public enum VeranstaltungsStufen {
 	STUFE_BH(1, "BH", "Begleithundeprüfung"), 
 	STUFE_BGH1(2, "BGH1", "Begleithundeprüfung 1",1,2,3,4,5), 
 	STUFE_BGH2(3, "BGH2","Begleithundeprüfung 2",1,2,3,4,5), 
-	STUFE_BGH3(4, "BGH3","Begleithundeprüfung 3", 1,2,3,4,5);
-
+	STUFE_BGH3(4, "BGH3","Begleithundeprüfung 3", 1,2,3,4,5),
+	STUFE_RBP1(5,"RBP1","Retrieverbasisprüfung 1",6,7,8,9,10),
+	STUFE_RBP2(6,"RBP2","Retrieverbasisprüfung 2",6,7,8,9,10),
+	STUFE_RBP3(7,"RBP3","Retrieverbasisprüfung 3",6,7,8,9,10),
+	STUFE_RBP4_O_WASSER(8,"RBP4","Retrieverbasisprüfung 4",6,7,8,9,10),
+	STUFE_RBP4_M_WASSER(9,"RBP4","Retrieverbasisprüfung 4 (mit Wasser)",6,7,8,9,10);
+	
 	private Integer veranstaltungsStufeId;
 	private String bezeichnung;
 	private String langBezeichnung;

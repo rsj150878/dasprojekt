@@ -4,7 +4,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.app.Components.Email;
+import com.app.Components.EmailDatenAbgleich;
+import com.app.Components.FileImport;
 import com.app.Components.HundFuerBesitzer;
 import com.app.Components.MitgliederListe;
 import com.app.Components.UserDetail;
@@ -51,9 +52,10 @@ public class UserMainViewForm extends CustomComponent {
 		final UserDetail ud = new UserDetail();
 		final HundFuerBesitzer hdb = new HundFuerBesitzer();
 		final MitgliederListe mgl = new MitgliederListe();
-		final Email email = new Email();
+		// final Email email = new Email();
 		final Veranstaltung veranstaltung = new Veranstaltung();
-		
+		final FileImport fileImport = new FileImport();
+		final EmailDatenAbgleich emailDatenAbgleich = new EmailDatenAbgleich();
 
 		// mainLayout.addComponent(ud, "top:140.0px;left:0.0px;");
 		MenuBar.Command mycommand = new MenuBar.Command() {
@@ -89,8 +91,8 @@ public class UserMainViewForm extends CustomComponent {
 				} else if (selectedItem.getText().equals("Email")) {
 
 					// UserDetail ud = new UserDetail();
-					mainLayout.addComponent(email, pos);
-					currentComponent = email;
+					// mainLayout.addComponent(email, pos);
+					// currentComponent = email;
 
 				} else if (selectedItem.getText().equals("Veranstaltung")) {
 
@@ -98,9 +100,19 @@ public class UserMainViewForm extends CustomComponent {
 					mainLayout.addComponent(veranstaltung, pos);
 					currentComponent = veranstaltung;
 
+				} else if (selectedItem.getText().equals("Datenimport")) {
+
+					// UserDetail ud = new UserDetail();
+					mainLayout.addComponent(fileImport, pos);
+					currentComponent = fileImport;
+
+				} else if (selectedItem.getText().equals("Emaildatenabgleich")) {
+
+					// UserDetail ud = new UserDetail();
+					mainLayout.addComponent(emailDatenAbgleich, pos);
+					currentComponent = emailDatenAbgleich;
+
 				}
-
-
 			}
 		};
 		{
@@ -114,9 +126,14 @@ public class UserMainViewForm extends CustomComponent {
 
 		MenuBar.MenuItem Mitglieder = mainMenu.addItem("Mitglieder", mycommand);
 
-		MenuBar.MenuItem Email = mainMenu.addItem("Email", mycommand);
-		
-		MenuBar.MenuItem Veranstaltung = mainMenu.addItem("Veranstaltung", mycommand);
+		// MenuBar.MenuItem Email = mainMenu.addItem("Email", mycommand);
+		//
+		MenuBar.MenuItem Veranstaltung = mainMenu.addItem("Veranstaltung",
+				mycommand);
+
+		MenuBar.MenuItem verwaltung = mainMenu.addItem("Verwaltung", null);
+		verwaltung.addItem("Datenimport", null, mycommand);
+		verwaltung.addItem("Emaildatenabgleich", null, mycommand);
 	}
 
 	public SecurityContext getSecContext() {

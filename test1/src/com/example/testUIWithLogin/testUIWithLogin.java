@@ -30,22 +30,24 @@ public class testUIWithLogin extends UI {
 	@WebServlet(value = "/*", asyncSupported = true)
 	@VaadinServletConfiguration(productionMode = false, ui = testUIWithLogin.class, widgetset = "com.example.testUIWithLogin.AppWidgetSet")
 	public static class Servlet extends VaadinServlet {
-	}
+	} 
 
-	@Override
+	@Override 
 	protected void init(VaadinRequest request) {
 		WrappedSession session = request.getWrappedSession();
+		session.setMaxInactiveInterval(300);
 		HttpSession httpSession = ((WrappedHttpSession) session)
 				.getHttpSession();
+		httpSession.setMaxInactiveInterval(300);
 		ServletContext servletContext = httpSession.getServletContext();
 		applicationContext = WebApplicationContextUtils
-				.getRequiredWebApplicationContext(servletContext);
+				.getRequiredWebApplicationContext(servletContext); 
 
-		PathHandler.INSTANCE.setPathName(servletContext
-				.getRealPath("WEB-INF/classes"));
-
-		System.out.println("xxx + "
-				+ servletContext.getRealPath("WEB-INF/files/kursblat.xml"));
+		//PathHandler.INSTANCE.setPathName(servletContext
+		//		.getRealPath("WEB-INF/classes"));
+ 
+		//System.out.println("xxx + "
+		//		+ servletContext.getRealPath("WEB-INF/files/kursblat.xml"));
 		;
 
 		Navigator navigator = new Navigator(this, this);

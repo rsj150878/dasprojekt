@@ -2,7 +2,9 @@ package com.app.enumPackage;
 
 public enum VeranstaltungsTypen {
 
-	BH_BGH_PRÜFUNG(1, "BH-BGH-Prüfung", 1, 2, 3, 4);
+	BH_BGH_PRÜFUNG(1, "BH-BGH-Prüfung", 1, 2, 3, 4),
+	RBP_O_WASSER(2,"RBP ohne Wasser",5,6,7,8),
+	RBP_M_WASSER(3,"RBP mit Wasser",5,6,7,9);
 
 	private Integer veranstaltungsTypID;
 	private String veranstaltungsTypBezeichnung;

@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import org.tepi.filtertable.FilterTreeTable;
 
+import com.app.EmailSender.EwsReplClass;
 import com.app.dbIO.DBConnection;
 import com.app.interfaces.DetailInterface;
 import com.app.printClasses.Kursblatt;
@@ -329,7 +330,8 @@ public class MitgliederListe extends CustomComponent implements Action.Handler,
 			hundContainer.refresh();
 			personContainer.commit();
 			personContainer.refresh();
-
+			
+	
 		} catch (SQLException e) {
 			e.printStackTrace();
 

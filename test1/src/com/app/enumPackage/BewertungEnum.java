@@ -6,7 +6,13 @@ public enum BewertungEnum {
 	BGH_BEFRIEDIGEND(2,70,79,"befriedigend"),
 	BGH_GUT(3,80,89,"gut"),
 	BGH_SEHRGUT(4,90,95,"sehr gut"),
-	BGH_VORZÜGLICH(5,96,100,"vorzüglich");
+	BGH_VORZÜGLICH(5,96,100,"vorzüglich"),
+	RBP_MANGELHAFT(6,0,69,"mangelhaft"),
+	RBP_BEFRIEDIGEND(7,70,79,"befriedigend"),
+	RBP_GUT(8,80,89,"gut"),
+	RBP_SEHR_GUT(9,90,95,"sehr gut"),
+	RBP_VORZÜGLICH(10,96,100,"vorzüglich");
+	
 	
 	public Integer id;
 	public Integer von;

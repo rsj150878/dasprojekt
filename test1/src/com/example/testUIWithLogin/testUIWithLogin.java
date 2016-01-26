@@ -31,7 +31,7 @@ public class testUIWithLogin extends UI {
 	@VaadinServletConfiguration(productionMode = false, ui = testUIWithLogin.class, widgetset = "com.example.testUIWithLogin.AppWidgetSet")
 	public static class Servlet extends VaadinServlet {
 	} 
-
+ 
 	@Override 
 	protected void init(VaadinRequest request) {
 		WrappedSession session = request.getWrappedSession();
@@ -49,6 +49,7 @@ public class testUIWithLogin extends UI {
 		//System.out.println("xxx + "
 		//		+ servletContext.getRealPath("WEB-INF/files/kursblat.xml"));
 		;
+		System.out.println("File Encoding:" + System.getProperty("file.encoding"));
 
 		Navigator navigator = new Navigator(this, this);
 

@@ -110,6 +110,7 @@ public class UserDetail extends CustomComponent {
 		buildMainLayout();
 		setCompositionRoot(mainLayout);
 
+		
 		// TODO add user code here
 
 		this.gebdat.setLocale(new Locale("de", "DE"));
@@ -262,6 +263,7 @@ public class UserDetail extends CustomComponent {
 		this.land.setContainerDataSource(container);
 		this.land.setItemCaptionMode(ItemCaptionMode.PROPERTY);
 		this.land.setItemCaptionPropertyId("landLangBezeichnung");
+
 
 		if (selItem != null) {
 			this.land.setValue(selItem);
@@ -433,6 +435,7 @@ public class UserDetail extends CustomComponent {
 		land.setDescription("Land");
 		land.setWidth("-1px");
 		land.setHeight("-1px");
+		land.setNullSelectionAllowed(false);
 		mainLayout.addComponent(land, "top:200.0px;left:40.0px;");
 
 		// email

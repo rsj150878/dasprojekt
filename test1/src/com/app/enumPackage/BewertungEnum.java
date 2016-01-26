@@ -11,7 +11,12 @@ public enum BewertungEnum {
 	RBP_BEFRIEDIGEND(7,70,79,"befriedigend"),
 	RBP_GUT(8,80,89,"gut"),
 	RBP_SEHR_GUT(9,90,95,"sehr gut"),
-	RBP_VORZÜGLICH(10,96,100,"vorzüglich");
+	RBP_VORZÜGLICH(10,96,100,"vorzüglich"),
+	GAP_MANGELHAFT(11,0,69,"mangelhaft"),
+	GAP_BEFRIEDIGEND(12,70,79,"befriedigend"),
+	GAP_GUT(13,80,89,"gut"),
+	GAP_SEHR_GUT(14,90,95,"sehr gut"),
+	GAP_VORZÜGLICH(15,96,100,"vorzüglich");
 	
 	
 	public Integer id;

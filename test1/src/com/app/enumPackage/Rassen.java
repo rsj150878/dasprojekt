@@ -7,6 +7,7 @@ public enum Rassen {
 	NOVA_SCOTIA_DUCK_TOLLING_RETRIEVER("DTR","Nova Scotia Duck Tolling Retriever", "Nova Scotia Duck Tolling Retriever"),
 	CHESAPEAKE_BAY_RETRIEVER("CBR","Chesapeake Bay Retriever","Chesapeake Bay Retriever"),
 	CURLY_COATED_RETRIEVER("CCR","Curly Coated Retriever", "Curly Coated Retriever"),
+	BORDER_COLLIE_TRICOLOR_LANGHAAR("BCTL", "Border Collie, Tricolor, Langhaar", "Border Collie, Tricolor, Langhaar"),
 	MISCHLING("MI","Mischling","");
 	
 	private final String RassenLangBezeichnung;
@@ -36,6 +37,17 @@ public enum Rassen {
 			
 		}
 		return "";
+	}
+	
+	public static Rassen getRasseForKurzBezeichnung(String kurzbezeichnung) {
+		
+		for (Rassen o: Rassen.values()) {
+			if (o.RassenKurzBezeichnung.equals(kurzbezeichnung)) {
+				return o;
+			}
+			
+		}
+		return null;
 	}
 
 	public static String getUrkundenBezeichnungFuerKurzBezeichnung(String kurzbezeichnung) {

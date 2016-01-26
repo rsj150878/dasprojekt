@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -12,6 +13,7 @@ import com.app.dbIO.DBConnection;
 import com.app.enumPackage.Rassen;
 import com.app.enumPackage.VeranstaltungsStufen;
 import com.app.service.TemporaryFileDownloadResource;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfCopyFields;
@@ -27,7 +29,7 @@ import com.vaadin.ui.CustomComponent;
 
 public class Urkunde extends CustomComponent {
 	private PdfReader reader;
-	private PdfStamper stamper;
+
 	private FileOutputStream fos;
 	/** The original PDF file. */
 	public static final String DATASHEET = "files/Urkunde_NEU_F.pdf";
@@ -57,6 +59,40 @@ public class Urkunde extends CustomComponent {
 			}
 
 			String[] states = form.getAppearanceStates("RÜDE");
+
+			AcroFields fields1 = reader.getAcroFields();
+
+			List<AcroFields.FieldPosition> positions = fields1
+					.getFieldPositions("RÜDE");
+			Rectangle rect = positions.get(0).position; // In points:
+			float left = rect.getLeft();
+			float bTop = rect.getTop();
+			float width = rect.getWidth();
+			float height = rect.getHeight();
+
+			int page = positions.get(0).page;
+			Rectangle pageSize = reader.getPageSize(page);
+			float pageHeight = pageSize.getTop();
+			float top = pageHeight - bTop;
+
+			System.out.print("Rüde" + "::" + page + "::" + left + "::" + top
+					+ "::" + width + "::" + height + "\n");
+
+			positions = fields1.getFieldPositions("HÜNDIN");
+			rect = positions.get(0).position; // In points:
+			left = rect.getLeft();
+			bTop = rect.getTop();
+			width = rect.getWidth();
+			height = rect.getHeight();
+
+			page = positions.get(0).page;
+			pageSize = reader.getPageSize(page);
+			pageHeight = pageSize.getTop();
+			top = pageHeight - bTop;
+
+			System.out.print("Hündin" + "::" + page + "::" + left + "::" + top
+					+ "::" + width + "::" + height + "\n");
+
 			for (int i = 0; i < states.length; i++) {
 				System.out.println(states[i]);
 			}
@@ -130,7 +166,8 @@ public class Urkunde extends CustomComponent {
 		PdfReader reader = new PdfReader(DATASHEET);
 		// fos = new FileOutputStream(RESULT);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		stamper = new PdfStamper(reader, baos);
+		PdfStamper stamper = new PdfStamper(reader, baos);
+		stamper.setFormFlattening(true);
 		AcroFields fields = stamper.getAcroFields();
 
 		BaseFont unicode = BaseFont.createFont(FONT, BaseFont.IDENTITY_H,
@@ -183,13 +220,14 @@ public class Urkunde extends CustomComponent {
 
 		if (!(hundContainer.getItem(hundContainer.firstItemId())
 				.getItemProperty("geschlecht") == null)) {
-			if ("R".equals(hundContainer.getItem(hundContainer.firstItemId())
+			if (new String("R").equals(hundContainer
+					.getItem(hundContainer.firstItemId())
 					.getItemProperty("geschlecht").getValue().toString())) {
-				fields.setField("HÜNDIN", "");
+				fields.setField("HÜNDIN", " ");
 				fields.setField("RÜDE", "Ja");
 
 			} else {
-				fields.setField("RÜDE", "");
+				fields.setField("RÜDE", " ");
 				fields.setField("HÜNDIN", "Ja");
 
 			}
@@ -229,13 +267,18 @@ public class Urkunde extends CustomComponent {
 			fields.setField("ZEILE 2", "erfolgreich bestanden");
 
 		} else if (defStufe == VeranstaltungsStufen.STUFE_BGH1
+				|| defStufe == VeranstaltungsStufen.STUFE_BGH2
+				|| defStufe == VeranstaltungsStufen.STUFE_BGH3
 				|| defStufe == VeranstaltungsStufen.STUFE_RBP4_O_WASSER
 				|| defStufe == VeranstaltungsStufen.STUFE_RBP4_M_WASSER
 				|| defStufe == VeranstaltungsStufen.STUFE_RBP3
 				|| defStufe == VeranstaltungsStufen.STUFE_RBP2
 				|| defStufe == VeranstaltungsStufen.STUFE_RBP1
-				
-				) {
+				|| defStufe == VeranstaltungsStufen.STUFE_GAP1
+				|| defStufe == VeranstaltungsStufen.STUFE_GAP2
+				|| defStufe == VeranstaltungsStufen.STUFE_GAP3
+
+		) {
 			fields.setField(
 					"ZEILE 2",
 					"erfolgreich mit "

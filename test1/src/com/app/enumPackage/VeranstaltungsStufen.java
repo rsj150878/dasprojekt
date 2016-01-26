@@ -11,7 +11,10 @@ public enum VeranstaltungsStufen {
 	STUFE_RBP2(6,"RBP2","Retrieverbasisprüfung 2",6,7,8,9,10),
 	STUFE_RBP3(7,"RBP3","Retrieverbasisprüfung 3",6,7,8,9,10),
 	STUFE_RBP4_O_WASSER(8,"RBP4","Retrieverbasisprüfung 4",6,7,8,9,10),
-	STUFE_RBP4_M_WASSER(9,"RBP4","Retrieverbasisprüfung 4 (mit Wasser)",6,7,8,9,10);
+	STUFE_RBP4_M_WASSER(9,"RBP4","Retrieverbasisprüfung 4 (mit Wasser)",6,7,8,9,10),
+	STUFE_GAP1(10,"GAP1","Gehorsam- und Apportierprüfung 1",11,12,13,14,15),
+	STUFE_GAP2(11,"GAP2","Gehorsam- und Apportierprüfung 2",11,12,13,14,15),
+	STUFE_GAP3(12,"GAP3","Gehorsam- und Apportierprüfung 3", 11,12,13,14,15);
 	
 	private Integer veranstaltungsStufeId;
 	private String bezeichnung;

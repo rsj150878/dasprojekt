@@ -4,7 +4,6 @@ import java.sql.SQLException;
 
 import org.tepi.filtertable.FilterTreeTable;
 
-import com.app.EmailSender.EwsReplClass;
 import com.app.dbIO.DBConnection;
 import com.app.interfaces.DetailInterface;
 import com.app.printClasses.Kursblatt;
@@ -20,12 +19,14 @@ import com.vaadin.data.util.sqlcontainer.query.QueryDelegate.RowIdChangeEvent;
 import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 import com.vaadin.event.Action;
 import com.vaadin.ui.AbsoluteLayout;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Tree;
 
 public class MitgliederListe extends CustomComponent implements Action.Handler,
-		Tree.ValueChangeListener, DetailInterface, QueryDelegate.RowIdChangeListener {
+		Tree.ValueChangeListener, DetailInterface,
+		QueryDelegate.RowIdChangeListener {
 
 	/*- VaadinEditorProperties={"grid":"RegularGrid,20","showGrid":true,"snapToGrid":true,"snapToObject":true,"movingGuides":false,"snappingDistance":10} */
 
@@ -48,6 +49,7 @@ public class MitgliederListe extends CustomComponent implements Action.Handler,
 			PRINTKursBlatt };
 
 	private Object currentSelection;
+
 	/**
 	 * The constructor should first build the main layout, set the composition
 	 * root and then do any custom initialization.
@@ -58,39 +60,6 @@ public class MitgliederListe extends CustomComponent implements Action.Handler,
 	public MitgliederListe() {
 		buildMainLayout();
 		setCompositionRoot(mainLayout);
-
-		// TODO add user code here
-
-		q1 = new TableQuery("person", DBConnection.INSTANCE.getConnectionPool());
-		q1.setVersionColumn("version");
-
-		q2 = new TableQuery("hund", DBConnection.INSTANCE.getConnectionPool());
-		q2.setVersionColumn("version");
-
-		try {
-			personContainer = new SQLContainer(q1);
-			personContainer.setAutoCommit(false);
-			hundContainer = new SQLContainer(q2);
-			hundContainer.setAutoCommit(false);
-			
-			hundContainer.addRowIdChangeListener(this);
-			personContainer.addRowIdChangeListener(this);
-			
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		Mitglieder.setContainerDataSource(createTreeContent());
-		Mitglieder.setImmediate(true);
-		Mitglieder.setSelectable(true);
-		Mitglieder.setFilterGenerator(new MitgliederFilterGenerator());
-		Mitglieder.setFilterDecorator(new MitgliederFilterDecorator());
-		Mitglieder.setVisibleColumns("Name");
-
-		Mitglieder.setFilterBarVisible(true);
-		Mitglieder.addActionHandler(this);
-		Mitglieder.addValueChangeListener(this);
 
 	}
 
@@ -137,7 +106,6 @@ public class MitgliederListe extends CustomComponent implements Action.Handler,
 								.setValue(hundeName);
 						container.getItem(hundContainer.getItem(zw))
 								.getItemProperty("KnotenArt").setValue(1);
-						
 
 						container.setParent(hundContainer.getItem(zw), parent);
 						container.setChildrenAllowed(hundContainer.getItem(zw),
@@ -166,11 +134,11 @@ public class MitgliederListe extends CustomComponent implements Action.Handler,
 											.getValue().toString();
 
 							container.addItem(personContainer.getItem(zw));
-				
+
 							container.getItem(personContainer.getItem(zw))
-							.getItemProperty("FilterField")
-							.setValue(name);
-				
+									.getItemProperty("FilterField")
+									.setValue(name);
+
 							container.getItem(personContainer.getItem(zw))
 									.getItemProperty("Name").setValue(name);
 
@@ -191,7 +159,6 @@ public class MitgliederListe extends CustomComponent implements Action.Handler,
 
 		}.put(personContainer, 0, null, container);
 
-	
 		return container;
 
 	}
@@ -207,7 +174,7 @@ public class MitgliederListe extends CustomComponent implements Action.Handler,
 		Item parent;
 		HierarchicalContainer container = ((HierarchicalContainer) Mitglieder
 				.getContainerDataSource());
-		
+
 		if (target == null) {
 			return;
 		}
@@ -224,7 +191,7 @@ public class MitgliederListe extends CustomComponent implements Action.Handler,
 
 			container.getItem(personContainer.getItem(neuePerson))
 					.getItemProperty("Name").setValue(name);
-		
+
 			container.getItem(personContainer.getItem(neuePerson))
 					.getItemProperty("KnotenArt").setValue(0);
 			container.setParent(personContainer.getItem(neuePerson), null);
@@ -233,7 +200,6 @@ public class MitgliederListe extends CustomComponent implements Action.Handler,
 
 			Mitglieder.setValue(personContainer.getItem(neuePerson));
 			currentSelection = Mitglieder.getValue();
-	
 
 		} else if (action == ADDHund) {
 
@@ -299,11 +265,10 @@ public class MitgliederListe extends CustomComponent implements Action.Handler,
 		HierarchicalContainer container = (HierarchicalContainer) Mitglieder
 				.getContainerDataSource();
 
-		
 		if (Mitglieder.getValue() == null) {
 			return;
 		}
-		 
+
 		if (container.getItem(Mitglieder.getValue())
 				.getItemProperty("KnotenArt").getValue().equals(new Integer(0))) {
 
@@ -324,19 +289,26 @@ public class MitgliederListe extends CustomComponent implements Action.Handler,
 	}
 
 	public void commit() {
+		Component zw = this.horizontalSplitPanel_1.getSecondComponent();
+		
+		if (zw instanceof HundDetail) {
+			HundDetail hundDetail = (HundDetail) zw;
+			hundDetail.validate();
+		}
+		
+		
 		try {
 
 			hundContainer.commit();
 			hundContainer.refresh();
 			personContainer.commit();
 			personContainer.refresh();
-			
-	
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 
 		}
-		
+
 		Mitglieder.setContainerDataSource(createTreeContent());
 		Mitglieder.setImmediate(true);
 		Mitglieder.setSelectable(true);
@@ -348,9 +320,9 @@ public class MitgliederListe extends CustomComponent implements Action.Handler,
 		Mitglieder.addActionHandler(this);
 		Mitglieder.addValueChangeListener(this);
 
-		if (!(currentSelection == null )) {
+		if (!(currentSelection == null)) {
 			Mitglieder.setValue(currentSelection);
-			
+
 		}
 
 	}
@@ -382,10 +354,43 @@ public class MitgliederListe extends CustomComponent implements Action.Handler,
 
 		// horizontalSplitPanel_1
 		horizontalSplitPanel_1 = buildHorizontalSplitPanel_1();
-		
+
 		mainLayout
 				.addComponent(horizontalSplitPanel_1, "top:0.0px;left:0.0px;");
 
+		setCompositionRoot(mainLayout);
+
+		// TODO add user code here
+
+		q1 = new TableQuery("person", DBConnection.INSTANCE.getConnectionPool());
+		q1.setVersionColumn("version");
+
+		q2 = new TableQuery("hund", DBConnection.INSTANCE.getConnectionPool());
+		q2.setVersionColumn("version");
+
+		try {
+			personContainer = new SQLContainer(q1);
+			personContainer.setAutoCommit(false);
+			hundContainer = new SQLContainer(q2);
+			hundContainer.setAutoCommit(false);
+
+			hundContainer.addRowIdChangeListener(this);
+			personContainer.addRowIdChangeListener(this);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		Mitglieder.setContainerDataSource(createTreeContent());
+		Mitglieder.setImmediate(true);
+		Mitglieder.setSelectable(true);
+		Mitglieder.setFilterGenerator(new MitgliederFilterGenerator());
+		Mitglieder.setFilterDecorator(new MitgliederFilterDecorator());
+		Mitglieder.setVisibleColumns("Name");
+
+		Mitglieder.setFilterBarVisible(true);
+		Mitglieder.addActionHandler(this);
+		Mitglieder.addValueChangeListener(this);
 		return mainLayout;
 	}
 
@@ -396,9 +401,9 @@ public class MitgliederListe extends CustomComponent implements Action.Handler,
 		horizontalSplitPanel_1.setImmediate(true);
 		horizontalSplitPanel_1.setWidth("1000px");
 		horizontalSplitPanel_1.setHeight("605px");
-		horizontalSplitPanel_1.setSplitPosition(250,Unit.PIXELS);
+		horizontalSplitPanel_1.setSplitPosition(250, Unit.PIXELS);
 		horizontalSplitPanel_1.setLocked(true);
-		
+
 		// Mitglieder
 		Mitglieder = new FilterTreeTable();
 		Mitglieder.setImmediate(true);
@@ -413,7 +418,11 @@ public class MitgliederListe extends CustomComponent implements Action.Handler,
 	public void rowIdChange(RowIdChangeEvent arg0) {
 		RowId x = arg0.getNewRowId();
 		System.out.println(x);
-		
+
 	}
 
+	public void refresh() {
+		this.mainLayout.removeAllComponents();
+		this.buildMainLayout();
+	}
 }

@@ -21,6 +21,9 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+<<<<<<< HEAD
 	<classpathentry kind="lib" path="C:/Users/Karl-Heinz/workspace-x64/test/WebContent/WEB-INF/lib/jackcess-2.1.0.jar"/>
+=======
+>>>>>>> branch 'master' of https://github.com/rsj150878/dasprojekt.git
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

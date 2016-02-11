@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE ivy-module [
-	<!ENTITY vaadin.version "7.3.5">
+	<!ENTITY vaadin.version "7.6.2">
 ]>
 <ivy-module version="2.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -31,7 +31,7 @@
 
 		<!-- itextpdf - drucken -->
 		<dependency org="com.itextpdf" name="itextpdf" rev="5.1.1"/>
-		
+		 
 		<!-- filtertable -->
 		<dependency org="org.vaadin.addons" name="filteringtable" rev="0.9.12.v7"/>
 		 

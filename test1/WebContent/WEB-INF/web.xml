@@ -34,7 +34,7 @@
     </listener>
 
     <servlet>
-        <servlet-name>Vaadin Application Servlet</servlet-name>
+        <!-- <servlet-name>Vaadin Application Servlet</servlet-name>
         <servlet-class>com.vaadin.server.VaadinServlet</servlet-class>
         <init-param>
             <description>Vaadin UI to display</description>
@@ -45,7 +45,20 @@
             <description>Application widgetset</description>
             <param-name>widgetset</param-name>
             <param-value>com.example.testUIWithLogin.AppWidgetSet</param-value>
+        </init-param> -->
+        
+        <servlet-name>Vaadin Application Servlet</servlet-name>
+        <servlet-class>com.vaadin.server.VaadinServlet</servlet-class>
+        <init-param>
+            <description>Vaadin UI to display</description>
+            <param-name>UI</param-name>
+            <param-value>com.app.DashBoard.DashboardUI</param-value>
         </init-param>
+        <init-param>
+            <description>Application widgetset</description>
+            <param-name>widgetset</param-name>
+            <param-value>com.app.DashBoard.DashboarWidgetSet</param-value>
+        </init-param> 
     </servlet>
 <resource-ref>
     <description>Connection Pool</description>

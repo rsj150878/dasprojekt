@@ -1,10 +1,15 @@
 package com.app.DashBoard;
 
+import org.vaadin.googleanalytics.tracking.GoogleAnalyticsTracker;
+
+import com.app.DashBoard.Event.DashBoardEvent.BrowserResizeEvent;
+import com.app.DashBoard.Event.DashBoardEvent.CloseOpenWindowsEvent;
+import com.app.DashBoard.Event.DashBoardEvent.PostViewChangeEvent;
+import com.app.DashBoard.Event.DashBoardEventBus;
+import com.app.DashBoard.View.DashBoardViewType;
 import com.vaadin.navigator.Navigator;
-import com.vaadin.navigator.Navigator.ClassBasedViewProvider;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.navigator.ViewProvider;
 import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.UI;
@@ -16,7 +21,7 @@ public class DashboardNavigator extends Navigator {
     private static final String TRACKER_ID = null;// "UA-658457-6";
     private GoogleAnalyticsTracker tracker;
 
-    private static final DashboardViewType ERROR_VIEW = DashboardViewType.DASHBOARD;
+    private static final DashBoardViewType ERROR_VIEW = DashBoardViewType.DASHBOARD;
     private ViewProvider errorViewProvider;
 
     public DashboardNavigator(final ComponentContainer container) {
@@ -51,12 +56,12 @@ public class DashboardNavigator extends Navigator {
 
             @Override
             public void afterViewChange(final ViewChangeEvent event) {
-                DashboardViewType view = DashboardViewType.getByViewName(event
+                DashBoardViewType view = DashBoardViewType.getByViewName(event
                         .getViewName());
                 // Appropriate events get fired after the view is changed.
-                DashboardEventBus.post(new PostViewChangeEvent(view));
-                DashboardEventBus.post(new BrowserResizeEvent());
-                DashboardEventBus.post(new CloseOpenWindowsEvent());
+                DashBoardEventBus.post(new PostViewChangeEvent(view));
+                DashBoardEventBus.post(new BrowserResizeEvent());
+                DashBoardEventBus.post(new CloseOpenWindowsEvent());
 
                 if (tracker != null) {
                     // The view change is submitted as a pageview for GA tracker
@@ -68,7 +73,7 @@ public class DashboardNavigator extends Navigator {
 
     private void initViewProviders() {
         // A dedicated view provider is added for each separate view type
-        for (final DashboardViewType viewType : DashboardViewType.values()) {
+        for (final DashBoardViewType viewType : DashBoardViewType.values()) {
             ViewProvider viewProvider = new ClassBasedViewProvider(
                     viewType.getViewName(), viewType.getViewClass()) {
 

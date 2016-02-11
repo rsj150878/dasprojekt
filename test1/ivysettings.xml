@@ -22,7 +22,7 @@
 					<artifact 
 						pattern="http://dev.vaadin.com/svn/versions/6.8/build/smartsprites/lib/[artifact](-[revision]).[ext]" />
 				</url>
-			</dual>
+			</dual> 
 			
 			<!-- spring security --> 
     		<ibiblio name="io.spring.repo.maven.release" m2compatible="true" 

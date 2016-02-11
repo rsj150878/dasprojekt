@@ -20,7 +20,7 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/karl-heinzknebel/git/dasprojekt/test1/WebContent/WEB-INF/lib/jxl.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Users/Karl-Heinz/workspace-x64/test/WebContent/WEB-INF/lib/jackcess-2.1.0.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

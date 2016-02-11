@@ -7,6 +7,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.app.dbIO.DBConnection;
+import com.healthmarketscience.jackcess.Database;
+import com.healthmarketscience.jackcess.DatabaseBuilder;
+import com.healthmarketscience.jackcess.Row;
+import com.healthmarketscience.jackcess.Table;
+import com.vaadin.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 import com.vaadin.server.Page;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Notification;
@@ -49,6 +56,13 @@ public class ShowImport extends CustomComponent {
 	private class FileUploader implements Receiver, SucceededListener, FailedListener {
 		public File file;
 		public String filename;
+		
+		private SQLContainer schauContainer;
+		private TableQuery q1;
+		private SQLContainer schauRingContainer;
+		private TableQuery q2;
+		private SQLContainer schauHundContainer;
+		private TableQuery q3;
 
 		public OutputStream receiveUpload(String filename, String mimeType) {
 			// Create upload stream
@@ -68,13 +82,28 @@ public class ShowImport extends CustomComponent {
 
 		public void uploadSucceeded(SucceededEvent event) {
 			// Show the uploaded file in the image viewer
+			q1 = new TableQuery("schau",
+					DBConnection.INSTANCE.getConnectionPool());
+			q1.setVersionColumn("version");
 			
-			try(BufferedReader br = new BufferedReader(new FileReader(file))) {
-			    for(String line; (line = br.readLine()) != null; ) {
-			        // process the line.
-			    	System.out.println(line);
-			    } 
-			    // line is not visible here.
+			q2 = new TableQuery("schauring",
+					DBConnection.INSTANCE.getConnectionPool());
+			q2.setVersionColumn("version");
+
+			q3 = new TableQuery("schauhund",
+					DBConnection.INSTANCE.getConnectionPool());
+			q3.setVersionColumn("version");
+
+			
+			try {
+				Database db = DatabaseBuilder.open(file);
+				Table table = db.getTable("OPTIAutoCheckin");
+
+				for (Row row : table) {
+					
+				}
+			   
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

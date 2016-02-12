@@ -27,11 +27,7 @@ public class testUIWithLogin extends UI {
 
 	private ApplicationContext applicationContext;
 
-	@WebServlet(value = "/*", asyncSupported = true)
-	@VaadinServletConfiguration(productionMode = false, ui = testUIWithLogin.class, widgetset = "com.example.testUIWithLogin.AppWidgetSet")
-	public static class Servlet extends VaadinServlet {
-	} 
- 
+	
 	@Override 
 	protected void init(VaadinRequest request) {
 		WrappedSession session = request.getWrappedSession();

@@ -11,8 +11,7 @@ import com.app.DashBoard.Event.DashBoardEvent.UserLoggedOutEvent;
 import com.app.DashBoard.Event.DashBoardEvent.UserLoginRequestedEvent;
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.DashBoard.View.MainView;
-import com.example.testUIWithLogin.LoginView;
-import com.example.testUIWithLogin.testUIWithLogin;
+import com.app.DashBoard.View.LoginView;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
@@ -48,7 +47,7 @@ public final class DashboardUI extends UI {
     @Override
     protected void init(final VaadinRequest request) {
         setLocale(Locale.GERMAN);
-
+   
         DashBoardEventBus.register(this);
         Responsive.makeResponsive(this);
         addStyleName(ValoTheme.UI_WITH_MENU);

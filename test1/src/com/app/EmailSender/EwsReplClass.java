@@ -1,30 +1,28 @@
 package com.app.EmailSender;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
-import microsoft.exchange.webservices.data.ConflictResolutionMode;
-import microsoft.exchange.webservices.data.Contact;
-import microsoft.exchange.webservices.data.ContactGroup;
-import microsoft.exchange.webservices.data.EmailAddress;
-import microsoft.exchange.webservices.data.EmailAddressKey;
-import microsoft.exchange.webservices.data.ExchangeCredentials;
-import microsoft.exchange.webservices.data.ExchangeService;
-import microsoft.exchange.webservices.data.ExchangeVersion;
-import microsoft.exchange.webservices.data.FileAsMapping;
-import microsoft.exchange.webservices.data.FindItemsResults;
-import microsoft.exchange.webservices.data.Folder;
-import microsoft.exchange.webservices.data.GroupMember;
-import microsoft.exchange.webservices.data.ItemId;
-import microsoft.exchange.webservices.data.ItemView;
-import microsoft.exchange.webservices.data.PhoneNumberKey;
-import microsoft.exchange.webservices.data.PhysicalAddressEntry;
-import microsoft.exchange.webservices.data.PhysicalAddressKey;
-import microsoft.exchange.webservices.data.WebCredentials;
-import microsoft.exchange.webservices.data.WellKnownFolderName;
+import microsoft.exchange.webservices.data.core.ExchangeService;
+import microsoft.exchange.webservices.data.core.enumeration.misc.ExchangeVersion;
+import microsoft.exchange.webservices.data.core.enumeration.property.EmailAddressKey;
+import microsoft.exchange.webservices.data.core.enumeration.property.PhoneNumberKey;
+import microsoft.exchange.webservices.data.core.enumeration.property.PhysicalAddressKey;
+import microsoft.exchange.webservices.data.core.enumeration.property.WellKnownFolderName;
+import microsoft.exchange.webservices.data.core.enumeration.service.ConflictResolutionMode;
+import microsoft.exchange.webservices.data.core.enumeration.service.FileAsMapping;
+import microsoft.exchange.webservices.data.core.service.folder.Folder;
+import microsoft.exchange.webservices.data.core.service.item.Contact;
+import microsoft.exchange.webservices.data.core.service.item.ContactGroup;
+import microsoft.exchange.webservices.data.credential.ExchangeCredentials;
+import microsoft.exchange.webservices.data.credential.WebCredentials;
+import microsoft.exchange.webservices.data.property.complex.EmailAddress;
+import microsoft.exchange.webservices.data.property.complex.GroupMember;
+import microsoft.exchange.webservices.data.property.complex.ItemId;
+import microsoft.exchange.webservices.data.property.complex.PhysicalAddressEntry;
+import microsoft.exchange.webservices.data.search.FindItemsResults;
+import microsoft.exchange.webservices.data.search.ItemView;
 
 import com.app.dbIO.DBConnection;
-import com.sun.corba.se.impl.copyobject.FallbackObjectCopierImpl;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.filter.Compare.Equal;
 import com.vaadin.data.util.sqlcontainer.SQLContainer;
@@ -232,10 +230,10 @@ public class EwsReplClass {
 
 			Folder folder = Folder.bind(service, WellKnownFolderName.Contacts);
 			ItemView view = new ItemView(999);
-			FindItemsResults<microsoft.exchange.webservices.data.Item> findResults = service
+			FindItemsResults<microsoft.exchange.webservices.data.core.service.item.Item> findResults = service
 					.findItems(folder.getId(), view);
 
-			for (microsoft.exchange.webservices.data.Item item : findResults
+			for (microsoft.exchange.webservices.data.core.service.item.Item item : findResults
 					.getItems()) {
 
 				if (item.getSubject().equals("newsletter") && !(person.getItemProperty("email").getValue() == null)) {

@@ -2,6 +2,8 @@ package com.app.DashBoard;
 
 import java.util.Locale;
 
+import javax.servlet.annotation.WebServlet;
+
 import com.app.Auth.User;
 import com.app.DashBoard.Event.DashBoardEvent.BrowserResizeEvent;
 import com.app.DashBoard.Event.DashBoardEvent.CloseOpenWindowsEvent;
@@ -10,15 +12,18 @@ import com.app.DashBoard.Event.DashBoardEvent.UserLoginRequestedEvent;
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.DashBoard.View.MainView;
 import com.example.testUIWithLogin.LoginView;
+import com.example.testUIWithLogin.testUIWithLogin;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
+import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
 import com.vaadin.server.Page;
 import com.vaadin.server.Page.BrowserWindowResizeEvent;
 import com.vaadin.server.Page.BrowserWindowResizeListener;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinServlet;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
@@ -36,6 +41,7 @@ public final class DashboardUI extends UI {
      * injection; and not in the UI but somewhere closer to where they're
      * actually accessed.
      */
+	 
     //private final DataProvider dataProvider = new DummyDataProvider();
     private final DashBoardEventBus dashboardEventbus = new DashBoardEventBus();
 
@@ -72,11 +78,11 @@ public final class DashboardUI extends UI {
         if (user != null && "admin".equals(user.getRole())) {
             // Authenticated user
             setContent(new MainView());
-            removeStyleName("loginview");
+            removeStyleName("loginview"); 
             getNavigator().navigateTo(getNavigator().getState());
         } else {
             setContent(new LoginView());
-            addStyleName("loginview");
+            addStyleName("loginview");  
         }
     }
 
@@ -99,10 +105,10 @@ public final class DashboardUI extends UI {
     }
 
     @Subscribe
-    public void closeOpenWindows(final CloseOpenWindowsEvent event) {
-        for (Window window : getWindows()) {
+    public void closeOpenWindows(final CloseOpenWindowsEvent event) { 
+        for (Window window : getWindows()) {  
             window.close();
-        }
+        } 
     }
 
     /**

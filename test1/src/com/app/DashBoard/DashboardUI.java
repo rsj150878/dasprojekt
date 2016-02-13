@@ -46,7 +46,7 @@ public final class DashboardUI extends UI {
 
     @Override
     protected void init(final VaadinRequest request) {
-        setLocale(Locale.GERMAN);
+        setLocale(Locale.GERMANY);
    
         DashBoardEventBus.register(this);
         Responsive.makeResponsive(this);
@@ -88,9 +88,8 @@ public final class DashboardUI extends UI {
     @Subscribe
      public void userLoginRequested(final UserLoginRequestedEvent event) {
     	// TODO
-       // User user = AuthManager.authenticate(event.getUserName(),
-       //         event.getPassword());
-       // VaadinSession.getCurrent().setAttribute(User.class.getName(), user);
+        User user = new User(event.getUserName(), event.getPassword());
+        VaadinSession.getCurrent().setAttribute(User.class.getName(), user);
         updateContent();
     }
 

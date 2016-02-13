@@ -170,18 +170,18 @@ public final class DashboardMenu extends CustomComponent {
 //                menuItemComponent = reports;
 //            }
 //
-//            if (view == DashboardViewType.DASHBOARD) {
-//                notificationsBadge = new Label();
-//                notificationsBadge.setId(NOTIFICATIONS_BADGE_ID);
-//                menuItemComponent = buildBadgeWrapper(menuItemComponent,
-//                        notificationsBadge);
-//            }
-//            if (view == DashboardViewType.REPORTS) {
+            if (view == DashBoardViewType.DASHBOARD) {
+                notificationsBadge = new Label();
+                notificationsBadge.setId(NOTIFICATIONS_BADGE_ID);
+                menuItemComponent = buildBadgeWrapper(menuItemComponent,
+                        notificationsBadge);
+            }
+            if (view == DashBoardViewType.MYDOGS) {
 //                reportsBadge = new Label();
 //                reportsBadge.setId(REPORTS_BADGE_ID);
 //                menuItemComponent = buildBadgeWrapper(menuItemComponent,
 //                        reportsBadge);
-//            }
+            }
 
             menuItemsLayout.addComponent(menuItemComponent);
         }

@@ -6,8 +6,8 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 
 public enum DashBoardViewType {
-    DASHBOARD("dashboard", DashboardView.class, FontAwesome.HOME, true); //, SALES(
-//            "sales", SalesView.class, FontAwesome.BAR_CHART_O, false), TRANSACTIONS(
+    DASHBOARD("Dashboard", DashboardView.class, FontAwesome.HOME, true),
+    MYDOGS("Meine Hunde", MyHundeView.class, FontAwesome.BAR_CHART_O, false); //, TRANSACTIONS(
 //            "transactions", TransactionsView.class, FontAwesome.TABLE, false), REPORTS(
 //            "reports", ReportsView.class, FontAwesome.FILE_TEXT_O, true), SCHEDULE(
 //            "schedule", ScheduleView.class, FontAwesome.CALENDAR_O, false);

@@ -3,6 +3,7 @@
 @import "views/login";
 @import "views/dashboardview";
 @import "views/myhundeview";
+@import "views/mitglieder";
 
 // Optimize the CSS output
 $v-included-components: remove($v-included-components, accordion);
@@ -28,4 +29,5 @@ $valo-menu-background-color: #414B56;
   @include dashboard-login-view;
   @include dashboard-dashboard-view;
   @include dashboard-myhunde-view;
+  @include dashboard-mitglieder-view;
 }

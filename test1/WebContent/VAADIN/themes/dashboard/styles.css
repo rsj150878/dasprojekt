@@ -11724,3 +11724,8 @@ div.v-layout.v-horizontal.v-widget {
 .dashboard .myhundeview .transaction .seats {
 	left: 60%;
 }
+
+.dashboard .mitglieder .viewheader {
+	padding: 25px;
+	border-bottom: 1px solid #dfdfdf;
+}

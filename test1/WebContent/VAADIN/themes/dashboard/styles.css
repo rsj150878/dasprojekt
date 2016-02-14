@@ -11554,7 +11554,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .canvas-layout {
-	min-height: 29cm;
+	min-height: 5cm;
 	background: #fff;
 	padding: 1.5cm;
 	-webkit-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);

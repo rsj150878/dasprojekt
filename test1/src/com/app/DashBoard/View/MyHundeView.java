@@ -1,12 +1,21 @@
 package com.app.DashBoard.View;
 
+import java.util.Collection;
+import java.util.Iterator;
+
+import com.app.Auth.Hund;
+import com.app.Auth.User;
+import com.app.DashBoard.Event.DashBoardEvent.DogUpdatedEvent;
 import com.app.DashBoard.Event.DashBoardEventBus;
+import com.app.DashBoardWindow.HundeDetailWindow;
+import com.google.common.eventbus.Subscribe;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.MouseEventDetails.MouseButton;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
@@ -15,34 +24,44 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 public class MyHundeView extends VerticalLayout implements View {
 
-	HorizontalLayout hunde;
-	
+	GridLayout hunde;
+
 	public MyHundeView() {
 		DashBoardEventBus.register(this);
-        	
-        setSizeFull();
+
+		setSizeFull();
 		addStyleName("myhundeview");
-	
+
 		addComponent(buildToolbar());
 
-		VerticalLayout titleAndDrafts = new VerticalLayout();
-		titleAndDrafts.setSizeUndefined();
-		titleAndDrafts.setSpacing(true);
-		titleAndDrafts.addStyleName("drafts");
-		addComponent(titleAndDrafts);
-		setComponentAlignment(titleAndDrafts, Alignment.MIDDLE_CENTER);
+		// VerticalLayout titleAndDrafts = new VerticalLayout();
+		// titleAndDrafts.setSizeUndefined();
+		// titleAndDrafts.setSpacing(true);
+		// titleAndDrafts.addStyleName("drafts");
+		//
+		// titleAndDrafts.addComponent(buildHundeList());
+		
+		
+		Component hundeList = buildHundeList();
+		addComponent(hundeList);
+		setExpandRatio(hundeList,1);
+		
 
-		titleAndDrafts.addComponent(buildHundeList());
-	
+		// setComponentAlignment(titleAndDrafts, Alignment.TOP_CENTER);
+		// addComponent(titleAndDrafts);
+		//
+
 	}
 
 	@Override
@@ -67,25 +86,52 @@ public class MyHundeView extends VerticalLayout implements View {
 
 		Label title = new Label("MeineHunde");
 		title.setSizeUndefined();
+
 		title.addStyleName(ValoTheme.LABEL_H1);
 		title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
+		
 		header.addComponent(title);
 
 		return header;
 	}
 
 	private Component buildHundeList() {
+		Panel panel = new Panel();
+		panel.addStyleName(ValoTheme.PANEL_BORDERLESS);
+		panel.addStyleName(ValoTheme.PANEL_SCROLL_INDICATOR);
+		panel.setSizeFull();
 
-		hunde = new HorizontalLayout();
+		
+		hunde = new GridLayout(5, 5);
+		hunde.setSizeUndefined();
+
 		hunde.setSpacing(true);
 
-		hunde.addComponent(buildHundeThumb());
+		System.out.println("grid : " + hunde.getStyleName());
+		
 		hunde.addComponent(buildCreateBox());
+		// hunde.addComponent(buildHundeThumb());
+		User user = (User) VaadinSession.getCurrent().getAttribute(
+				User.class.getName());
 
-		return hunde;
+		Collection<Hund> zwCollection = user.getAllHunde();
+
+		Iterator i = zwCollection.iterator();
+
+		while (i.hasNext()) {
+
+			hunde.addComponent(new HundeThumbClass((Hund) i.next()));
+
+		}
+
+		panel.setContent(hunde);
+		return panel;
+		//return hunde;
+		
 	}
 
 	private Component buildHundeThumb() {
+
 		HundeThumbClass hundeThumb = new HundeThumbClass();
 		return hundeThumb;
 	}
@@ -102,7 +148,6 @@ public class MyHundeView extends VerticalLayout implements View {
 			@Override
 			public void buttonClick(final ClickEvent event) {
 				hunde.addComponent(new HundeThumbClass());
-				
 
 			}
 		});
@@ -113,7 +158,48 @@ public class MyHundeView extends VerticalLayout implements View {
 	}
 
 	private class HundeThumbClass extends CustomComponent {
+
+		private final Hund hund;
+		private Label draftTitle;
+
 		public HundeThumbClass() {
+
+			User user = (User) VaadinSession.getCurrent().getAttribute(
+					User.class.getName());
+
+			hund = new Hund(user.getIdperson());
+
+			setCompositionRoot(buildHundeThumb());
+
+		}
+
+		public HundeThumbClass(Integer idhund) {
+			User user = (User) VaadinSession.getCurrent().getAttribute(
+					User.class.getName());
+
+			hund = new Hund(user.getIdperson(), idhund);
+			setCompositionRoot(buildHundeThumb());
+		}
+
+		public HundeThumbClass(final Hund hund) {
+			this.hund = hund;
+			setCompositionRoot(buildHundeThumb());
+		}
+
+		@Subscribe
+		public void updateUserName(final DogUpdatedEvent event) {
+		
+			
+			draftTitle.setValue(hund.getRufname() + "<br>"
+					+ hund.getZwingername());
+			
+			
+					
+		}
+
+		private Component buildHundeThumb() {
+
+			DashBoardEventBus.register(this);
 			VerticalLayout hundeThumb = new VerticalLayout();
 			hundeThumb.setSpacing(true);
 
@@ -124,9 +210,9 @@ public class MyHundeView extends VerticalLayout implements View {
 			draft.setHeight(200.0f, Unit.PIXELS);
 			draft.setDescription("Click to edit");
 			hundeThumb.addComponent(draft);
-			Label draftTitle = new Label(
-					"Monthly revenue<br><span>Last modified 1 day ago</span>",
-					ContentMode.HTML);
+			draftTitle = new Label(hund.getRufname() + "<br>"
+					+ hund.getZwingername(), ContentMode.HTML);
+			
 			draftTitle.setSizeUndefined();
 			hundeThumb.addComponent(draftTitle);
 
@@ -139,6 +225,7 @@ public class MyHundeView extends VerticalLayout implements View {
 					Notification.show("Not implemented in this demo");
 				}
 			});
+
 			hundeThumb.addComponent(delete);
 
 			hundeThumb.addLayoutClickListener(new LayoutClickListener() {
@@ -147,12 +234,19 @@ public class MyHundeView extends VerticalLayout implements View {
 					if (event.getButton() == MouseButton.LEFT
 							&& event.getChildComponent() != delete) {
 
+						HundeDetailWindow.open(hund);
+
 					}
 				}
 			});
 
-			setCompositionRoot(hundeThumb);
+			return hundeThumb;
 
+		}
+		@Override
+		public void detach() {
+			super.detach();
+			DashBoardEventBus.unregister(this);
 		}
 
 	}

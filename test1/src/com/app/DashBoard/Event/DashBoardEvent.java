@@ -78,4 +78,7 @@ public abstract class DashBoardEvent {
 
     public static class ProfileUpdatedEvent {
     }
+    
+    public static class DogUpdatedEvent {
+    }
 }

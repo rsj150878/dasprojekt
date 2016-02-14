@@ -5,7 +5,7 @@
       padding: $view-padding;
       border-bottom: valo-border($strength: 0.5);
     }
-  
+
    .create .v-slot {
       border: 1px solid rgba(122,122,122,.1);
       background: rgba(122,122,122,.04);
@@ -90,7 +90,7 @@
   }
 
   .canvas-layout {
-    min-height: 29cm;
+    min-height: 5cm;
     background: #fff;
 
     padding: 1.5cm;
@@ -259,5 +259,6 @@
       left: 60%;
     }
     }
+
 
 }

@@ -1,8 +1,9 @@
 package com.app.Auth;
 
-import java.util.Date;
 import java.sql.SQLException;
-import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -12,9 +13,11 @@ import com.vaadin.data.util.filter.Compare.Equal;
 import com.vaadin.data.util.sqlcontainer.SQLContainer;
 import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 
+@SuppressWarnings({ "serial", "unchecked" })
 public final class User {
 	private String role;
 	private Integer idUser;
+	private Integer idPerson;
 	private String firstName;
 	private String lastName;
 	private String title;
@@ -75,6 +78,8 @@ public final class User {
 			personItem = personContainer.getItem(personContainer.firstItemId());
 
 			this.role = "admin";
+			
+			this.idPerson = Integer.valueOf(personItem.getItemProperty("idperson").getValue().toString());
 
 			this.email = personItem.getItemProperty("email").getValue() == null ? null
 					: personItem.getItemProperty("email").getValue().toString();
@@ -139,6 +144,31 @@ public final class User {
 
 		}
 
+	}
+	
+	public Collection<Hund> getAllHunde() {
+		Collection<Hund> hundeCollection = new ArrayList<Hund>();
+		
+		TableQuery q1 = new TableQuery("hund",DBConnection.INSTANCE.getConnectionPool());
+		q1.setVersionColumn("version");
+		SQLContainer hundeContainer;
+		try {
+			hundeContainer = new SQLContainer(q1);
+			hundeContainer.addContainerFilter(new Equal ("idperson",this.idPerson));
+			
+			for (int i = 0; i < hundeContainer.size(); i++) {
+				Item item = hundeContainer.getItem(hundeContainer.getIdByIndex(i));
+				final Hund hund = new Hund(this.idPerson, Integer.valueOf(item.getItemProperty("idhund").getValue().toString()));
+				hundeCollection.add(hund);
+				
+			}
+			
+ 		} catch (SQLException e) {
+ 			
+ 		}
+		
+		
+		return hundeCollection;
 	}
 
 	public void commit() throws Exception {
@@ -391,6 +421,14 @@ public final class User {
 
 	public void setplz(final String plz) {
 		this.plz = plz;
+	}
+	
+	public Integer getIduser() {
+		return this.idUser;
+	}
+	
+	public Integer getIdperson() {
+		return this.idPerson;
 	}
 
 }

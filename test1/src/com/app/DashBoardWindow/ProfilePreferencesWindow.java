@@ -95,10 +95,6 @@ public class ProfilePreferencesWindow extends Window {
 	@PropertyId("newsletter3")
 	private OptionGroup newsletter3;
 	
-	
-	
-	
-
 	private final User user;
 	 
 	private ProfilePreferencesWindow(final User user,

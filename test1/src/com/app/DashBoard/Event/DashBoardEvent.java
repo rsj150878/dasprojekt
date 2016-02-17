@@ -1,5 +1,6 @@
 package com.app.DashBoard.Event;
 
+import com.app.Auth.Person;
 import com.app.DashBoard.View.DashBoardViewType;
 
 /*
@@ -74,6 +75,18 @@ public abstract class DashBoardEvent {
     }
 
     public static class CloseOpenWindowsEvent {
+    }
+
+    public static final class UserNewEvent {
+    	private final Person person;
+    	public UserNewEvent(final Person person) {
+    		this.person = person;
+    	}
+    	
+    	public Person getPerson() {
+    		return this.person;
+    	}
+    	
     }
 
     public static class ProfileUpdatedEvent {

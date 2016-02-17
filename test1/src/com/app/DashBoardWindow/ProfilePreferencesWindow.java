@@ -1,9 +1,10 @@
 package com.app.DashBoardWindow;
 
+import com.app.Auth.Person;
 import com.app.Auth.User;
-import com.app.DashBoard.Component.LandSelect;
 import com.app.DashBoard.Event.DashBoardEvent.CloseOpenWindowsEvent;
 import com.app.DashBoard.Event.DashBoardEvent.ProfileUpdatedEvent;
+import com.app.DashBoard.Event.DashBoardEvent.UserNewEvent;
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.PropertyId;
@@ -12,7 +13,6 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.ThemeResource;
-import com.vaadin.server.UserError;
 import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.datefield.Resolution;
@@ -44,7 +44,8 @@ public class ProfilePreferencesWindow extends Window {
 
 	public static final String ID = "profilepreferenceswindow";
 
-	 private final BeanFieldGroup<User> fieldGroup;
+	 private final BeanFieldGroup<Person> fieldGroupPerson;
+	 private final BeanFieldGroup<User> fieldGroupUser;
 	/*
 	 * Fields for editing the User object are defined here as class members.
 	 * They are later bound to a FieldGroup by calling
@@ -96,12 +97,42 @@ public class ProfilePreferencesWindow extends Window {
 	private OptionGroup newsletter3;
 	
 	private final User user;
+	private final Person person;
 	 
 	private ProfilePreferencesWindow(final User user,
 			final boolean preferencesTabOpen) {
 
 		this.user = user;
+		this.person = null;
+	
+		initWindow(preferencesTabOpen);
 		
+		fieldGroupPerson = null;
+
+		fieldGroupUser = new BeanFieldGroup<User>(User.class);
+        fieldGroupUser.bindMemberFields(this);
+        fieldGroupUser.setItemDataSource(user);
+
+	}
+
+	
+	private ProfilePreferencesWindow(final Person person) {
+
+		this.user = null;
+		this.person = person;
+	
+		initWindow(false);
+		
+
+		fieldGroupUser = null;
+		
+		fieldGroupPerson = new BeanFieldGroup<Person>(Person.class);
+        fieldGroupPerson.bindMemberFields(this);
+        fieldGroupPerson.setItemDataSource(person);
+
+	}
+
+	private void initWindow(final boolean preferencesTabOpen) {
 		addStyleName("profile-window");
 		setId(ID);
 		Responsive.makeResponsive(this);
@@ -133,12 +164,6 @@ public class ProfilePreferencesWindow extends Window {
 		}
 
 		content.addComponent(buildFooter());
-		
-
-		fieldGroup = new BeanFieldGroup<User>(User.class);
-        fieldGroup.bindMemberFields(this);
-        fieldGroup.setItemDataSource(user);
-
 	}
 
 	private Component buildPreferencesTab() {
@@ -337,11 +362,18 @@ public class ProfilePreferencesWindow extends Window {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				try {
-					fieldGroup.commit();
+				
 					// Updated user should also be persisted to database. But
 					// not in this demo.
 
-					user.commit();
+					if (user == null) {
+						fieldGroupPerson.commit();
+						person.commit();
+					} else {
+						fieldGroupUser.commit();					
+						user.commit();
+					}
+				
 					Notification success = new Notification(
 							"Profile updated successfully");
 					success.setDelayMsec(2000);
@@ -349,7 +381,13 @@ public class ProfilePreferencesWindow extends Window {
 					success.setPosition(Position.BOTTOM_CENTER);
 					success.show(Page.getCurrent());
 
-					DashBoardEventBus.post(new ProfileUpdatedEvent());
+					if (user == null) {
+						DashBoardEventBus.post(new UserNewEvent(person));
+						
+					} else {
+						DashBoardEventBus.post(new ProfileUpdatedEvent());
+					}
+					
 					close();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -365,9 +403,17 @@ public class ProfilePreferencesWindow extends Window {
 		return footer;
 	}
 
+	
 	public static void open(final User user, final boolean preferencesTabActive) {
 		DashBoardEventBus.post(new CloseOpenWindowsEvent());
 		Window w = new ProfilePreferencesWindow(user, preferencesTabActive);
+		UI.getCurrent().addWindow(w);
+		w.focus();
+	}
+	
+	public static void open(final Person person) {
+		DashBoardEventBus.post(new CloseOpenWindowsEvent());
+		Window w = new ProfilePreferencesWindow(person);
 		UI.getCurrent().addWindow(w);
 		w.focus();
 	}

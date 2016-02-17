@@ -5,16 +5,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
 import com.app.dbIO.DBConnection;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.filter.Compare.Equal;
+import com.vaadin.data.util.sqlcontainer.RowId;
 import com.vaadin.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.data.util.sqlcontainer.query.QueryDelegate;
+import com.vaadin.data.util.sqlcontainer.query.QueryDelegate.RowIdChangeEvent;
 import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 
 @SuppressWarnings({ "serial", "unchecked" })
-public class Person {
+public class Person implements QueryDelegate.RowIdChangeListener {
 
 	private String role;
 
@@ -121,6 +122,130 @@ public class Person {
 		}
 
 	}
+	
+	public Person() {
+		TableQuery q2 = new TableQuery("person",
+				DBConnection.INSTANCE.getConnectionPool());
+		q2.setVersionColumn("version");
+		Item personItem;
+		SQLContainer personContainer;
+
+		try {
+
+			personContainer = new SQLContainer(q2);
+			personContainer.addRowIdChangeListener(this);
+			personItem = personContainer.getItem(personContainer.addItem());
+
+			this.role = "admin";
+
+			this.firstName = "";
+			this.lastName = "";
+			this.land = "AT";
+			this.strasse = "";
+			this.hausnummer = "";
+			this.plz = "";
+			this.ort = "";
+			
+			personItem.getItemProperty("nachname").setValue(this.lastName);
+			personItem.getItemProperty("vorname").setValue(this.firstName);
+			personItem.getItemProperty("land").setValue(this.land);
+			personItem.getItemProperty("strasse").setValue(this.strasse);
+			personItem.getItemProperty("hausnummer").setValue(this.hausnummer);
+			personItem.getItemProperty("plz").setValue(this.plz);
+			personItem.getItemProperty("ort").setValue(this.ort);
+
+			personContainer.commit();
+
+
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+
+		}
+
+	}
+	
+	public void commit() throws Exception {
+		TableQuery q2 = new TableQuery("person",
+				DBConnection.INSTANCE.getConnectionPool());
+		q2.setVersionColumn("version");
+		Item userItem;
+		Item personItem;
+		SQLContainer personContainer;
+		SQLContainer userContainer;
+
+		personContainer = new SQLContainer(q2);
+		personContainer.addContainerFilter(new Equal("idperson", this.idPerson));
+
+		personItem = personContainer.getItem(personContainer.firstItemId());
+
+		personItem.getItemProperty("nachname").setValue(this.lastName);
+		personItem.getItemProperty("vorname").setValue(this.firstName);
+		personItem.getItemProperty("email").setValue(this.email);
+		personItem.getItemProperty("land").setValue(this.land);
+		personItem.getItemProperty("geb_dat").setValue(this.gebdat);
+		personItem.getItemProperty("newsletter").setValue(this.newsletter);
+
+		personItem.getItemProperty("email2").setValue(this.email2);
+		personItem.getItemProperty("email3").setValue(this.email3);
+
+		personItem.getItemProperty("newsletter2").setValue(this.newsletter2);
+		personItem.getItemProperty("newsletter3").setValue(this.newsletter3);
+
+		personItem.getItemProperty("titel").setValue(this.title);
+		personItem.getItemProperty("geschlecht").setValue(this.male);
+
+		personItem.getItemProperty("strasse").setValue(this.strasse);
+		personItem.getItemProperty("hausnummer").setValue(this.hausnummer);
+		personItem.getItemProperty("plz").setValue(this.plz);
+		personItem.getItemProperty("ort").setValue(this.ort);
+
+		if (this.phone == null || this.phone.isEmpty() || phone.equals(new String(""))) {
+			personItem.getItemProperty("telnr").setValue(null);
+		} else {
+			personItem.getItemProperty("telnr").setValue(this.phone);
+
+		}
+
+		if (this.mobnr == null || this.mobnr.isEmpty() || mobnr.equals(new String(""))) {
+			personItem.getItemProperty("mobnr").setValue(null);
+		} else {
+			personItem.getItemProperty("mobnr").setValue(this.mobnr);
+
+		}
+		
+		if (this.bio == null || this.bio.isEmpty() || bio.equals(new String(""))) {
+			personItem.getItemProperty("zusatztext").setValue(null);
+		} else {
+			personItem.getItemProperty("zusatztext").setValue(this.bio);
+
+		}
+		
+		if (this.website == null || this.website.isEmpty() || website.equals(new String(""))) {
+			personItem.getItemProperty("website").setValue(null);
+		} else {
+			personItem.getItemProperty("website").setValue(this.website);
+
+		}
+
+
+
+		personContainer.commit();
+
+		// personContainer.commit();
+		// userContainer.commit();
+	}
+
+	
+	@Override
+	public void rowIdChange(RowIdChangeEvent arg0) {
+		RowId x = arg0.getNewRowId();
+		Long newID = (Long) x.getId()[0];
+
+		this.idPerson = new Integer(newID.intValue());
+
+	}
+
 	
 	public Collection<Hund> getAllHunde() {
 		Collection<Hund> hundeCollection = new ArrayList<Hund>();

@@ -65,12 +65,8 @@ public class DataProvider {
 					
 					Person person = new Person (Integer.valueOf(personContainer.getItem(id).getItemProperty("idperson").toString()));
 					mitgliederListe.setPerson(person);
-					mitgliederListe.setHunde(person.getAllHunde());
-					
-					mitgliederListe.setFamilienName(person.getLastName());
-					mitgliederListe.setVorName(person.getFirstName());
-					mitgliederListe.setAdresse(person.getStrasse() + " " + person.getHausnummer() + ", " + person.getPlz() + " " + person.getOrt());
 										
+			
 					orderedList.add(mitgliederListe);
 				}
 				personItem = personContainer.getItem(personContainer.firstItemId());

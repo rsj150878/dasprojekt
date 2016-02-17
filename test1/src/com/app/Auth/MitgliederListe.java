@@ -41,6 +41,13 @@ public class MitgliederListe {
 	}
 	public void setPerson(Person person) {
 		this.person = person;
+		setHunde(person.getAllHunde());
+		
+		setFamilienName(person.getLastName());
+		setVorName(person.getFirstName());
+		setAdresse(person.getStrasse() + " " + person.getHausnummer() + ", " + person.getPlz() + " " + person.getOrt());
+							
+
 	}
 	public Collection<Hund> getHunde() {
 		return hunde;

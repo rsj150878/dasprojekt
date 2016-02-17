@@ -9,8 +9,12 @@ import java.util.Comparator;
 
 import com.app.Auth.DataProvider;
 import com.app.Auth.MitgliederListe;
+import com.app.Auth.Person;
+import com.app.DashBoard.Event.DashBoardEvent.UserNewEvent;
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.DashBoardWindow.FilterableSortableListContainer;
+import com.app.DashBoardWindow.ProfilePreferencesWindow;
+import com.google.common.eventbus.Subscribe;
 import com.vaadin.data.Container.Filter;
 import com.vaadin.data.Container.Filterable;
 import com.vaadin.data.Item;
@@ -47,6 +51,7 @@ public class MitgliederView extends VerticalLayout implements View {
 	private static final DecimalFormat DECIMALFORMAT = new DecimalFormat("#.##");
 	private static final String[] DEFAULT_COLLAPSIBLE = { "country", "city",
 			"theater", "room", "title", "seats" };
+	private TempTransactionsContainer mitgliederListe;
 
 	public MitgliederView() {
 
@@ -99,10 +104,14 @@ public class MitgliederView extends VerticalLayout implements View {
 		createReport.addClickListener(new ClickListener() {
 			@Override
 			public void buttonClick(final ClickEvent event) {
+				Person person = new Person();
+				ProfilePreferencesWindow.open(person);
+				System.out.println(" nach open ");
+				
 
 			}
 		});
-		createReport.setEnabled(false);
+		
 		return createReport;
 	}
 
@@ -163,7 +172,7 @@ public class MitgliederView extends VerticalLayout implements View {
 	}
 
 	private Grid buildTable() {
-		final Grid table = new Grid() {
+		final Grid gridTable = new Grid() {
 			// @Override
 			// protected String formatPropertyValue(final Object rowId,
 			// final Object colId, final Property<?> property) {
@@ -181,54 +190,28 @@ public class MitgliederView extends VerticalLayout implements View {
 			// return result;
 			// }
 		};
-		table.setSizeFull();
+		gridTable.setSizeFull();
 		
-		table.addStyleName(ValoTheme.TABLE_BORDERLESS);
-		table.addStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
-		table.addStyleName(ValoTheme.TABLE_COMPACT);
-		// table.setSelectable(true);
-
-		// table.setColumnCollapsingAllowed(true);
-		// table.setColumnCollapsible("vorName", false);
-		// table.setColumnCollapsible("familienName", false);
-
-		table.setColumnReorderingAllowed(true);
-
-		table.setContainerDataSource(new TempTransactionsContainer(DataProvider
-				.getMitgliederList()));
-		// table.setContainerDataSource(DataProvider.getMitgliederList());
-		table.sort(Sort.by("familienName", SortDirection.ASCENDING).then("vorName",SortDirection.ASCENDING));
-		// table.setSortContainerPropertyId("vorname");
-		// table.setSortAscending(false);
-
-		// table.setColumnAlignment("seats", Align.RIGHT);
-		// table.setColumnAlignment("price", Align.RIGHT);
-
-		table.setColumnOrder("vorName", "familienName", "adresse");
-		table.getColumn("vorName").setHeaderCaption("Vorname");
+		gridTable.addStyleName(ValoTheme.TABLE_BORDERLESS);
+		gridTable.addStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
+		gridTable.addStyleName(ValoTheme.TABLE_COMPACT);
 		
-		table.getColumn("familienName").setHeaderCaption("Familienname");
-		table.getColumn("adresse").setHeaderCaption("Adresse");
-		table.setColumns("vorName", "familienName", "adresse");
+		gridTable.setColumnReorderingAllowed(true);
+
+		mitgliederListe = new TempTransactionsContainer(DataProvider.getMitgliederList());
+		gridTable.setContainerDataSource(mitgliederListe);
 		
-		// table.setVisibleColumns("vorName", "familienName", "adresse");
-		// "hunde"); // , "ort", "strasse",
-		// "hausnummer");
-		// table.setColumnHeaders("Vorname", "Nachname", "Adresse"); //,
-		// "Hunde"); // ,
-		// "Ort",
-		// "Strasse",
-
-		// "Hausnummer"); //, "Seats", "Price");
-
-		// Allow dragging items to the reports menu
-		// table.setDragMode(TableDragMode.MULTIROW);
-		// table.setMultiSelect(false);
-
-		// table.addActionHandler(new TransactionsActionHandler());
-		// table.setNullSelectionAllowed(false);
-
-		table.addItemClickListener(new ItemClickListener() {
+		gridTable.sort(Sort.by("familienName", SortDirection.ASCENDING).then("vorName",SortDirection.ASCENDING));
+		
+		gridTable.setColumnOrder("vorName", "familienName", "adresse");
+		gridTable.getColumn("vorName").setHeaderCaption("Vorname");
+		
+		gridTable.getColumn("familienName").setHeaderCaption("Familienname");
+		gridTable.getColumn("adresse").setHeaderCaption("Adresse");
+		gridTable.setColumns("vorName", "familienName", "adresse");
+		
+		
+		gridTable.addItemClickListener(new ItemClickListener() {
 
 			@Override
 			public void itemClick(ItemClickEvent event) {
@@ -244,9 +227,21 @@ public class MitgliederView extends VerticalLayout implements View {
 
 		});
 
-		table.setImmediate(true);
+		gridTable.setImmediate(true);
 
-		return table;
+		return gridTable;
+	}
+	
+	@Subscribe
+	public void newUserEvent (UserNewEvent event) {
+		System.out.println("in new event");
+		MitgliederListe zw = new MitgliederListe();
+		zw.setPerson(event.getPerson());
+		mitgliederListe.addItem(zw);
+		//table.getContainerDataSource().
+		
+		//table.markAsDirty();
+		
 	}
 
 	// TODO
@@ -337,7 +332,8 @@ public class MitgliederView extends VerticalLayout implements View {
 				final Collection<MitgliederListe> collection) {
 			super(collection);
 		}
-
+		
+		
 		//
 		// // This is only temporarily overridden until issues with
 		// // BeanComparator get resolved.
@@ -369,12 +365,21 @@ public class MitgliederView extends VerticalLayout implements View {
 								if (!sortAscending) {
 									result *= -1;
 								}
+								
+								System.out.println(" result " + result);
+								
 								return result;
 							}
-						});
+						}
+				
+				
+				);
+				fireItemSetChange();
+				System.out.println("getBackingList.size " + getBackingList().size());
 			}
 		}
-
+		
+		
 	}
 
 }

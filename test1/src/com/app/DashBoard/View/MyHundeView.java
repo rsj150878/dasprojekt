@@ -107,8 +107,6 @@ public class MyHundeView extends VerticalLayout implements View {
 
 		hunde.setSpacing(true);
 
-		System.out.println("grid : " + hunde.getStyleName());
-		
 		hunde.addComponent(buildCreateBox());
 		// hunde.addComponent(buildHundeThumb());
 		User user = (User) VaadinSession.getCurrent().getAttribute(

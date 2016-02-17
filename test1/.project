@@ -2,9 +2,7 @@
 <projectDescription>
 	<name>test1</name>
 	<comment></comment>
-	<projects>
-		<project>Servers</project>
-	</projects>
+	
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.wst.jsdt.core.javascriptValidator</name>

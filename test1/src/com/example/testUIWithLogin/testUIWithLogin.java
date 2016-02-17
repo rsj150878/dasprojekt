@@ -1,16 +1,14 @@
 package com.example.testUIWithLogin;
 
 import java.io.FileNotFoundException;
-
 import javax.servlet.ServletContext;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpSession;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-
 import com.app.dbIO.PathHandler;
 import com.vaadin.annotations.PreserveOnRefresh;
+import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
@@ -22,6 +20,7 @@ import com.vaadin.ui.UI;
 /**
  * The Application's "main" class
  */
+@Theme("test1theme")
 @PreserveOnRefresh
 public class testUIWithLogin extends UI {
 

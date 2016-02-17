@@ -1,0 +1,9 @@
+@import "addons.scss";
+@import "test1theme.scss";
+
+/* This file prefixes all rules with the theme name to avoid causing conflicts with other themes. */
+/* The actual styles should be defined in test1theme.scss */
+.test1theme {
+  @include addons;
+  @include test1theme;
+}

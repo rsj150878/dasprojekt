@@ -14,6 +14,7 @@ import com.app.DashBoardWindow.FilterableSortableListContainer;
 import com.vaadin.data.Container.Filter;
 import com.vaadin.data.Container.Filterable;
 import com.vaadin.data.Item;
+import com.vaadin.data.sort.Sort;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.event.ItemClickEvent;
@@ -196,7 +197,7 @@ public class MitgliederView extends VerticalLayout implements View {
 		table.setContainerDataSource(new TempTransactionsContainer(DataProvider
 				.getMitgliederList()));
 		// table.setContainerDataSource(DataProvider.getMitgliederList());
-		table.sort("familienName", SortDirection.ASCENDING);
+		table.sort(Sort.by("familienName", SortDirection.ASCENDING).then("vorName",SortDirection.ASCENDING));
 		// table.setSortContainerPropertyId("vorname");
 		// table.setSortAscending(false);
 
@@ -342,19 +343,24 @@ public class MitgliederView extends VerticalLayout implements View {
 		// // BeanComparator get resolved.
 		@Override
 		public void sort(final Object[] propertyId, final boolean[] ascending) {
+			System.out.println("in sort");
 			if (ascending.length != 0) {
 				final boolean sortAscending = ascending[0];
 				final Object sortContainerPropertyId = propertyId[0];
+				if (sortAscending) { System.out.println("true"); } else { System.out.println("false"); };
+				
 				Collections.sort(getBackingList(),
 						new Comparator<MitgliederListe>() {
 							@Override
 							public int compare(final MitgliederListe o1,
 									final MitgliederListe o2) {
+								
+								System.out.println("bin in compare");
 								int result = 0;
 								if ("vorName".equals(sortContainerPropertyId)) {
 									result = o1.getVorName().compareTo(
 											o2.getVorName());
-								} else if ("Familien"
+								} else if ("familienName"
 										.equals(sortContainerPropertyId)) {
 									result = o1.getFamilienName().compareTo(
 											o2.getFamilienName());

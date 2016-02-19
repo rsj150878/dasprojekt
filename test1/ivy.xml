@@ -100,6 +100,8 @@
 		 
 		 <dependency org="com.google.guava" name="guava" rev="18.0"/>
 		 
+		 <dependency org="org.vaadin.addons" name="fonticon" rev="7.1.1" />
+		 
 		    
 		 <!-- <dependency org="org.apache.httpcomponents" name="httpclient" rev="4.5"/> -->
 		 <!-- <dependency org="org.apache.httpcomponents" name="httpcore" rev="4.4.1"/>  -->

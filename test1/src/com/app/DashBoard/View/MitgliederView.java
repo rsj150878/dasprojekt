@@ -15,10 +15,13 @@ import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.DashBoardWindow.FilterableSortableListContainer;
 import com.app.DashBoardWindow.ProfilePreferencesWindow;
 import com.google.common.eventbus.Subscribe;
+import com.vaadin.client.ui.FontIcon;
 import com.vaadin.data.Container.Filter;
 import com.vaadin.data.Container.Filterable;
 import com.vaadin.data.Item;
 import com.vaadin.data.sort.Sort;
+import com.vaadin.data.util.GeneratedPropertyContainer;
+import com.vaadin.data.util.PropertyValueGenerator;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.event.ItemClickEvent;
@@ -39,7 +42,11 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.renderers.ButtonRenderer;
+import com.vaadin.ui.renderers.ClickableRenderer;
 import com.vaadin.ui.themes.ValoTheme;
+
+
 
 @SuppressWarnings({ "serial", "unchecked" })
 public class MitgliederView extends VerticalLayout implements View {
@@ -172,24 +179,7 @@ public class MitgliederView extends VerticalLayout implements View {
 	}
 
 	private Grid buildTable() {
-		final Grid gridTable = new Grid() {
-			// @Override
-			// protected String formatPropertyValue(final Object rowId,
-			// final Object colId, final Property<?> property) {
-			// String result = super.formatPropertyValue(rowId, colId,
-			// property);
-			// if (colId.equals("gebdat")) {
-			// result = DATEFORMAT.format(((Date) property.getValue()));
-			// } else if (colId.equals("price")) {
-			// if (property != null && property.getValue() != null) {
-			// return "$" + DECIMALFORMAT.format(property.getValue());
-			// } else {
-			// return "";
-			// }
-			// }
-			// return result;
-			// }
-		};
+		final Grid gridTable = new Grid();
 		gridTable.setSizeFull();
 		
 		gridTable.addStyleName(ValoTheme.TABLE_BORDERLESS);
@@ -199,16 +189,29 @@ public class MitgliederView extends VerticalLayout implements View {
 		gridTable.setColumnReorderingAllowed(true);
 
 		mitgliederListe = new TempTransactionsContainer(DataProvider.getMitgliederList());
+		
 		gridTable.setContainerDataSource(mitgliederListe);
 		
 		gridTable.sort(Sort.by("familienName", SortDirection.ASCENDING).then("vorName",SortDirection.ASCENDING));
 		
-		gridTable.setColumnOrder("vorName", "familienName", "adresse");
+		gridTable.setColumnOrder("vorName", "familienName", "adresse","edit");
 		gridTable.getColumn("vorName").setHeaderCaption("Vorname");
 		
 		gridTable.getColumn("familienName").setHeaderCaption("Familienname");
 		gridTable.getColumn("adresse").setHeaderCaption("Adresse");
-		gridTable.setColumns("vorName", "familienName", "adresse");
+		gridTable.setColumns("vorName", "familienName", "adresse","edit");
+		
+		
+        gridTable.getColumn("edit")
+        .setRenderer(new FontIconRenderer(new RendererClickListener() {
+            @Override
+            public void click(RendererClickEvent e) {
+                Notification.show("Deleted item " + e.getItemId());
+            }
+        	
+        	
+        });
+
 		
 		
 		gridTable.addItemClickListener(new ItemClickListener() {
@@ -380,6 +383,26 @@ public class MitgliederView extends VerticalLayout implements View {
 		}
 		
 		
+	}
+	
+	public class FontIconRenderer extends ClickableRenderer<String> {
+
+		/**
+		 * Creates a new icon renderer.
+		 */
+		public FontIconRenderer() {
+			super(FontAwesome.class);
+		}
+
+		/**
+		 * Creates a new icon renderer and adds the given click listener to it.
+		 *
+		 * @param listener the click listener to register
+		 */
+		public FontIconRenderer(RendererClickListener listener) {
+			this();
+			addClickListener(listener);
+		}
 	}
 
 }

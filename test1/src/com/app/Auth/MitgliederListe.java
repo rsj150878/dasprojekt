@@ -3,6 +3,9 @@ package com.app.Auth;
 import java.util.Collection;
 import java.util.Iterator;
 
+import com.vaadin.client.ui.FontIcon;
+import com.vaadin.server.FontAwesome;
+
 public class MitgliederListe {
 	
 	private String familienName;
@@ -11,6 +14,7 @@ public class MitgliederListe {
 	private Person person;
 	private Collection<Hund> hunde;
 	private String hundeNamen;
+	private FontIcon edit;
 
 	public String getFamilienName() {
 		return familienName;
@@ -67,6 +71,10 @@ public class MitgliederListe {
 		}
 		
 	}
+	public FontIcon getEdit() {
+		return FontAwesome.PENCIL.getHtml();;
+	}
+	
 	
 	
 

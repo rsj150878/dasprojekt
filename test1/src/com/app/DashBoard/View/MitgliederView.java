@@ -7,21 +7,20 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
+import com.app.FontIconRenderer;
 import com.app.Auth.DataProvider;
 import com.app.Auth.MitgliederListe;
 import com.app.Auth.Person;
+import com.app.DashBoard.Event.DashBoardEvent.BrowserResizeEvent;
 import com.app.DashBoard.Event.DashBoardEvent.UserNewEvent;
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.DashBoardWindow.FilterableSortableListContainer;
 import com.app.DashBoardWindow.ProfilePreferencesWindow;
 import com.google.common.eventbus.Subscribe;
-import com.vaadin.client.ui.FontIcon;
 import com.vaadin.data.Container.Filter;
 import com.vaadin.data.Container.Filterable;
 import com.vaadin.data.Item;
 import com.vaadin.data.sort.Sort;
-import com.vaadin.data.util.GeneratedPropertyContainer;
-import com.vaadin.data.util.PropertyValueGenerator;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.event.ItemClickEvent;
@@ -31,6 +30,7 @@ import com.vaadin.event.ShortcutListener;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.Button;
@@ -40,13 +40,12 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.renderers.ButtonRenderer;
-import com.vaadin.ui.renderers.ClickableRenderer;
+import com.vaadin.ui.renderers.ClickableRenderer.RendererClickEvent;
+import com.vaadin.ui.renderers.ClickableRenderer.RendererClickListener;
 import com.vaadin.ui.themes.ValoTheme;
-
-
 
 @SuppressWarnings({ "serial", "unchecked" })
 public class MitgliederView extends VerticalLayout implements View {
@@ -114,11 +113,10 @@ public class MitgliederView extends VerticalLayout implements View {
 				Person person = new Person();
 				ProfilePreferencesWindow.open(person);
 				System.out.println(" nach open ");
-				
 
 			}
 		});
-		
+
 		return createReport;
 	}
 
@@ -181,39 +179,41 @@ public class MitgliederView extends VerticalLayout implements View {
 	private Grid buildTable() {
 		final Grid gridTable = new Grid();
 		gridTable.setSizeFull();
-		
+
 		gridTable.addStyleName(ValoTheme.TABLE_BORDERLESS);
 		gridTable.addStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
 		gridTable.addStyleName(ValoTheme.TABLE_COMPACT);
-		
+
 		gridTable.setColumnReorderingAllowed(true);
 
-		mitgliederListe = new TempTransactionsContainer(DataProvider.getMitgliederList());
-		
+		mitgliederListe = new TempTransactionsContainer(
+				DataProvider.getMitgliederList());
+
 		gridTable.setContainerDataSource(mitgliederListe);
 		
-		gridTable.sort(Sort.by("familienName", SortDirection.ASCENDING).then("vorName",SortDirection.ASCENDING));
-		
-		gridTable.setColumnOrder("vorName", "familienName", "adresse","edit");
+
+		gridTable.sort(Sort.by("familienName", SortDirection.ASCENDING).then(
+				"vorName", SortDirection.ASCENDING));
+
+		gridTable.setColumnOrder("vorName", "familienName", "adresse", "edit");
 		gridTable.getColumn("vorName").setHeaderCaption("Vorname");
-		
+
 		gridTable.getColumn("familienName").setHeaderCaption("Familienname");
 		gridTable.getColumn("adresse").setHeaderCaption("Adresse");
-		gridTable.setColumns("vorName", "familienName", "adresse","edit");
-		
-		
-        gridTable.getColumn("edit")
-        .setRenderer(new FontIconRenderer(new RendererClickListener() {
-            @Override
-            public void click(RendererClickEvent e) {
-                Notification.show("Deleted item " + e.getItemId());
-            }
-        	
-        	
-        });
+		gridTable.getColumn("edit").setHeaderCaption("Hunde");
+		gridTable.setColumns("vorName", "familienName", "adresse", "edit");
 
-		
-		
+		gridTable.setFrozenColumnCount(2);
+
+		gridTable.getColumn("edit").setRenderer(
+				new FontIconRenderer(new RendererClickListener() {
+					@Override
+					public void click(RendererClickEvent e) {
+						Notification.show("Deleted item " + e.getItemId());
+					}
+
+				}));
+
 		gridTable.addItemClickListener(new ItemClickListener() {
 
 			@Override
@@ -234,17 +234,17 @@ public class MitgliederView extends VerticalLayout implements View {
 
 		return gridTable;
 	}
-	
+
 	@Subscribe
-	public void newUserEvent (UserNewEvent event) {
+	public void newUserEvent(UserNewEvent event) {
 		System.out.println("in new event");
 		MitgliederListe zw = new MitgliederListe();
 		zw.setPerson(event.getPerson());
 		mitgliederListe.addItem(zw);
-		//table.getContainerDataSource().
-		
-		//table.markAsDirty();
-		
+		// table.getContainerDataSource().
+
+		// table.markAsDirty();
+
 	}
 
 	// TODO
@@ -260,17 +260,15 @@ public class MitgliederView extends VerticalLayout implements View {
 	// }
 
 	// TODO
-	// @Subscribe
-	// public void browserResized(final BrowserResizeEvent event) {
-	// // Some columns are collapsed when browser window width gets small
-	// // enough to make the table fit better.
-	// if (defaultColumnsVisible()) {
-	// for (String propertyId : DEFAULT_COLLAPSIBLE) {
-	// table.setColumnCollapsed(propertyId, Page.getCurrent()
-	// .getBrowserWindowWidth() < 800);
-	// }
-	// }
-	// }
+	@Subscribe
+	public void browserResized(final BrowserResizeEvent event) {
+		// Some columns are collapsed when browser window width gets small
+		// enough to make the table fit better.
+		if (Page.getCurrent().getBrowserWindowWidth() < 800) {
+			table.removeColumn("adresse");
+			
+		} 
+	}
 
 	private boolean filterByProperty(final String prop, final Item item,
 			final String text) {
@@ -335,8 +333,7 @@ public class MitgliederView extends VerticalLayout implements View {
 				final Collection<MitgliederListe> collection) {
 			super(collection);
 		}
-		
-		
+
 		//
 		// // This is only temporarily overridden until issues with
 		// // BeanComparator get resolved.
@@ -346,14 +343,19 @@ public class MitgliederView extends VerticalLayout implements View {
 			if (ascending.length != 0) {
 				final boolean sortAscending = ascending[0];
 				final Object sortContainerPropertyId = propertyId[0];
-				if (sortAscending) { System.out.println("true"); } else { System.out.println("false"); };
-				
+				if (sortAscending) {
+					System.out.println("true");
+				} else {
+					System.out.println("false");
+				}
+				;
+
 				Collections.sort(getBackingList(),
 						new Comparator<MitgliederListe>() {
 							@Override
 							public int compare(final MitgliederListe o1,
 									final MitgliederListe o2) {
-								
+
 								System.out.println("bin in compare");
 								int result = 0;
 								if ("vorName".equals(sortContainerPropertyId)) {
@@ -368,41 +370,21 @@ public class MitgliederView extends VerticalLayout implements View {
 								if (!sortAscending) {
 									result *= -1;
 								}
-								
+
 								System.out.println(" result " + result);
-								
+
 								return result;
 							}
 						}
-				
-				
+
 				);
 				fireItemSetChange();
-				System.out.println("getBackingList.size " + getBackingList().size());
+				System.out.println("getBackingList.size "
+						+ getBackingList().size());
 			}
 		}
-		
-		
+
 	}
+
 	
-	public class FontIconRenderer extends ClickableRenderer<String> {
-
-		/**
-		 * Creates a new icon renderer.
-		 */
-		public FontIconRenderer() {
-			super(FontAwesome.class);
-		}
-
-		/**
-		 * Creates a new icon renderer and adds the given click listener to it.
-		 *
-		 * @param listener the click listener to register
-		 */
-		public FontIconRenderer(RendererClickListener listener) {
-			this();
-			addClickListener(listener);
-		}
-	}
-
 }

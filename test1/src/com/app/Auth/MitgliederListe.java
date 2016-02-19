@@ -14,7 +14,7 @@ public class MitgliederListe {
 	private Person person;
 	private Collection<Hund> hunde;
 	private String hundeNamen;
-	private FontIcon edit;
+	private String edit;
 
 	public String getFamilienName() {
 		return familienName;
@@ -71,8 +71,9 @@ public class MitgliederListe {
 		}
 		
 	}
-	public FontIcon getEdit() {
-		return FontAwesome.PENCIL.getHtml();;
+	
+	public String getEdit() {
+		return FontAwesome.EDIT.getHtml();
 	}
 	
 	

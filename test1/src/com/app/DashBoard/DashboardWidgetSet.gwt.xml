@@ -25,7 +25,7 @@
 			class="com.vaadin.client.metadata.ConnectorBundleLoader" />
 	</generate-with>
 
-    <inherits name="com.example.testUIWithLogin.AppWidgetSet" />
+    <!-- <inherits name="com.example.testUIWithLogin.AppWidgetSet" /> -->
 
 
     <inherits name="org.vaadin.hene.popupbutton.widgetset.PopupbuttonWidgetset" />

@@ -102,6 +102,8 @@
 		 
 		 <dependency org="org.vaadin.addons" name="fonticon" rev="7.1.1" />
 		 
+		 <dependency org="org.vaadin.addons" name="vaadin-grid-util" rev="1.0.8" />
+		 
 		    
 		 <!-- <dependency org="org.apache.httpcomponents" name="httpclient" rev="4.5"/> -->
 		 <!-- <dependency org="org.apache.httpcomponents" name="httpcore" rev="4.4.1"/>  -->

@@ -7,7 +7,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
-import com.app.FontIconRenderer;
+import org.vaadin.gridutil.renderer.EditButtonValueRenderer;
+
 import com.app.Auth.DataProvider;
 import com.app.Auth.MitgliederListe;
 import com.app.Auth.Person;
@@ -40,7 +41,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.renderers.ClickableRenderer.RendererClickEvent;
@@ -190,7 +190,6 @@ public class MitgliederView extends VerticalLayout implements View {
 				DataProvider.getMitgliederList());
 
 		gridTable.setContainerDataSource(mitgliederListe);
-		
 
 		gridTable.sort(Sort.by("familienName", SortDirection.ASCENDING).then(
 				"vorName", SortDirection.ASCENDING));
@@ -206,13 +205,14 @@ public class MitgliederView extends VerticalLayout implements View {
 		gridTable.setFrozenColumnCount(2);
 
 		gridTable.getColumn("edit").setRenderer(
-				new FontIconRenderer(new RendererClickListener() {
-					@Override
-					public void click(RendererClickEvent e) {
-						Notification.show("Deleted item " + e.getItemId());
-					}
+				new EditButtonValueRenderer(new RendererClickListener() {
 
-				}));
+					@Override
+					public void click(final RendererClickEvent event) {
+					}
+				}
+
+				));
 
 		gridTable.addItemClickListener(new ItemClickListener() {
 
@@ -266,8 +266,8 @@ public class MitgliederView extends VerticalLayout implements View {
 		// enough to make the table fit better.
 		if (Page.getCurrent().getBrowserWindowWidth() < 800) {
 			table.removeColumn("adresse");
-			
-		} 
+
+		}
 	}
 
 	private boolean filterByProperty(final String prop, final Item item,
@@ -386,5 +386,4 @@ public class MitgliederView extends VerticalLayout implements View {
 
 	}
 
-	
 }

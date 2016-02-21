@@ -3,6 +3,7 @@ package com.app.DashBoard;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.app.DashBoard.Client.FontIconRendererConnector;
 import com.google.gwt.core.ext.typeinfo.JClassType;
 import com.vaadin.client.ui.button.ButtonConnector;
 import com.vaadin.client.ui.csslayout.CssLayoutConnector;
@@ -14,8 +15,8 @@ import com.vaadin.client.ui.passwordfield.PasswordFieldConnector;
 import com.vaadin.client.ui.textfield.TextFieldConnector;
 import com.vaadin.client.ui.ui.UIConnector;
 import com.vaadin.client.ui.window.WindowConnector;
-import com.vaadin.shared.ui.Connect.LoadStyle;
 import com.vaadin.server.widgetsetutils.ConnectorBundleLoaderFactory;
+import com.vaadin.shared.ui.Connect.LoadStyle;
  
 
 public final class OptimizedConnectorBundleLoaderFactory extends
@@ -32,6 +33,7 @@ public final class OptimizedConnectorBundleLoaderFactory extends
         eagerConnectors.add(PanelConnector.class.getName());
         eagerConnectors.add(LabelConnector.class.getName());
         eagerConnectors.add(WindowConnector.class.getName());
+        eagerConnectors.add(FontIconRendererConnector.class.getName());
     }
 
     @Override

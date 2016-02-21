@@ -13,9 +13,11 @@ import com.app.Auth.DataProvider;
 import com.app.Auth.MitgliederListe;
 import com.app.Auth.Person;
 import com.app.DashBoard.Event.DashBoardEvent.BrowserResizeEvent;
+import com.app.DashBoard.Event.DashBoardEvent.UpdateUserEvent;
 import com.app.DashBoard.Event.DashBoardEvent.UserNewEvent;
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.DashBoardWindow.FilterableSortableListContainer;
+import com.app.DashBoardWindow.HundeDetailWindow;
 import com.app.DashBoardWindow.ProfilePreferencesWindow;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.data.Container.Filter;
@@ -39,6 +41,8 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.CellReference;
+import com.vaadin.ui.Grid.CellStyleGenerator;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
@@ -111,7 +115,7 @@ public class MitgliederView extends VerticalLayout implements View {
 			@Override
 			public void buttonClick(final ClickEvent event) {
 				Person person = new Person();
-				ProfilePreferencesWindow.open(person);
+				ProfilePreferencesWindow.open(person, false);
 				System.out.println(" nach open ");
 
 			}
@@ -194,14 +198,20 @@ public class MitgliederView extends VerticalLayout implements View {
 		gridTable.sort(Sort.by("familienName", SortDirection.ASCENDING).then(
 				"vorName", SortDirection.ASCENDING));
 
-		gridTable.setColumnOrder("vorName", "familienName", "adresse", "edit");
+		gridTable.setColumnOrder("vorName", "familienName", "adresse", "edit","hundeforbutton");
 		gridTable.getColumn("vorName").setHeaderCaption("Vorname");
 
 		gridTable.getColumn("familienName").setHeaderCaption("Familienname");
 		gridTable.getColumn("adresse").setHeaderCaption("Adresse");
 		gridTable.getColumn("edit").setHeaderCaption("Hunde");
-		gridTable.setColumns("vorName", "familienName", "adresse", "edit");
+		gridTable.setColumns("vorName", "familienName", "adresse", "edit","hundeforbutton");
+		gridTable.getColumn("edit").setHeaderCaption("bearb");
+		gridTable.getColumn("edit").setWidth(54);
+		gridTable.getColumn("hundeforbutton").setHeaderCaption("Hunde");
+		gridTable.getColumn("hundeforbutton").setWidth(54);
 
+		gridTable.getDefaultHeaderRow().join("edit","hundeforbutton").setText("Tools");
+		
 		gridTable.setFrozenColumnCount(2);
 
 		gridTable.getColumn("edit").setRenderer(
@@ -209,11 +219,38 @@ public class MitgliederView extends VerticalLayout implements View {
 
 					@Override
 					public void click(final RendererClickEvent event) {
+						
+						//System.out.println("item: " + event.getItem());
+						MitgliederListe zw = (MitgliederListe) event.getItemId();
+						ProfilePreferencesWindow.open(zw.getPerson(), true);
+					}	
+				})				);
+
+
+		gridTable.getColumn("hundeforbutton").setRenderer(
+				new EditButtonValueRenderer(new RendererClickListener() {
+
+					@Override
+					public void click(final RendererClickEvent event) {
+						MitgliederListe zw = (MitgliederListe) event.getItemId();
+						HundeDetailWindow.open(zw.getHunde());	
 					}
-				}
+				})				);
 
-				));
-
+		
+		gridTable.setCellStyleGenerator(new CellStyleGenerator() {
+		    @Override
+		    public String getStyle(final CellReference cellReference) {
+		        if (cellReference.getPropertyId()
+		                .equals("edit")) {
+		            return "link-icon";
+		        } if (cellReference.getPropertyId().equals("hundeforbutton"))
+		        	return "link-icon-hund";
+		        else {
+		            return null;
+		        }
+		    }
+		});
 		gridTable.addItemClickListener(new ItemClickListener() {
 
 			@Override
@@ -241,10 +278,12 @@ public class MitgliederView extends VerticalLayout implements View {
 		MitgliederListe zw = new MitgliederListe();
 		zw.setPerson(event.getPerson());
 		mitgliederListe.addItem(zw);
-		// table.getContainerDataSource().
-
-		// table.markAsDirty();
-
+	
+	}
+	
+	@Subscribe
+	public void updateUserEvent(UpdateUserEvent event) {
+		mitgliederListe.update();
 	}
 
 	// TODO
@@ -332,6 +371,9 @@ public class MitgliederView extends VerticalLayout implements View {
 		public TempTransactionsContainer(
 				final Collection<MitgliederListe> collection) {
 			super(collection);
+		}
+		public void update() {
+			fireItemSetChange();
 		}
 
 		//

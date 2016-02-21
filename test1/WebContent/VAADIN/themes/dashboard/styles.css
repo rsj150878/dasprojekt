@@ -999,7 +999,7 @@
  */
 
 .v-vaadin-version:after {
-	content: "7.6.2";
+	content: "7.6.3";
 }
 
 .v-widget {
@@ -12568,4 +12568,38 @@ div.v-layout.v-horizontal.v-widget {
 .dashboard .mitglieder .viewheader {
 	padding: 25px;
 	border-bottom: 1px solid #dfdfdf;
+}
+
+.dashboard .mitglieder .v-button-value-cell {
+	clear: both;
+	position: relative;
+	width: 100%;
+}
+
+.dashboard .mitglieder .v-button-value-cell .v-button-bar {
+	position: absolute;
+	left: -4px;
+	top: -4px;
+	display: inline-block;
+	text-align: center;
+}
+
+.dashboard .mitglieder .v-button-value-cell .v-button-bar button {
+	cursor: pointer;
+	width: 30px;
+	height: 30px;
+	font-family: FontAwesome !important;
+	font-style: normal;
+	font-weight: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	margin-right: 2px;
+}
+
+.dashboard .mitglieder .v-grid-cell.link-icon .v-button-bar button.v-edit span:before {
+	content: "\f044";
+}
+
+.dashboard .mitglieder .v-grid-cell.link-icon-hund .v-button-bar button.v-edit span:before {
+	content: "\f281";
 }

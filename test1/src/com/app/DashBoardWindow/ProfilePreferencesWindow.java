@@ -4,6 +4,7 @@ import com.app.Auth.Person;
 import com.app.Auth.User;
 import com.app.DashBoard.Event.DashBoardEvent.CloseOpenWindowsEvent;
 import com.app.DashBoard.Event.DashBoardEvent.ProfileUpdatedEvent;
+import com.app.DashBoard.Event.DashBoardEvent.UpdateUserEvent;
 import com.app.DashBoard.Event.DashBoardEvent.UserNewEvent;
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
@@ -44,8 +45,8 @@ public class ProfilePreferencesWindow extends Window {
 
 	public static final String ID = "profilepreferenceswindow";
 
-	 private final BeanFieldGroup<Person> fieldGroupPerson;
-	 private final BeanFieldGroup<User> fieldGroupUser;
+	private final BeanFieldGroup<Person> fieldGroupPerson;
+	private final BeanFieldGroup<User> fieldGroupUser;
 	/*
 	 * Fields for editing the User object are defined here as class members.
 	 * They are later bound to a FieldGroup by calling
@@ -73,12 +74,12 @@ public class ProfilePreferencesWindow extends Window {
 	private TextField plzField;
 	@PropertyId("ort")
 	private TextField ortField;
-	
+
 	@PropertyId("phone")
 	private TextField phoneField;
 	@PropertyId("mobnr")
 	private TextField mobNrField;
-	
+
 	@PropertyId("land")
 	private ComboBox landField;
 	@PropertyId("website")
@@ -95,40 +96,41 @@ public class ProfilePreferencesWindow extends Window {
 	private TextField emailField3;
 	@PropertyId("newsletter3")
 	private OptionGroup newsletter3;
-	
+
 	private final User user;
 	private final Person person;
-	 
+	private final boolean update;
+
 	private ProfilePreferencesWindow(final User user,
 			final boolean preferencesTabOpen) {
 
 		this.user = user;
 		this.person = null;
-	
+		this.update = false;
+
 		initWindow(preferencesTabOpen);
-		
+
 		fieldGroupPerson = null;
 
 		fieldGroupUser = new BeanFieldGroup<User>(User.class);
-        fieldGroupUser.bindMemberFields(this);
-        fieldGroupUser.setItemDataSource(user);
+		fieldGroupUser.bindMemberFields(this);
+		fieldGroupUser.setItemDataSource(user);
 
 	}
 
-	
-	private ProfilePreferencesWindow(final Person person) {
+	private ProfilePreferencesWindow(final Person person, final boolean update) {
 
 		this.user = null;
 		this.person = person;
-	
+		this.update = update;
+
 		initWindow(false);
-		
 
 		fieldGroupUser = null;
-		
+
 		fieldGroupPerson = new BeanFieldGroup<Person>(Person.class);
-        fieldGroupPerson.bindMemberFields(this);
-        fieldGroupPerson.setItemDataSource(person);
+		fieldGroupPerson.bindMemberFields(this);
+		fieldGroupPerson.setItemDataSource(person);
 
 	}
 
@@ -179,7 +181,7 @@ public class ProfilePreferencesWindow extends Window {
 		message.addStyleName(ValoTheme.LABEL_LIGHT);
 		root.addComponent(message);
 		root.setComponentAlignment(message, Alignment.MIDDLE_CENTER);
-		
+
 		return root;
 	}
 
@@ -223,15 +225,15 @@ public class ProfilePreferencesWindow extends Window {
 		sexField.setItemCaption("F", "Frau");
 		sexField.addStyleName("horizontal");
 		details.addComponent(sexField);
-		
+
 		titleField = new TextField("Titel");
 		details.addComponent(titleField);
-		
+
 		firstNameField = new TextField("Vorname");
 		details.addComponent(firstNameField);
 		lastNameField = new TextField("Familienname");
 		details.addComponent(lastNameField);
-		
+
 		birthDate = new PopupDateField("GeburtsDatum");
 		birthDate.setWidth("100%");
 		birthDate.setResolution(Resolution.DAY);
@@ -248,12 +250,12 @@ public class ProfilePreferencesWindow extends Window {
 		emailField.setRequired(true);
 		emailField.setNullRepresentation("");
 		details.addComponent(emailField);
-		
+
 		newsletter = new OptionGroup("Newsletter");
 		newsletter.addItem("J");
 		newsletter.setItemCaption("J", "Ja");
 		newsletter.addItem("N");
-		newsletter.setItemCaption("N","Nein");
+		newsletter.setItemCaption("N", "Nein");
 		newsletter.addStyleName("horizontal");
 		details.addComponent(newsletter);
 
@@ -266,21 +268,19 @@ public class ProfilePreferencesWindow extends Window {
 		mobNrField.setWidth("100%");
 		mobNrField.setNullRepresentation("");
 		details.addComponent(mobNrField);
-		
-		
+
 		section = new Label("Addresse");
 		section.addStyleName(ValoTheme.LABEL_H4);
 		section.addStyleName(ValoTheme.LABEL_COLORED);
 		details.addComponent(section);
-		
-		
+
 		landField = new ComboBox("Land");
 		landField.addItem("AT");
-		landField.setItemCaption("AT","Österreich");
+		landField.setItemCaption("AT", "Österreich");
 		landField.addItem("DE");
-		landField.setItemCaption("DE","Deutschland");
+		landField.setItemCaption("DE", "Deutschland");
 		landField.addItem("CH");
-		landField.setItemCaption("CH","Schweiz");
+		landField.setItemCaption("CH", "Schweiz");
 		landField.addStyleName("horizontal");
 		details.addComponent(landField);
 
@@ -303,36 +303,35 @@ public class ProfilePreferencesWindow extends Window {
 		ortField.setWidth("100%");
 		ortField.setNullRepresentation("");
 		details.addComponent(ortField);
-		
-		
+
 		section = new Label("Zusatzinfos");
 		section.addStyleName(ValoTheme.LABEL_H4);
 		section.addStyleName(ValoTheme.LABEL_COLORED);
 		details.addComponent(section);
-		
+
 		emailField2 = new TextField("Email 2");
 		emailField2.setWidth("100%");
 		emailField2.setNullRepresentation("");
 		details.addComponent(emailField2);
-		
+
 		newsletter2 = new OptionGroup("Newsletter 2");
 		newsletter2.addItem("J");
 		newsletter2.setItemCaption("J", "Ja");
 		newsletter2.addItem("N");
-		newsletter2.setItemCaption("N","Nein");
+		newsletter2.setItemCaption("N", "Nein");
 		newsletter2.addStyleName("horizontal");
 		details.addComponent(newsletter2);
-		
+
 		emailField3 = new TextField("Email 3");
 		emailField3.setWidth("100%");
 		emailField3.setNullRepresentation("");
 		details.addComponent(emailField3);
-		
+
 		newsletter3 = new OptionGroup("Newsletter 3");
 		newsletter3.addItem("J");
 		newsletter3.setItemCaption("J", "Ja");
 		newsletter3.addItem("N");
-		newsletter3.setItemCaption("N","Nein");
+		newsletter3.setItemCaption("N", "Nein");
 		newsletter3.addStyleName("horizontal");
 		details.addComponent(newsletter3);
 
@@ -362,7 +361,7 @@ public class ProfilePreferencesWindow extends Window {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				try {
-				
+
 					// Updated user should also be persisted to database. But
 					// not in this demo.
 
@@ -370,10 +369,10 @@ public class ProfilePreferencesWindow extends Window {
 						fieldGroupPerson.commit();
 						person.commit();
 					} else {
-						fieldGroupUser.commit();					
+						fieldGroupUser.commit();
 						user.commit();
 					}
-				
+
 					Notification success = new Notification(
 							"Profile updated successfully");
 					success.setDelayMsec(2000);
@@ -382,12 +381,15 @@ public class ProfilePreferencesWindow extends Window {
 					success.show(Page.getCurrent());
 
 					if (user == null) {
-						DashBoardEventBus.post(new UserNewEvent(person));
-						
+						if (update == true) {
+							DashBoardEventBus.post(new UpdateUserEvent());
+						} else {
+							DashBoardEventBus.post(new UserNewEvent(person));
+						}
 					} else {
 						DashBoardEventBus.post(new ProfileUpdatedEvent());
 					}
-					
+
 					close();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -403,17 +405,16 @@ public class ProfilePreferencesWindow extends Window {
 		return footer;
 	}
 
-	
 	public static void open(final User user, final boolean preferencesTabActive) {
 		DashBoardEventBus.post(new CloseOpenWindowsEvent());
 		Window w = new ProfilePreferencesWindow(user, preferencesTabActive);
 		UI.getCurrent().addWindow(w);
 		w.focus();
 	}
-	
-	public static void open(final Person person) {
+
+	public static void open(final Person person, final boolean update) {
 		DashBoardEventBus.post(new CloseOpenWindowsEvent());
-		Window w = new ProfilePreferencesWindow(person);
+		Window w = new ProfilePreferencesWindow(person, update);
 		UI.getCurrent().addWindow(w);
 		w.focus();
 	}

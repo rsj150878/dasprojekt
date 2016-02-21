@@ -1,8 +1,8 @@
-com.vaadin.integration.eclipse.previousCompileAction=widgetset
+com.vaadin.integration.eclipse.previousCompileAction=theme
 com.vaadin.integration.eclipse.useLatestNightly=false
 com.vaadin.integration.eclipse.widgetsetBuildsSuspended=true
-com.vaadin.integration.eclipse.widgetsetCompilationEta=52817
-com.vaadin.integration.eclipse.widgetsetDirty=true
+com.vaadin.integration.eclipse.widgetsetCompilationEta=210407
+com.vaadin.integration.eclipse.widgetsetDirty=false
 com.vaadin.integration.eclipse.widgetsetParallelism=2
 com.vaadin.integration.eclipse.widgetsetStyle=DRAFT
 com.vaadin.integration.eclipse.widgetsetVerbose=true

@@ -88,6 +88,10 @@ public abstract class DashBoardEvent {
     	}
     	
     }
+    
+    public static class UpdateUserEvent {
+    }
+
 
     public static class ProfileUpdatedEvent {
     }

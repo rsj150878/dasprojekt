@@ -3,7 +3,6 @@ package com.app.Auth;
 import java.util.Collection;
 import java.util.Iterator;
 
-import com.vaadin.client.ui.FontIcon;
 import com.vaadin.server.FontAwesome;
 
 public class MitgliederListe {
@@ -15,21 +14,22 @@ public class MitgliederListe {
 	private Collection<Hund> hunde;
 	private String hundeNamen;
 	private String edit;
+	private String hundeforbutton;
 
 	public String getFamilienName() {
-		return familienName;
+		return person.getLastName();
 	}
 	public void setFamilienName(String familienName) {
 		this.familienName = familienName;
 	}
 	public String getVorName() {
-		return vorName;
+		return person.getFirstName();
 	}
 	public void setVorName(String vorName) {
 		this.vorName = vorName;
 	}
 	public String getAdresse() {
-		return adresse;
+		return person.getStrasse() + " " + person.getHausnummer() + ", " + person.getPlz() + " " + person.getOrt();
 	}
 	public String getHundeNamen() {
 		return hundeNamen;
@@ -71,12 +71,17 @@ public class MitgliederListe {
 		}
 		
 	}
-	
-	public String getEdit() {
-		return FontAwesome.EDIT.getHtml();
+//	
+	public String getedit() {
+		return null;
 	}
 	
+	public String gethundeforbutton() {
+		return null;
+		
+	}
 	
+//	
 	
 
 }

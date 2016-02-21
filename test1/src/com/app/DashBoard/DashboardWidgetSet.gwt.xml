@@ -26,6 +26,9 @@
 	</generate-with>
 
     <!-- <inherits name="com.example.testUIWithLogin.AppWidgetSet" /> -->
+    
+     <inherits name="org.vaadin.gridutil.WidgetSet" />
+
 
 
     <inherits name="org.vaadin.hene.popupbutton.widgetset.PopupbuttonWidgetset" />

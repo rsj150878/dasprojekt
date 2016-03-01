@@ -233,7 +233,7 @@ public class MitgliederView extends VerticalLayout implements View {
 					@Override
 					public void click(final RendererClickEvent event) {
 						MitgliederListe zw = (MitgliederListe) event.getItemId();
-						HundeDetailWindow.open(zw.getHunde());	
+						HundeDetailWindow.open(zw.getPerson(), zw.getHunde());	
 					}
 				})				);
 

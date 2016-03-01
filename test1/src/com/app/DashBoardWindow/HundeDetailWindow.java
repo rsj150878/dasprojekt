@@ -5,11 +5,12 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import com.app.Auth.Hund;
-import com.app.Auth.MitgliederListe;
+import com.app.Auth.Person;
 import com.app.DashBoard.Event.DashBoardEvent.CloseOpenWindowsEvent;
 import com.app.DashBoard.Event.DashBoardEvent.DogUpdatedEvent;
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.enumPackage.Rassen;
+import com.app.printClasses.Kursblatt;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.PropertyId;
 import com.vaadin.event.ItemClickEvent;
@@ -30,6 +31,7 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
@@ -76,10 +78,16 @@ public class HundeDetailWindow extends Window {
 	private Hund hund;
 	private Collection<Hund> hundeCollection;
 	private float height;
+	private Person person;
+	private Table dogTable;
+	private TempTransactionsContainer containerSource;
+	private Kursblatt zw;
 
-	private HundeDetailWindow(Collection<Hund> hundeCollection) {
+	
+	private HundeDetailWindow(Person person, Collection<Hund> hundeCollection) {
 		this.hund = hundeCollection.iterator().next();
 		this.hundeCollection = hundeCollection;
+		this.person = person;
 
 		height = 100.0f;
 		initWindow();
@@ -87,7 +95,7 @@ public class HundeDetailWindow extends Window {
 		fieldGroup = new BeanFieldGroup<Hund>(Hund.class);
 		fieldGroup.bindMemberFields(this);
 		fieldGroup.setItemDataSource(hund);
-		
+
 	}
 
 	private HundeDetailWindow(final Hund hund) {
@@ -113,14 +121,14 @@ public class HundeDetailWindow extends Window {
 		setHeight(height, Unit.PERCENTAGE);
 
 		VerticalLayout content = new VerticalLayout();
-		//content.setSizeFull();
+		// content.setSizeFull();
 		content.setMargin(new MarginInfo(true, false, false, false));
 		setContent(content);
 
 		HorizontalLayout horizontalContent = new HorizontalLayout();
 		horizontalContent.setSizeFull();
 		content.addComponent(horizontalContent);
-		
+
 		float expandRatio = 0;
 		if (!(hundeCollection == null)) {
 			Component auswahlTab = buildHundeAuswahlTab();
@@ -139,7 +147,7 @@ public class HundeDetailWindow extends Window {
 
 		detailsWrapper.addComponent(buildProfileTab());
 		detailsWrapper.addComponent(buildPreferencesTab());
-		
+
 		content.addComponent(buildFooter());
 
 	}
@@ -162,7 +170,7 @@ public class HundeDetailWindow extends Window {
 	}
 
 	private Component buildHundeAuswahlTab() {
-		
+
 		System.out.println("bin in neuer tab");
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSizeFull();
@@ -173,17 +181,18 @@ public class HundeDetailWindow extends Window {
 		Button newDog = new Button("neuer Hund", new ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
-				//Hund newHund = new Hund();
-				
+				Hund newHund = new Hund(person.getIdPerson());
+				hundeCollection.add(newHund);
+				containerSource.update();
+				dogTable.select(newHund);
 
 			}
 
 		});
 		layout.addComponent(newDog);
 		newDog.addStyleName(ValoTheme.BUTTON_TINY);
-		
 
-		Table dogTable = new Table();
+		dogTable = new Table();
 		layout.addComponent(dogTable);
 		dogTable.setSizeFull();
 
@@ -191,15 +200,14 @@ public class HundeDetailWindow extends Window {
 		dogTable.addStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
 		dogTable.addStyleName(ValoTheme.TABLE_COMPACT);
 
-		TempTransactionsContainer containerSource = new TempTransactionsContainer(
-				hundeCollection);
+		containerSource = new TempTransactionsContainer(hundeCollection);
 		dogTable.setContainerDataSource(containerSource);
 
 		dogTable.setSelectable(true);
 
 		dogTable.setVisibleColumns("rufname", "zwingername");
 		dogTable.setColumnHeaders("Rufname", "Zwingername");
-		
+
 		dogTable.addItemClickListener(new ItemClickListener() {
 
 			@Override
@@ -220,17 +228,18 @@ public class HundeDetailWindow extends Window {
 
 				} catch (Exception e) {
 					e.printStackTrace();
-					Notification.show("Es ist ein Fehler passiert\n" + e.getMessage(),
+					Notification.show(
+							"Es ist ein Fehler passiert\n" + e.getMessage(),
 							Type.ERROR_MESSAGE);
-					
+
 				}
 				hund = (Hund) event.getItemId();
 				fieldGroup.setItemDataSource(hund);
 			}
-			
+
 		});
-		
-		layout.setExpandRatio(dogTable,1);
+
+		layout.setExpandRatio(dogTable, 1);
 
 		return layout;
 	}
@@ -240,11 +249,11 @@ public class HundeDetailWindow extends Window {
 		root.setCaption("Profile");
 		root.setIcon(FontAwesome.USER);
 
-//		if (!(hundeCollection == null)) {
-//			root.setWidth(80.0f, Unit.PERCENTAGE);
-//		} else {
-			root.setWidth(100.0f, Unit.PERCENTAGE);
-//		}
+		// if (!(hundeCollection == null)) {
+		// root.setWidth(80.0f, Unit.PERCENTAGE);
+		// } else {
+		root.setWidth(100.0f, Unit.PERCENTAGE);
+		// }
 		root.setSpacing(true);
 		root.setMargin(true);
 		root.addStyleName("profile-form");
@@ -335,10 +344,38 @@ public class HundeDetailWindow extends Window {
 	}
 
 	private Component buildFooter() {
-		HorizontalLayout footer = new HorizontalLayout();
+		final GridLayout footer = new GridLayout(3,1);
 		footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
 		footer.setWidth(100.0f, Unit.PERCENTAGE);
 
+		if (!(this.hundeCollection == null)) {
+
+			Button printButton = new Button("Kursblatt");
+			printButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
+
+			printButton.addClickListener(new ClickListener() {
+
+				@Override
+				public void buttonClick(ClickEvent event) {
+					// TODO Auto-generated method stub
+
+					
+					if (!(zw == null)) {
+						footer.removeComponent(zw);
+					}
+					zw = new Kursblatt(person, hund);
+					footer.addComponent(zw,1,0);
+					
+				}
+
+			});
+
+			footer.addComponent(printButton,0,0);
+			//footer.setComponentAlignment(printButton, Alignment.TOP_LEFT);
+
+		}
+
+		
 		Button ok = new Button("OK");
 		ok.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		ok.addClickListener(new ClickListener() {
@@ -368,8 +405,10 @@ public class HundeDetailWindow extends Window {
 			}
 		});
 		ok.focus();
-		footer.addComponent(ok);
+		footer.addComponent(ok,2,0);
 		footer.setComponentAlignment(ok, Alignment.TOP_RIGHT);
+
+		
 		return footer;
 	}
 
@@ -380,9 +419,9 @@ public class HundeDetailWindow extends Window {
 		w.focus();
 	}
 
-	public static void open(final Collection<Hund> hund) {
+	public static void open(final Person person, final Collection<Hund> hund) {
 		DashBoardEventBus.post(new CloseOpenWindowsEvent());
-		Window w = new HundeDetailWindow(hund);
+		Window w = new HundeDetailWindow(person, hund);
 		UI.getCurrent().addWindow(w);
 		w.focus();
 	}

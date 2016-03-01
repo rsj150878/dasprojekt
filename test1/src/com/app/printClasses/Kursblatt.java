@@ -7,8 +7,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.springframework.format.datetime.DateFormatter;
-
+import com.app.Auth.Hund;
+import com.app.Auth.Person;
 import com.app.bean.RassenBean;
 import com.app.enumPackage.Rassen;
 import com.app.service.TemporaryFileDownloadResource;
@@ -176,6 +176,154 @@ public class Kursblatt extends CustomComponent {
 				if (hund.getItemProperty("rasse").getValue() != null
 						&& o.getRassenKurzBezeichnung().equals(
 								hund.getItemProperty("rasse").getValue()
+										.toString())) {
+					fields.setField("Rasse", o.getRassenLangBezeichnung());
+				}
+
+			}
+
+			// ende hund
+
+			stamper.close();
+			reader.close();
+
+			TemporaryFileDownloadResource s = null;
+			try {
+				s = new TemporaryFileDownloadResource(RESULT,
+						"application/pdf", new File(RESULT));
+			} catch (final FileNotFoundException e) {
+
+			}
+
+			BrowserFrame e = new BrowserFrame("kursblatt", s);
+			mainLayout.addComponent(e);
+
+		} catch (Exception ee) {
+			ee.printStackTrace();
+		}
+
+	}
+	
+	public Kursblatt(Person besitzer, Hund hund) {
+		try {
+			mainLayout = new AbsoluteLayout();
+			mainLayout.setImmediate(false);
+			mainLayout.setWidth("100%");
+			mainLayout.setHeight("100%");
+			setCompositionRoot(mainLayout);
+
+			reader = new PdfReader(DATASHEET);
+			fos = new FileOutputStream(RESULT);
+			stamper = new PdfStamper(reader, fos);
+			stamper.setFormFlattening(true);
+			AcroFields fields = stamper.getAcroFields();
+
+			BaseFont unicode = BaseFont.createFont(FONT, BaseFont.IDENTITY_H,
+					BaseFont.EMBEDDED);
+			fields.addSubstitutionFont(unicode);
+			// besitzer-block
+
+			if (!(besitzer.getEmail() == null)) {
+				fields.setField("E-Mail-Adresse",
+						besitzer.getEmail());
+
+			}
+			fields.setField("Adresse", besitzer.getStrasse()
+					+ " "
+					+ besitzer.getHausnummer()
+					+ ", "
+					+ besitzer.getPlz()
+					+ " "
+					+ besitzer.getOrt());
+
+
+			String titel = "";
+
+			if (!(besitzer.getTitle() == null)) {
+				titel = besitzer.getTitle() + " ";
+			}
+
+			fields.setField("Name", titel
+					+ besitzer.getLastName() + " " + besitzer.getFirstName());
+			
+			Date currentDate = new Date();
+			DateFormat dateFormat1 = new SimpleDateFormat("dd.MM.yyyy");
+
+			if (!(besitzer.getGebdat() == null)) {
+				fields.setField("Geburtsdatum", dateFormat1.format(besitzer.
+						getGebdat()));
+			}
+
+//			if (!(besitzer. == null)) {
+//				fields.setField("ÖRC-Mitgliedsnummer", besitzer
+//						.getOercMitgliedsNummer()
+//						.toString());
+//			}
+
+			if (besitzer.getNewsletter()
+					.equals("J")) {
+				fields.setField("Check Box JA", "Ja");
+			} else {
+				fields.setField("Check Box NEIN", "Ja");
+			}
+
+			if (!(besitzer.getMobnr() == null)) {
+				fields.setField("Mobiltelefonnummer",
+						besitzer.getMobnr().toString());
+			}
+
+			if (!(besitzer.getPhone() == null)) {
+				fields.setField("Telefonnummer",
+						besitzer.getPhone().toString());
+			}
+
+			fields.setField("Schranawand am", dateFormat1.format(currentDate));
+
+			// ende besitzer
+
+			// beginn hund
+
+			fields.setField("Wurfdatum", dateFormat1.format(hund
+					.getWurfdatum()));
+
+			if (hund.getGeschlecht()
+					.equals("R")) {
+				fields.setField("Geschlecht", "Rüde");
+			} else {
+				fields.setField("Geschlecht", "Hündin");
+			}
+
+			if (!(hund.getZuchtbuchnummer() == null)) {
+				fields.setField("Zuchtbuchnummer",
+						hund.getZuchtbuchnummer()
+								.toString());
+			}
+
+			fields.setField("Chipnummer", hund.getChipnummer().toString());
+
+			if (!(hund.getZuechter() == null)) {
+				fields.setField("Züchter", hund.getZuechter().toString());
+			}
+
+			if (!(hund.getZwingername() == null)) {
+				fields.setField("Name des Hundes lt. Ahnentafel", hund
+						.getZwingername().toString());
+			}
+
+			fields.setField("Rufname", hund.getRufname().toString());
+
+			if (hund.getFarbe() != null) {
+				fields.setField("Farbe", hund.getFarbe().toString());
+			}
+
+			for (Rassen o : Rassen.values()) {
+				RassenBean addObject = new RassenBean(
+						o.getRassenKurzBezeichnung(),
+						o.getRassenLangBezeichnung());
+
+				if (hund.getRasse() != null
+						&& o.getRassenKurzBezeichnung().equals(
+								hund.getRasse()
 										.toString())) {
 					fields.setField("Rasse", o.getRassenLangBezeichnung());
 				}

@@ -50,6 +50,7 @@ public class Hund implements QueryDelegate.RowIdChangeListener {
 			hundItem.getItemProperty("wurfdatum").setValue(new Date());
 			hundItem.getItemProperty("rasse").setValue("GR");
 			hundItem.getItemProperty("chipnummer").setValue("0000000000000000");
+			hundItem.getItemProperty("geschlecht").setValue("R");
 
 			hundContainer.commit();
 

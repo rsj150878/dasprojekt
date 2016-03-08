@@ -8,8 +8,8 @@ import com.vaadin.server.Resource;
 public enum DashBoardViewType {
     DASHBOARD("Dashboard", DashboardView.class, FontAwesome.HOME, true),
     MYDOGS("Meine Hunde", MyHundeView.class, FontAwesome.BAR_CHART_O, false),  
-    MITGLIEDER("Mitgliederliste", MitgliederView.class, FontAwesome.TABLE, false); //;, REPORTS(
-//            "reports", ReportsView.class, FontAwesome.FILE_TEXT_O, true), SCHEDULE(
+    MITGLIEDER("Mitgliederliste", MitgliederView.class, FontAwesome.TABLE, false);
+   // REPORTS("Verwaltung", null, FontAwesome.FILE_TEXT_O, true); //, SCHEDULE(
 //            "schedule", ScheduleView.class, FontAwesome.CALENDAR_O, false);
 
     private final String viewName;

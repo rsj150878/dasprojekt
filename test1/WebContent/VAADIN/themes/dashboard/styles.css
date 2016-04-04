@@ -9255,6 +9255,62 @@ div.v-layout.v-horizontal.v-widget {
 	min-height: 14px;
 }
 
+.dashboard .v-treetable [class*="caption-container"], .dashboard .v-treetable [class*="footer-container"], .dashboard .v-treetable [class*="cell-wrapper"] {
+	-webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.dashboard .v-treetable [class*="caption-container"], .dashboard .v-treetable [class*="footer-container"] {
+	min-height: 14px;
+}
+
+.dashboard .v-treetable [class*="cell-wrapper"] {
+	min-height: 16px;
+}
+
+.dashboard .v-treetable [class*="caption-container"] {
+	padding-left: 12px;
+}
+
+.dashboard .v-treetable [class*="caption-container-align-right"] {
+	padding-left: 20px;
+}
+
+.dashboard .v-treetable [class*="footer-container"] {
+	padding-right: 12px;
+}
+
+.dashboard .v-treetable [class*="cell-content"] {
+	padding-left: 12px;
+	padding-right: 12px;
+}
+
+.dashboard .v-treetable [class*="cell-content"]:first-child {
+	padding-left: 13px;
+}
+
+.dashboard .v-treetable-treespacer {
+	display: inline-block;
+	position: absolute;
+	width: 19px !important;
+	margin-left: -25px;
+	text-align: center;
+	cursor: pointer;
+}
+
+.dashboard .v-treetable-node-closed:before {
+	content: "\f0da";
+	font-family: ThemeIcons;
+}
+
+.dashboard .v-treetable-node-open:before {
+	content: "\f0d7";
+	font-family: ThemeIcons;
+}
+
 .dashboard .v-tabsheet:not(.v-has-width) {
 	width: auto !important;
 }
@@ -10529,6 +10585,95 @@ div.v-layout.v-horizontal.v-widget {
 .dashboard .v-select-select  + .v-textfield  + .v-nativebutton {
 	margin-top: 9px;
 	margin-left: 9px;
+}
+
+.dashboard .v-popupview {
+	cursor: pointer;
+	color: #197de1;
+	text-decoration: underline;
+	font-weight: inherit;
+	-webkit-transition: color 140ms;
+	-moz-transition: color 140ms;
+	transition: color 140ms;
+}
+
+.dashboard .v-popupview:hover {
+	color: #4396ea;
+}
+
+.dashboard .v-popupview.v-disabled {
+	opacity: 0.5;
+	filter: alpha(opacity=50) ;
+}
+
+.dashboard .v-popupview-popup {
+	padding: 4px 4px;
+	border-radius: 4px;
+	background-color: white;
+	color: #474747;
+	-webkit-box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1), 0 3px 5px 0 rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.09098);
+	box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1), 0 3px 5px 0 rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.09098);
+	-webkit-backface-visibility: hidden;
+	-moz-backface-visibility: hidden;
+	-ms-backface-visibility: hidden;
+	backface-visibility: hidden;
+}
+
+.dashboard .v-popupview-popup[class*="animate-in"] {
+	-webkit-animation: v-popupview-animate-in 120ms;
+	-moz-animation: v-popupview-animate-in 120ms;
+	animation: v-popupview-animate-in 120ms;
+}
+
+.dashboard .v-popupview-popup[class*="animate-out"] {
+	-webkit-animation: valo-animate-out-fade 120ms;
+	-moz-animation: valo-animate-out-fade 120ms;
+	animation: valo-animate-out-fade 120ms;
+}
+
+.dashboard .v-popupview-popup .popupContent  > .v-margin-top {
+	padding-top: 12px;
+}
+
+.dashboard .v-popupview-popup .popupContent  > .v-margin-right {
+	padding-right: 12px;
+}
+
+.dashboard .v-popupview-popup .popupContent  > .v-margin-bottom {
+	padding-bottom: 12px;
+}
+
+.dashboard .v-popupview-popup .popupContent  > .v-margin-left {
+	padding-left: 12px;
+}
+
+.dashboard .v-popupview-loading {
+	margin: 12px 12px;
+	height: 24px !important;
+	width: 24px !important;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	border: 2px solid rgba(25, 125, 225, 0.2);
+	border-top-color: #197de1;
+	border-right-color: #197de1;
+	border-radius: 100%;
+	-webkit-animation: v-rotate-360 500ms infinite linear;
+	-moz-animation: v-rotate-360 500ms infinite linear;
+	animation: v-rotate-360 500ms infinite linear;
+	pointer-events: none;
+}
+
+.v-ie8 .dashboard .v-popupview-loading, .v-ie9 .dashboard .v-popupview-loading {
+	border: none;
+	border-radius: 4px;
+	background: #fff url(../valo/shared/img/spinner.gif) no-repeat 50% 50%;
+	background-size: 80%;
+}
+
+.v-ie8 .dashboard .v-popupview-loading {
+	min-width: 30px;
+	min-height: 30px;
 }
 
 .dashboard .v-richtextarea {

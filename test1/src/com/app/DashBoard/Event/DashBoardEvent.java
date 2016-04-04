@@ -2,6 +2,7 @@ package com.app.DashBoard.Event;
 
 import com.app.Auth.Person;
 import com.app.DashBoard.View.DashBoardViewType;
+import com.app.enumPackage.VeranstaltungsTypen;
 
 /*
  * Event bus events used in Dashboard are listed here as inner classes.
@@ -87,6 +88,18 @@ public abstract class DashBoardEvent {
     		return this.person;
     	}
     	
+    }
+    
+    public static final class NeueVeranstaltung {
+    	private VeranstaltungsTypen neueVeranstaltung;
+    	
+    	public NeueVeranstaltung(final VeranstaltungsTypen neueVeranstaltung) {
+    		this.neueVeranstaltung = neueVeranstaltung;
+    	}
+    	
+    	public VeranstaltungsTypen getVeranstaltungsTyp () {
+    		return this.neueVeranstaltung;
+    	}
     }
     
     public static class UpdateUserEvent {

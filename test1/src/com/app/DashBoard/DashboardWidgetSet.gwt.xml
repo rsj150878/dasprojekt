@@ -25,13 +25,11 @@
 			class="com.vaadin.client.metadata.ConnectorBundleLoader" />
 	</generate-with>
 
-    <!-- <inherits name="com.example.testUIWithLogin.AppWidgetSet" /> -->
-    
-     <inherits name="org.vaadin.gridutil.WidgetSet" />
-
-
+    <inherits name="org.vaadin.gridutil.WidgetSet" />
 
     <inherits name="org.vaadin.hene.popupbutton.widgetset.PopupbuttonWidgetset" />
 
     <inherits name="org.tepi.filtertable.gwt.FilterTableWidgetset" />
+
+    <inherits name="com.example.testUIWithLogin.AppWidgetSet" />
 </module>

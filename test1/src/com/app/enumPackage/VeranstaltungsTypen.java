@@ -30,6 +30,18 @@ public enum VeranstaltungsTypen {
 	public String getVeranstaltungsTypBezeichnung() {
 		return veranstaltungsTypBezeichnung;
 	}
+	
+	public static VeranstaltungsTypen getVeranstaltungsTypForId(Integer id) {
+		for (VeranstaltungsTypen x : VeranstaltungsTypen.values()) {
+			if (id.equals(x.veranstaltungsTypID)) {
+				return x;
+			}
+
+		}
+
+		return null;
+		
+	}
 
 	public void setVeranstaltungsTypBezeichnung(
 			String veranstaltungsTypBezeichnung) {

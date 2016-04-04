@@ -104,7 +104,8 @@
 		 
 		 <dependency org="org.vaadin.addons" name="vaadin-grid-util" rev="1.0.8" />
 		 
-		    
+		 <dependency org="org.vaadin.addons" name="filteringtable" rev="0.9.15.v7" />
+
 		 <!-- <dependency org="org.apache.httpcomponents" name="httpclient" rev="4.5"/> -->
 		 <!-- <dependency org="org.apache.httpcomponents" name="httpcore" rev="4.4.1"/>  -->
 		 <!-- <dependency org="org.apache.httpcomponents" name="httpcomponents-client" rev="4.5"/> -->

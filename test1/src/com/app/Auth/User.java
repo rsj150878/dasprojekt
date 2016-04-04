@@ -13,7 +13,6 @@ import com.vaadin.data.util.filter.Compare.Equal;
 import com.vaadin.data.util.sqlcontainer.SQLContainer;
 import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 
-@SuppressWarnings({ "serial", "unchecked" })
 public final class User {
 	private String role;
 	private Integer idUser;

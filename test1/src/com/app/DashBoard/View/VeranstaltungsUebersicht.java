@@ -1,6 +1,7 @@
 package com.app.DashBoard.View;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.app.DashBoard.Event.DashBoardEvent.NeueVeranstaltung;
@@ -13,15 +14,15 @@ import com.vaadin.data.Item;
 import com.vaadin.data.util.filter.Compare.Equal;
 import com.vaadin.data.util.sqlcontainer.RowId;
 import com.vaadin.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.data.util.sqlcontainer.query.OrderBy;
 import com.vaadin.data.util.sqlcontainer.query.QueryDelegate;
-import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 import com.vaadin.data.util.sqlcontainer.query.QueryDelegate.RowIdChangeEvent;
+import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.MouseEventDetails.MouseButton;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
@@ -30,7 +31,6 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
@@ -72,6 +72,7 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 
 		try {
 			veranstaltungsContainer = new SQLContainer(q1);
+			veranstaltungsContainer.addOrderBy(new OrderBy("datum", false));
 			veranstaltungsStufenContainer = new SQLContainer(q2);
 
 			veranstaltungsContainer.addRowIdChangeListener(this);
@@ -115,53 +116,128 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 	}
 
 	private Component buildDrafts() {
+		
+		Panel draftsPanel = new Panel("Alle Veranstaltungen");
+		draftsPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
+		draftsPanel.addStyleName(ValoTheme.PANEL_SCROLL_INDICATOR);
+		draftsPanel.setSizeUndefined();
+		
 		final VerticalLayout allDrafts = new VerticalLayout();
 		allDrafts.setSizeFull();
-		allDrafts.setCaption("Alle Veranstaltungen");
+		allDrafts.setSpacing(true);
+		//allDrafts.setCaption("Alle Veranstaltungen");
 
-		VerticalLayout titleAndDrafts = new VerticalLayout();
-		titleAndDrafts.setSizeUndefined();
-		titleAndDrafts.setSpacing(true);
-		titleAndDrafts.addStyleName("drafts");
-		allDrafts.addComponent(titleAndDrafts);
-		allDrafts
-				.setComponentAlignment(titleAndDrafts, Alignment.MIDDLE_CENTER);
+		// VerticalLayout titleAndDrafts = new VerticalLayout();
+		// titleAndDrafts.setSizeUndefined();
+		// titleAndDrafts.setSpacing(true);
+		// titleAndDrafts.addStyleName("drafts");
+		// allDrafts.addComponent(titleAndDrafts);
+		// allDrafts
+		// .setComponentAlignment(titleAndDrafts, Alignment.MIDDLE_CENTER);
+		allDrafts.addComponent(buildCreateBox());
 
-		Label draftsTitle = new Label("Drafts");
-		draftsTitle.addStyleName(ValoTheme.LABEL_H1);
-		draftsTitle.setSizeUndefined();
-		titleAndDrafts.addComponent(draftsTitle);
-		titleAndDrafts.setComponentAlignment(draftsTitle, Alignment.TOP_CENTER);
+		buildDraftsList(allDrafts);
 
-		titleAndDrafts.addComponent(buildDraftsList());
-
-		return allDrafts;
+		draftsPanel.setContent(allDrafts);
+		
+		return draftsPanel;
 	}
 
-	private Component buildDraftsList() {
+	private Component buildDraftsList(VerticalLayout parentLayout) {
+
 		HorizontalLayout drafts = new HorizontalLayout();
 		drafts.setSpacing(true);
+		drafts.setSizeUndefined();
 
-		drafts.addComponent(buildDraftThumb());
-		drafts.addComponent(buildCreateBox());
+		System.out.println("veranstaltungsdatum "
+				+ veranstaltungsContainer
+						.getItem(veranstaltungsContainer.getIdByIndex(0))
+						.getItemProperty("datum").getValue().toString());
+
+		String year = veranstaltungsContainer
+				.getItem(veranstaltungsContainer.getIdByIndex(0))
+				.getItemProperty("datum").getValue().toString().substring(0, 4);
+
+		Label yearLabel = new Label(year);
+		yearLabel.setSizeUndefined();
+
+		Panel yearPanel = new Panel();
+		yearPanel.setSizeUndefined();
+		yearPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
+		yearPanel.addStyleName(ValoTheme.PANEL_SCROLL_INDICATOR);
+
+		parentLayout.addComponent(yearLabel);
+		parentLayout.addComponent(yearPanel);
+
+		yearPanel.setContent(drafts);
+
+		for (Object itemId : veranstaltungsContainer.getItemIds()) {
+
+			if (!year.equals(veranstaltungsContainer
+					.getItem(itemId)
+					.getItemProperty("datum").getValue().toString()
+					.substring(0, 4))) {
+
+				
+				yearPanel.setContent(drafts);
+				
+				year = veranstaltungsContainer
+						.getItem(itemId)
+						.getItemProperty("datum").getValue().toString()
+						.substring(0, 4);
+
+				yearLabel = new Label(year);
+				yearLabel.setSizeUndefined();
+
+				yearPanel = new Panel();
+				yearPanel.setSizeUndefined();
+				yearPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
+				yearPanel.addStyleName(ValoTheme.PANEL_SCROLL_INDICATOR);
+
+				parentLayout.addComponent(yearLabel);
+				parentLayout.addComponent(yearPanel);
+
+				drafts = new HorizontalLayout();
+				drafts.setSpacing(true);
+				drafts.setSizeUndefined();
+
+			
+
+			}
+
+			drafts.addComponent(buildDraftThumb(veranstaltungsContainer
+					.getItem(itemId)));
+
+		}
+		
+		yearPanel.setContent(drafts);
 
 		return drafts;
 	}
 
-	private Component buildDraftThumb() {
+	private Component buildDraftThumb(Item veranstaltungsItem) {
+
+		final Item vaItem = veranstaltungsItem;
+
 		VerticalLayout draftThumb = new VerticalLayout();
+		draftThumb.setWidth(160.0f, Unit.PIXELS);
+		draftThumb.setHeight(200.0f, Unit.PIXELS);
+
 		draftThumb.setSpacing(true);
 
-		draftThumb.addStyleName("draft-thumb");
-		Image draft = new Image(null, new ThemeResource(
-				"img/draft-report-thumb.png"));
-		draft.setWidth(160.0f, Unit.PIXELS);
-		draft.setHeight(200.0f, Unit.PIXELS);
-		draft.setDescription("Click to edit");
-		draftThumb.addComponent(draft);
-		Label draftTitle = new Label(
-				"Monthly revenue<br><span>Last modified 1 day ago</span>",
-				ContentMode.HTML);
+		StringBuilder sb = new StringBuilder();
+		sb.append("<p align = \"center\"><b>");
+		sb.append(VeranstaltungsTypen.getVeranstaltungsTypForId(
+				Integer.valueOf(vaItem.getItemProperty("typ").getValue()
+						.toString())).getVeranstaltungsTypBezeichnung());
+
+		sb.append("</b><br>");
+		sb.append(new SimpleDateFormat("dd.MM.yyyy")
+				.format(vaItem
+						.getItemProperty("datum").getValue()));
+		sb.append("</p>");
+
+		Label draftTitle = new Label(sb.toString(), ContentMode.HTML);
 		draftTitle.setSizeUndefined();
 		draftThumb.addComponent(draftTitle);
 
@@ -182,7 +258,7 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 				if (event.getButton() == MouseButton.LEFT
 						&& event.getChildComponent() != delete) {
 
-					// addReport();
+					 openReport(vaItem);
 				}
 			}
 		});
@@ -201,6 +277,30 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 		createBox.setComponentAlignment(popupView, Alignment.MIDDLE_CENTER);
 
 		return createBox;
+	}
+	
+	public void openReport (Item toOpenVeranstaltung) {
+		VeranstaltungsDetailView detailView = new VeranstaltungsDetailView(
+				toOpenVeranstaltung, this);
+
+		String title = VeranstaltungsTypen.getVeranstaltungsTypForId(
+				Integer.valueOf(toOpenVeranstaltung.getItemProperty("typ")
+						.getValue().toString()))
+				.getVeranstaltungsTypBezeichnung();
+
+		title += " "
+				+ new SimpleDateFormat("dd.MM.yyyy").format(toOpenVeranstaltung
+						.getItemProperty("datum").getValue());
+
+		addTab(detailView).setClosable(true);
+
+		DashBoardEventBus.post(new ReportsCountUpdatedEvent(
+				getComponentCount() - 1));
+
+		detailView.setTitle(title);
+		setSelectedTab(getComponentCount() - 1);
+
+		
 	}
 
 	@Subscribe
@@ -241,11 +341,24 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 
 		VeranstaltungsDetailView detailView = new VeranstaltungsDetailView(
 				newVeranstaltung, this);
+
+		String title = VeranstaltungsTypen.getVeranstaltungsTypForId(
+				Integer.valueOf(newVeranstaltung.getItemProperty("typ")
+						.getValue().toString()))
+				.getVeranstaltungsTypBezeichnung();
+
+		title += " "
+				+ new SimpleDateFormat("dd.MM.yyyy").format(newVeranstaltung
+						.getItemProperty("datum").getValue());
+
 		addTab(detailView).setClosable(true);
 
 		DashBoardEventBus.post(new ReportsCountUpdatedEvent(
 				getComponentCount() - 1));
+
+		detailView.setTitle(title);
 		setSelectedTab(getComponentCount() - 1);
+
 	}
 
 	@Override
@@ -283,8 +396,7 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 				DashBoardEventBus.post(new ReportsCountUpdatedEvent(
 						getComponentCount() - 1));
 				Notification
-						.show("The report was saved as a draft",
-								"Actually, the report was just closed and deleted forever. As this is only a demo, it doesn't persist any data.",
+						.show("Die Veranstaltung wurde gespeichert",
 								Type.TRAY_NOTIFICATION);
 			}
 		});

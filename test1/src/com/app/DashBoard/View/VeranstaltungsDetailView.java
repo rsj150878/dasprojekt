@@ -220,15 +220,22 @@ public class VeranstaltungsDetailView extends CustomComponent implements
 		datumVeranstaltung.setPropertyDataSource(currentVeranstaltungsItem
 				.getItemProperty("datum"));
 		
-		setTitle();
-
 		datumVeranstaltung.addValueChangeListener(new ValueChangeListener() {
 
 			@Override
 			public void valueChange(ValueChangeEvent event) {
 				// TODO Auto-generated method stub
+				String title = VeranstaltungsTypen.getVeranstaltungsTypForId(
+						Integer.valueOf(currentVeranstaltungsItem
+								.getItemProperty("typ").getValue().toString()))
+						.getVeranstaltungsTypBezeichnung();
+
+				title += " " + new SimpleDateFormat("dd.MM.yyyy")
+						.format(currentVeranstaltungsItem.getItemProperty(
+								"datum").getValue());
+			
 				
-				setTitle();
+				setTitle(title);
 			
 			}
 
@@ -310,15 +317,7 @@ public class VeranstaltungsDetailView extends CustomComponent implements
 	}
 
 	
-	private void setTitle() {
-		String title = VeranstaltungsTypen.getVeranstaltungsTypForId(
-				Integer.valueOf(currentVeranstaltungsItem
-						.getItemProperty("typ").getValue().toString()))
-				.getVeranstaltungsTypBezeichnung();
-
-		title += " " + new SimpleDateFormat("dd.MM.yyyy")
-				.format(currentVeranstaltungsItem.getItemProperty(
-						"datum").getValue());
+	public void setTitle(String title) {
 		
 		listener.titleChanged(title, VeranstaltungsDetailView.this);
 	}
@@ -791,7 +790,7 @@ public class VeranstaltungsDetailView extends CustomComponent implements
 					|| defStufe == VeranstaltungsStufen.STUFE_BGH2
 					|| defStufe == VeranstaltungsStufen.STUFE_BGH3) {
 				anmeldungsTable.addContainerProperty("gespunkte",
-						TextArea.class, "0", "Gesamtpunkte", null, null);
+						TextField.class, "0", "Gesamtpunkte", null, null);
 				anmeldungsTable.addContainerProperty("textbewertung",
 						Label.class, null, "Bewertung", null, null);
 
@@ -802,36 +801,36 @@ public class VeranstaltungsDetailView extends CustomComponent implements
 					|| defStufe == VeranstaltungsStufen.STUFE_GAP3
 
 			) {
-				anmeldungsTable.addContainerProperty("uebung1", TextArea.class,
+				anmeldungsTable.addContainerProperty("uebung1", TextField.class,
 						"0", "Übung 1", null, null);
-				anmeldungsTable.addContainerProperty("uebung2", TextArea.class,
+				anmeldungsTable.addContainerProperty("uebung2", TextField.class,
 						"0", "Übung 2", null, null);
-				anmeldungsTable.addContainerProperty("uebung3", TextArea.class,
+				anmeldungsTable.addContainerProperty("uebung3", TextField.class,
 						"0", "Übung 3", null, null);
-				anmeldungsTable.addContainerProperty("uebung4", TextArea.class,
+				anmeldungsTable.addContainerProperty("uebung4", TextField.class,
 						"0", "Übung 4", null, null);
-				anmeldungsTable.addContainerProperty("uebung5", TextArea.class,
+				anmeldungsTable.addContainerProperty("uebung5", TextField.class,
 						"0", "Übung 5", null, null);
 				anmeldungsTable.addContainerProperty("gespunkte",
-						TextArea.class, "0", "Gesamtpunkte", null, null);
+						TextField.class, "0", "Gesamtpunkte", null, null);
 				anmeldungsTable.addContainerProperty("textbewertung",
 						Label.class, null, "Bewertung", null, null);
 
 			} else if (defStufe == VeranstaltungsStufen.STUFE_RBP1) {
-				anmeldungsTable.addContainerProperty("uebung1", TextArea.class,
+				anmeldungsTable.addContainerProperty("uebung1", TextField.class,
 						"0", "Übung 1", null, null);
-				anmeldungsTable.addContainerProperty("uebung2", TextArea.class,
+				anmeldungsTable.addContainerProperty("uebung2", TextField.class,
 						"0", "Übung 2", null, null);
-				anmeldungsTable.addContainerProperty("uebung3", TextArea.class,
+				anmeldungsTable.addContainerProperty("uebung3", TextField.class,
 						"0", "Übung 3", null, null);
-				anmeldungsTable.addContainerProperty("uebung4", TextArea.class,
+				anmeldungsTable.addContainerProperty("uebung4", TextField.class,
 						"0", "Übung 4", null, null);
-				anmeldungsTable.addContainerProperty("uebung5", TextArea.class,
+				anmeldungsTable.addContainerProperty("uebung5", TextField.class,
 						"0", "Übung 5", null, null);
-				anmeldungsTable.addContainerProperty("uebung6", TextArea.class,
+				anmeldungsTable.addContainerProperty("uebung6", TextField.class,
 						"0", "Übung 6", null, null);
 				anmeldungsTable.addContainerProperty("gespunkte",
-						TextArea.class, "0", "Gesamtpunkte", null, null);
+						TextField.class, "0", "Gesamtpunkte", null, null);
 				anmeldungsTable.addContainerProperty("textbewertung",
 						Label.class, null, "Bewertung", null, null);
 
@@ -839,22 +838,22 @@ public class VeranstaltungsDetailView extends CustomComponent implements
 					|| defStufe == VeranstaltungsStufen.STUFE_RBP3
 
 			) {
-				anmeldungsTable.addContainerProperty("uebung1", TextArea.class,
+				anmeldungsTable.addContainerProperty("uebung1", TextField.class,
 						"0", "Übung 1", null, null);
-				anmeldungsTable.addContainerProperty("uebung2", TextArea.class,
+				anmeldungsTable.addContainerProperty("uebung2", TextField.class,
 						"0", "Übung 2", null, null);
-				anmeldungsTable.addContainerProperty("uebung3", TextArea.class,
+				anmeldungsTable.addContainerProperty("uebung3", TextField.class,
 						"0", "Übung 3", null, null);
-				anmeldungsTable.addContainerProperty("uebung4", TextArea.class,
+				anmeldungsTable.addContainerProperty("uebung4", TextField.class,
 						"0", "Übung 4", null, null);
-				anmeldungsTable.addContainerProperty("uebung5", TextArea.class,
+				anmeldungsTable.addContainerProperty("uebung5", TextField.class,
 						"0", "Übung 5", null, null);
-				anmeldungsTable.addContainerProperty("uebung6", TextArea.class,
+				anmeldungsTable.addContainerProperty("uebung6", TextField.class,
 						"0", "Übung 6", null, null);
-				anmeldungsTable.addContainerProperty("uebung7", TextArea.class,
+				anmeldungsTable.addContainerProperty("uebung7", TextField.class,
 						"0", "Übung 7", null, null);
 				anmeldungsTable.addContainerProperty("gespunkte",
-						TextArea.class, "0", "Gesamtpunkte", null, null);
+						TextField.class, "0", "Gesamtpunkte", null, null);
 				anmeldungsTable.addContainerProperty("textbewertung",
 						Label.class, null, "Bewertung", null, null);
 

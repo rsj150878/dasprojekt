@@ -1,7 +1,10 @@
 package com.app.EmailSender;
 
+import java.net.URI;
 import java.util.ArrayList;
 
+import microsoft.exchange.webservices.data.autodiscover.IAutodiscoverRedirectionUrl;
+import microsoft.exchange.webservices.data.autodiscover.exception.AutodiscoverLocalException;
 import microsoft.exchange.webservices.data.core.ExchangeService;
 import microsoft.exchange.webservices.data.core.enumeration.misc.ExchangeVersion;
 import microsoft.exchange.webservices.data.core.enumeration.property.EmailAddressKey;
@@ -100,7 +103,8 @@ public class EwsReplClass {
 
 		ExchangeCredentials credentials = new WebCredentials(email, password);
 		service.setCredentials(credentials);
-		service.autodiscoverUrl(email);
+		//service.autodiscoverUrl(email, new URLCallBack());
+		service.setUrl(new URI("https://exchange.world4you.com/EWS/exchange.asmx"));
 		return service;
 	}
 
@@ -270,7 +274,8 @@ public class EwsReplClass {
 
 					// contactGroup.tryGetProperty(propertyDefinition,
 					// propertyValue)
-					if (person.getItemProperty("newsletter").getValue()
+					if (!(person.getItemProperty("newsletter").getValue() == null) &&
+							person.getItemProperty("newsletter").getValue()
 							.toString().equals("J")) {
 						contactGroup.getMembers().add(gm);
 					}
@@ -294,6 +299,7 @@ public class EwsReplClass {
 
 					System.out.println("key: " + key);
 					if ((sqlContainer.size() == 0)
+							&& !(person.getItemProperty("newsletter").getValue() == null)
 							&& person.getItemProperty("newsletter").getValue()
 									.toString().equals("J")) {
 						Object x = sqlContainer.addItem();
@@ -321,6 +327,18 @@ public class EwsReplClass {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+	}
+	
+	public class URLCallBack implements IAutodiscoverRedirectionUrl {
+
+	    @Override
+	    public boolean autodiscoverRedirectionUrlValidationCallback(String arg0)
+	            throws AutodiscoverLocalException {
+
+	        // Do your evaluation here
+	        return true;
+	    }
 
 	}
 

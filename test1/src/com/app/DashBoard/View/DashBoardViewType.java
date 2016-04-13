@@ -10,7 +10,8 @@ public enum DashBoardViewType {
     MYDOGS("Meine Hunde", MyHundeView.class, FontAwesome.BAR_CHART_O, false),  
     MITGLIEDER("Mitgliederliste", MitgliederView.class, FontAwesome.TABLE, false),
     VERANSTALTUNG("Veranstaltungen", VeranstaltungsUebersicht.class, FontAwesome.PARAGRAPH, false),
-    MAILABGLEICH("Mailadressenabgleich", MailReplicateView.class, FontAwesome.MAIL_FORWARD, false);
+    MAILABGLEICH("Mailadressenabgleich", MailReplicateView.class, FontAwesome.MAIL_FORWARD, false),
+    SCHOWIMPORT("SchowDatenImport", ShowImporter.class, FontAwesome.EXCLAMATION, false);
    // REPORTS("Verwaltung", null, FontAwesome.FILE_TEXT_O, true); //, SCHEDULE(
 //            "schedule", ScheduleView.class, FontAwesome.CALENDAR_O, false);
 

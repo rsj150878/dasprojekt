@@ -49,8 +49,7 @@ public final class ShowInfoUI extends UI {
      */
     private void updateContent() {
     	VerticalLayout mainLayout = new VerticalLayout();
-    	ComboBox yearSelect = new ComboBox("<div text-align:center>Ausstellungsjahr</div>");
-    	yearSelect.setCaptionAsHtml(true);
+    	ComboBox yearSelect = new ComboBox("Ausstellungsjahr");
     	
     	yearSelect.addItem(2016);
     	yearSelect.setItemCaption(2016, "2016");

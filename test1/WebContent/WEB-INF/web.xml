@@ -46,7 +46,7 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>ShowInfoDashboard</servlet-name>
-		<url-pattern>/showinfo/</url-pattern>
+		<url-pattern>/showinfo/*</url-pattern>
 	</servlet-mapping>
 	
 

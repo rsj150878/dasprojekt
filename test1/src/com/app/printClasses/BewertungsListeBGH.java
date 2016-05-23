@@ -119,7 +119,8 @@ public class BewertungsListeBGH extends CustomComponent {
 		fields.addSubstitutionFont(unicode);
 
 		fields.setField("Prüfungsordnung", "OEPO");
-		fields.setField("Verbandskörperschaft", "Österreichischer Retrieverclub");
+		fields.setField("Verbandskörperschaft",
+				"Österreichischer Retrieverclub");
 		fields.setField(
 				"Prüfungsstufe",
 				VeranstaltungsStufen.getBezeichnungForId(
@@ -160,7 +161,9 @@ public class BewertungsListeBGH extends CustomComponent {
 				.getItemProperty("plz_leiter").getValue().toString());
 
 		fields.setField("Telefonnummer Prüfungsleiter", veranstaltung
-				.getItemProperty("tel_nr_leiter").getValue().toString());
+				.getItemProperty("tel_nr_leiter").getValue() == null ? ""
+				: veranstaltung.getItemProperty("tel_nr_leiter").getValue()
+						.toString());
 
 		for (int i = 1; i <= 8; i++) {
 			fields.setField("Rüde " + i, "xx");
@@ -200,8 +203,8 @@ public class BewertungsListeBGH extends CustomComponent {
 							.getItemProperty("id_hund").getValue()));
 
 			personContainer.addContainerFilter(new Equal("idperson",
-					teilnehmerContainer.getItemUnfiltered(id).getItemProperty(
-							"id_person").getValue()));
+					teilnehmerContainer.getItemUnfiltered(id)
+							.getItemProperty("id_person").getValue()));
 
 			fields.setField("Hund " + i,
 					hundContainer.getItem(hundContainer.firstItemId())
@@ -282,12 +285,11 @@ public class BewertungsListeBGH extends CustomComponent {
 									.getItem(personContainer.firstItemId())
 									.getItemProperty("hausnummer").getValue()
 									.toString());
-			
+
 			fields.setField("Ort " + i,
 					personContainer.getItem(personContainer.firstItemId())
 							.getItemProperty("ort").getValue().toString());
 
-			
 			hundContainer.removeAllContainerFilters();
 			personContainer.removeAllContainerFilters();
 			i++;

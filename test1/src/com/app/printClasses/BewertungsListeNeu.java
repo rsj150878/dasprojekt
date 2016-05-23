@@ -25,20 +25,22 @@ import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.CustomComponent;
 
-public class GAPBewertungsExcel extends CustomComponent {
+public class BewertungsListeNeu extends CustomComponent {
 
 	private AbsoluteLayout mainLayout;
 	private TableQuery q3;
 	private TableQuery q4;
 	private TableQuery q5;
+	private TableQuery q1;
 
+	private SQLContainer veranstaltungsStufenContainer;
 	private SQLContainer personContainer;
 	private SQLContainer hundContainer;
 	private SQLContainer teilnehmerContainer;
 
-	private static String RESULT = "GAPExcelBewertungsListe.xls";
+	private static String RESULT = "BewertungsListeOERC.xls";
 
-	public GAPBewertungsExcel(Item veranstaltung, Item veranstaltungsStufe) {
+	public BewertungsListeNeu(Item veranstaltung) {
 
 		q3 = new TableQuery("veranstaltungs_teilnehmer",
 				DBConnection.INSTANCE.getConnectionPool());
@@ -50,19 +52,20 @@ public class GAPBewertungsExcel extends CustomComponent {
 		q5 = new TableQuery("hund", DBConnection.INSTANCE.getConnectionPool());
 		q5.setVersionColumn("version");
 
+		q1 = new TableQuery("veranstaltungs_stufe",
+				DBConnection.INSTANCE.getConnectionPool());
+		q1.setVersionColumn("version");
+
 		try {
 
 			personContainer = new SQLContainer(q4);
 			hundContainer = new SQLContainer(q5);
 			teilnehmerContainer = new SQLContainer(q3);
+			veranstaltungsStufenContainer = new SQLContainer(q1);
 
-			System.out.println("stufe: "
-					+ veranstaltungsStufe.getItemProperty("id_stufe")
-							.getValue().toString());
-			teilnehmerContainer
-					.addContainerFilter(new Equal("id_stufe",
-							veranstaltungsStufe.getItemProperty("id_stufe")
-									.getValue()));
+			teilnehmerContainer.addContainerFilter(new Equal(
+					"id_veranstaltung", veranstaltung.getItemProperty(
+							"id_veranstaltung").getValue()));
 
 			mainLayout = new AbsoluteLayout();
 			mainLayout.setImmediate(false);
@@ -81,11 +84,19 @@ public class GAPBewertungsExcel extends CustomComponent {
 
 				System.out.println(zw);
 
+				veranstaltungsStufenContainer.addContainerFilter(new Equal(
+						"id_stufe", teilnehmerContainer.getItem(zw)
+								.getItemProperty("id_stufe").getValue()));
+
 				VeranstaltungsStufen ob = VeranstaltungsStufen
 						.getBezeichnungForId(Integer
-								.valueOf(veranstaltungsStufe
+								.valueOf(veranstaltungsStufenContainer
+										.getItem(
+												veranstaltungsStufenContainer
+														.getIdByIndex(0))
 										.getItemProperty("stufen_typ")
 										.getValue().toString()));
+				veranstaltungsStufenContainer.removeAllContainerFilters();
 				Label label = new Label(0, i, ob.getBezeichnung());
 				sheet.addCell(label);
 
@@ -107,11 +118,13 @@ public class GAPBewertungsExcel extends CustomComponent {
 
 				DateFormat df = new DateFormat("dd.MM.yyyy");
 				WritableCellFormat cf1 = new WritableCellFormat(df);
-				 
-				DateTime dt = new DateTime(2, i, new SimpleDateFormat("yyyy-MM-dd").parse(hundContainer
-									.getItem(hundContainer.firstItemId())
-									.getItemProperty("wurfdatum").getValue().toString()), cf1, DateTime.GMT);
-				       
+
+				DateTime dt = new DateTime(2, i, new SimpleDateFormat(
+						"yyyy-MM-dd").parse(hundContainer
+						.getItem(hundContainer.firstItemId())
+						.getItemProperty("wurfdatum").getValue().toString()),
+						cf1, DateTime.GMT);
+
 				sheet.addCell(dt);
 
 				Label rasse = new Label(3, i, hundContainer
@@ -124,15 +137,19 @@ public class GAPBewertungsExcel extends CustomComponent {
 						.getItemProperty("geschlecht").getValue().toString());
 				sheet.addCell(geschlecht);
 
-				NumberFormat chipNrFormat = new NumberFormat("000000000000000");
-				WritableCellFormat chipCell = new WritableCellFormat(chipNrFormat);
-				Number n = new Number(4,i,Float.valueOf(hundContainer.getItem(hundContainer.firstItemId())
-						.getItemProperty("chipnummer").getValue().toString()), chipCell);
+				NumberFormat chipNrFormat = new NumberFormat(
+						"000 000 000 000 000");
+				WritableCellFormat chipCell = new WritableCellFormat(
+						chipNrFormat);
+				Number n = new Number(5, i, Float.valueOf(hundContainer
+						.getItem(hundContainer.firstItemId())
+						.getItemProperty("chipnummer").getValue().toString()),
+						chipCell);
 				sheet.addCell(n);
 
 				String hundeFuehrer = "";
-				if (teilnehmerContainer.getItem(zw)
-						.getItemProperty("hundefuehrer").getValue() != null) {
+				if (!(teilnehmerContainer.getItem(zw)
+						.getItemProperty("hundefuehrer").getValue() == null)) {
 
 					hundeFuehrer = teilnehmerContainer.getItem(zw)
 							.getItemProperty("hundefuehrer").getValue()
@@ -151,28 +168,45 @@ public class GAPBewertungsExcel extends CustomComponent {
 				sheet.addCell(hundeFuehrerCell);
 
 				NumberFormat punktFormat = new NumberFormat("##0");
-				WritableCellFormat punktCell = new WritableCellFormat(punktFormat);
-				
-				
-				Number punkte = null;
-				if (teilnehmerContainer.getItem(zw)
-						.getItemProperty("ges_punkte").getValue() != null) {
-					punkte = new Number(6, i,
-							Integer.valueOf(teilnehmerContainer.getItem(zw)
-									.getItemProperty("ges_punkte").getValue()
-									.toString()), punktCell);
-				} else {
-					punkte = new Number(7, i, 0, punktCell);
+				WritableCellFormat punktCell = new WritableCellFormat(
+						punktFormat);
 
-				}
-
-				sheet.addCell(punkte);
-
-				Label unbefangenheitsprobe = new Label(8, i,
+				Label unbefangenheitsprobe = new Label(7, i,
 						teilnehmerContainer.getItem(zw)
 								.getItemProperty("bestanden").getValue()
-								.toString());
+								.toString().equals("J") ? "B" : "NB");
 				sheet.addCell(unbefangenheitsprobe);
+
+				if (ob.equals(VeranstaltungsStufen.STUFE_BH)) {
+
+					String bestandenString = "";
+					if (teilnehmerContainer.getItem(zw)
+							.getItemProperty("bestanden").getValue().toString()
+							.equals(("J"))) {
+						bestandenString = "best.";
+
+					} else {
+						bestandenString = "n.best.";
+					}
+
+					Label bestanden = new Label(8, i, bestandenString);
+					sheet.addCell(bestanden);
+
+				} else {
+					Number punkte = null;
+					if (teilnehmerContainer.getItem(zw)
+							.getItemProperty("ges_punkte").getValue() != null) {
+						punkte = new Number(8, i,
+								Integer.valueOf(teilnehmerContainer.getItem(zw)
+										.getItemProperty("ges_punkte")
+										.getValue().toString()), punktCell);
+					} else {
+						punkte = new Number(8, i, 0, punktCell);
+
+					}
+					sheet.addCell(punkte);
+
+				}
 
 				hundContainer.removeAllContainerFilters();
 				personContainer.removeAllContainerFilters();

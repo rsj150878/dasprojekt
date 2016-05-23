@@ -3,10 +3,16 @@ package com.app.printClasses;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import jxl.Workbook;
+import jxl.write.DateFormat;
+import jxl.write.DateFormats;
+import jxl.write.DateTime;
 import jxl.write.Label;
 import jxl.write.Number;
+import jxl.write.NumberFormat;
+import jxl.write.WritableCellFormat;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 
@@ -75,8 +81,6 @@ public class RBPBewertungsExcel extends CustomComponent {
 			int i = 0;
 			for (Object zw : teilnehmerContainer.getItemIds()) {
 
-				System.out.println(zw);
-
 				VeranstaltungsStufen ob = VeranstaltungsStufen
 						.getBezeichnungForId(Integer
 								.valueOf(veranstaltungsStufe
@@ -101,24 +105,26 @@ public class RBPBewertungsExcel extends CustomComponent {
 						.getItemProperty("zwingername").getValue().toString());
 				sheet.addCell(hundeName);
 
-				String wurfDate = new SimpleDateFormat("dd.MM.yyyy")
-						.format(hundContainer
-								.getItem(hundContainer.firstItemId())
-								.getItemProperty("wurfdatum").getValue());
-
-				Label wurfDatumCell = new Label(2, i, wurfDate);
-				sheet.addCell(wurfDatumCell);
+								
+				DateFormat df = new DateFormat("dd.MM.yyyy");
+				WritableCellFormat cf1 = new WritableCellFormat(df);
+				 
+				DateTime dt = new DateTime(2, i, new SimpleDateFormat("yyyy-MM-dd").parse(hundContainer
+									.getItem(hundContainer.firstItemId())
+									.getItemProperty("wurfdatum").getValue().toString()), cf1, DateTime.GMT);
+				       
+				sheet.addCell(dt);
 
 				Label rasse = new Label(3, i, hundContainer
 						.getItem(hundContainer.firstItemId())
 						.getItemProperty("rasse").getValue().toString());
 				sheet.addCell(rasse);
-
-				Label chipNummer = new Label(4, i, "=\""
-						+ hundContainer.getItem(hundContainer.firstItemId())
-								.getItemProperty("chipnummer").getValue()
-								.toString() + "\"");
-				sheet.addCell(chipNummer);
+		
+				NumberFormat chipNrFormat = new NumberFormat("000000000000000");
+				WritableCellFormat chipCell = new WritableCellFormat(chipNrFormat);
+				Number n = new Number(4,i,Float.valueOf(hundContainer.getItem(hundContainer.firstItemId())
+						.getItemProperty("chipnummer").getValue().toString()), chipCell);
+				sheet.addCell(n);
 
 				String hundeFuehrer = "";
 				if (teilnehmerContainer.getItem(zw)
@@ -140,15 +146,18 @@ public class RBPBewertungsExcel extends CustomComponent {
 				Label hundeFuehrerCell = new Label(5, i, hundeFuehrer);
 				sheet.addCell(hundeFuehrerCell);
 
+				NumberFormat punktFormat = new NumberFormat("##0");
+				WritableCellFormat punktCell = new WritableCellFormat(punktFormat);
+				
 				Number punkte = null;
 				if (teilnehmerContainer.getItem(zw)
 						.getItemProperty("ges_punkte").getValue() != null) {
 					punkte = new Number(6, i,
 							Integer.valueOf(teilnehmerContainer.getItem(zw)
 									.getItemProperty("ges_punkte").getValue()
-									.toString()));
+									.toString()), punktCell);
 				} else {
-					punkte = new Number(6, i, 0);
+					punkte = new Number(6, i, 0, punktCell);
 							
 				}
 

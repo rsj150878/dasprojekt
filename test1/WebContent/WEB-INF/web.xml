@@ -22,6 +22,22 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>com.app.config.AppConfig</param-value>
 	</context-param>
+	
+	<context-param>
+    	<param-name>DBURLLocal</param-name>
+    	<param-value>jdbc:mysql://localhost:3306/test</param-value>
+	</context-param>
+
+	<context-param>
+    	<param-name>DBURL</param-name>
+    	<param-value>jdbc:mysql://profi1.de:3306/test</param-value>
+	</context-param>
+
+	<context-param>
+    	<param-name>DBURLProd</param-name>
+    	<param-value>jdbc:mysql://profi1.de:3306/prod</param-value>
+	</context-param>
+
 
 	<servlet>
 		<servlet-name>HuschuDashboard</servlet-name>

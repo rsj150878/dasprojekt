@@ -54,7 +54,7 @@ public class HundeDetailWindow extends Window {
 
 	private BeanFieldGroup<Hund> fieldGroup;
 
-	@PropertyId("bhdatum")
+	@PropertyId("bh_datum")
 	private DateField bhDatumField;
 	@PropertyId("chipnummer")
 	private TextField chipnummerField;
@@ -83,9 +83,11 @@ public class HundeDetailWindow extends Window {
 	private TempTransactionsContainer containerSource;
 	private Kursblatt zw;
 
-	
 	private HundeDetailWindow(Person person, Collection<Hund> hundeCollection) {
-		this.hund = hundeCollection.iterator().next();
+		if (hundeCollection.size() > 0) {
+			this.hund = hundeCollection.iterator().next();
+
+		}
 		this.hundeCollection = hundeCollection;
 		this.person = person;
 
@@ -171,7 +173,6 @@ public class HundeDetailWindow extends Window {
 
 	private Component buildHundeAuswahlTab() {
 
-		System.out.println("bin in neuer tab");
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSizeFull();
 		layout.setSpacing(true);
@@ -182,7 +183,14 @@ public class HundeDetailWindow extends Window {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				Hund newHund = new Hund(person.getIdPerson());
+
 				hundeCollection.add(newHund);
+
+				containerSource = new TempTransactionsContainer(hundeCollection);
+				dogTable.setContainerDataSource(containerSource);
+				dogTable.setVisibleColumns("rufname", "zwingername");
+				dogTable.setColumnHeaders("Rufname", "Zwingername");
+				
 				containerSource.update();
 				dogTable.select(newHund);
 
@@ -200,14 +208,19 @@ public class HundeDetailWindow extends Window {
 		dogTable.addStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
 		dogTable.addStyleName(ValoTheme.TABLE_COMPACT);
 
-		containerSource = new TempTransactionsContainer(hundeCollection);
-		dogTable.setContainerDataSource(containerSource);
+		if (hundeCollection.size() > 0) {
+			containerSource = new TempTransactionsContainer(hundeCollection);
+			dogTable.setContainerDataSource(containerSource);
+			dogTable.setVisibleColumns("rufname", "zwingername");
+			dogTable.setColumnHeaders("Rufname", "Zwingername");
+			
+
+		}
 
 		dogTable.setSelectable(true);
 
-		dogTable.setVisibleColumns("rufname", "zwingername");
-		dogTable.setColumnHeaders("Rufname", "Zwingername");
-
+		
+		
 		dogTable.addItemClickListener(new ItemClickListener() {
 
 			@Override
@@ -344,7 +357,7 @@ public class HundeDetailWindow extends Window {
 	}
 
 	private Component buildFooter() {
-		final GridLayout footer = new GridLayout(3,1);
+		final GridLayout footer = new GridLayout(3, 1);
 		footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
 		footer.setWidth(100.0f, Unit.PERCENTAGE);
 
@@ -359,23 +372,21 @@ public class HundeDetailWindow extends Window {
 				public void buttonClick(ClickEvent event) {
 					// TODO Auto-generated method stub
 
-					
 					if (!(zw == null)) {
 						footer.removeComponent(zw);
 					}
 					zw = new Kursblatt(person, hund);
-					footer.addComponent(zw,1,0);
-					
+					footer.addComponent(zw, 1, 0);
+
 				}
 
 			});
 
-			footer.addComponent(printButton,0,0);
-			//footer.setComponentAlignment(printButton, Alignment.TOP_LEFT);
+			footer.addComponent(printButton, 0, 0);
+			// footer.setComponentAlignment(printButton, Alignment.TOP_LEFT);
 
 		}
 
-		
 		Button ok = new Button("OK");
 		ok.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		ok.addClickListener(new ClickListener() {
@@ -405,10 +416,9 @@ public class HundeDetailWindow extends Window {
 			}
 		});
 		ok.focus();
-		footer.addComponent(ok,2,0);
+		footer.addComponent(ok, 2, 0);
 		footer.setComponentAlignment(ok, Alignment.TOP_RIGHT);
 
-		
 		return footer;
 	}
 
@@ -446,18 +456,11 @@ public class HundeDetailWindow extends Window {
 			if (ascending.length != 0) {
 				final boolean sortAscending = ascending[0];
 				final Object sortContainerPropertyId = propertyId[0];
-				if (sortAscending) {
-					System.out.println("true");
-				} else {
-					System.out.println("false");
-				}
-				;
 
 				Collections.sort(getBackingList(), new Comparator<Hund>() {
 					@Override
 					public int compare(final Hund o1, final Hund o2) {
 
-						System.out.println("bin in compare");
 						int result = 0;
 						// if ("vorName".equals(sortContainerPropertyId)) {
 						// result = o1.getVorName().compareTo(
@@ -471,17 +474,13 @@ public class HundeDetailWindow extends Window {
 						if (!sortAscending) {
 							result *= -1;
 						}
-
-						System.out.println(" result " + result);
-
 						return result;
 					}
 				}
 
 				);
 				fireItemSetChange();
-				System.out.println("getBackingList.size "
-						+ getBackingList().size());
+
 			}
 		}
 

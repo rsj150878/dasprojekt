@@ -24,6 +24,7 @@ import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.shared.MouseEventDetails.MouseButton;
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -60,6 +61,7 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 		addStyleName("reports");
 		addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
 		setCloseHandler(this);
+		
 		DashBoardEventBus.register(this);
 
 		q1 = new TableQuery("veranstaltung",
@@ -121,6 +123,7 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 		draftsPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
 		draftsPanel.addStyleName(ValoTheme.PANEL_SCROLL_INDICATOR);
 		draftsPanel.setSizeUndefined();
+		
 		
 		final VerticalLayout allDrafts = new VerticalLayout();
 		allDrafts.setSizeFull();
@@ -218,11 +221,12 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 	private Component buildDraftThumb(Item veranstaltungsItem) {
 
 		final Item vaItem = veranstaltungsItem;
-
+		
 		VerticalLayout draftThumb = new VerticalLayout();
 		draftThumb.setWidth(160.0f, Unit.PIXELS);
 		draftThumb.setHeight(200.0f, Unit.PIXELS);
-
+		draftThumb.addStyleName("draft-thumb");
+		 
 		draftThumb.setSpacing(true);
 
 		StringBuilder sb = new StringBuilder();

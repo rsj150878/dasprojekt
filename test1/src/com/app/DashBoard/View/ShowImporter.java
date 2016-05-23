@@ -173,7 +173,7 @@ public class ShowImporter extends VerticalLayout implements View {
 						rasse = Rassen.CHESAPEAKE_BAY_RETRIEVER
 								.getRassenKurzBezeichnung();
 						break;
-					case "Curly Coated Retriever":
+					case "Curly-Coated Retriever":
 						rasse = Rassen.CURLY_COATED_RETRIEVER
 								.getRassenKurzBezeichnung();
 						break;
@@ -288,12 +288,6 @@ public class ShowImporter extends VerticalLayout implements View {
 								.setValue(row.getString("Zuchtbuchnummer"));
 						schauHundItem.getItemProperty("chipnummer").setValue(
 								"000");
-						schauHundItem.getItemProperty("katalognummer")
-								.setValue(
-										row.getInt("Katalognummer").toString()
-												.trim()
-												+ row.getString("aNummer")
-														.trim());
 						schauHundItem.getItemProperty("klasse").setValue(
 								row.getString("Klasse"));
 
@@ -305,13 +299,40 @@ public class ShowImporter extends VerticalLayout implements View {
 						schauHundItem.getItemProperty("besitzershow").setValue(
 								row.getString("Besitzername"));
 
-						schauHundItem.getItemProperty("bewertung").setValue(
-								row.getString("Beschreibung"));
+						schauHundItem.getItemProperty("katalognummer")
+								.setValue(
+										row.getInt("Katalognummer").toString()
+												.trim()
+												+ row.getString("aNummer")
+														.trim());
 
-						schauHundItem.getItemProperty("hundfehlt").setValue(
+						if (!(row.getString("Beschreibung") == null)) {
+							schauHundItem.getItemProperty("bewertung")
+									.setValue(row.getString("Beschreibung"));
+							
+
+						}
+
+						schauHundItem
+						.getItemProperty("hundfehlt")
+						.setValue(
 								row.getBoolean("fehlt") ? "J" : "N");
-
+						
 						schauHundItem.getItemProperty("rasse").setValue(rasse);
+						schauHundItem.getItemProperty("idschau").setValue(
+								newItem.getItemProperty("idschau").getValue());
+
+						schauHundItem.getItemProperty("geschlecht").setValue(
+								row.getString("Geschlecht"));
+						schauHundItem.getItemProperty("zuechter").setValue(
+								row.getString("Zuechter"));
+
+						if (!(row.getInt("Numerierung") == null)) {
+							schauHundItem.getItemProperty("platzierung")
+									.setValue(
+											row.getInt("Numerierung")
+													.toString());
+						}
 
 						if (!(row.getInt("Bewertung") == null)) {
 							switch (row.getInt("Bewertung")) {
@@ -336,6 +357,31 @@ public class ShowImporter extends VerticalLayout implements View {
 										.setValue("ob");
 								break;
 							default:
+								System.out
+										.println("unbekannter wert für formwert erwachsene: "
+												+ row.getInt("Bewertung"));
+								break;
+							}
+						}
+
+						if (!(row.getInt("Juengstenklasse") == null)) {
+							switch (row.getInt("Juengstenklasse")) {
+							case 6:
+								schauHundItem.getItemProperty("formwert")
+										.setValue("vv");
+								break;
+							case 7:
+								schauHundItem.getItemProperty("formwert")
+										.setValue("v");
+								break;
+							case 8:
+								schauHundItem.getItemProperty("formwert")
+										.setValue("g");
+								break;
+							default:
+								System.out
+										.println("unbekannter wert für formwert jüngsten: "
+												+ row.getInt("Bewertung"));
 								break;
 							}
 						}

@@ -12839,3 +12839,262 @@ div.v-layout.v-horizontal.v-widget {
 .dashboard .mitglieder .v-grid-cell.link-icon-hund .v-button-bar button.v-edit span:before {
 	content: "\f281";
 }
+
+.dashboard .reports .create .v-slot {
+	border: 1px solid rgba(122, 122, 122, 0.1);
+	background: rgba(122, 122, 122, 0.04);
+}
+
+.dashboard .reports .draft-thumb {
+	border: 1px solid rgba(122, 122, 122, 0.1);
+	background: rgba(122, 122, 122, 0.04);
+	cursor: pointer;
+	position: relative;
+}
+
+.dashboard .reports .draft-thumb .v-label {
+	display: block;
+	text-align: center;
+}
+
+.dashboard .reports .draft-thumb .v-label span {
+	font-size: 0.8em;
+}
+
+.dashboard .reports .draft-thumb .v-image {
+	-webkit-box-shadow: 0 2px 7px 1px rgba(0, 0, 0, 0.5);
+	box-shadow: 0 2px 7px 1px rgba(0, 0, 0, 0.5);
+}
+
+.dashboard .reports .draft-thumb .v-image:hover {
+	outline: 2px solid #5198df;
+}
+
+.dashboard .reports .v-slot-palette {
+	background-color: #fafafa;
+	background-image: -webkit-linear-gradient(top, #fafafa 2%, #efefef 98%);
+	background-image: linear-gradient(to bottom,#fafafa 2%, #efefef 98%);
+	border-bottom: 1px solid #c5c5c5;
+}
+
+.dashboard .reports .palette {
+	padding: 0.5em 0;
+	font-size: 0.9em;
+}
+
+.dashboard .reports .palette .v-icon {
+	display: block;
+	text-align: center;
+}
+
+.dashboard .reports .palette .v-label {
+	font-size: 0.9em;
+	margin: 0 0.4em;
+	cursor: move;
+}
+
+.dashboard .reports .v-caption-palette {
+	font-size: 12px;
+	display: block;
+	white-space: normal;
+	padding-top: 1em;
+	width: 140px;
+}
+
+.dashboard .reports .v-slot-canvas {
+	overflow: auto;
+}
+
+.dashboard .reports .canvas {
+	padding: 25px;
+}
+
+.dashboard .reports .canvas .title {
+	font-size: 24px;
+	font-weight: 600;
+	border: 1px solid transparent;
+	color: #404346;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+	width: 100%;
+	text-align: center;
+	cursor: pointer;
+	margin-bottom: 1cm;
+}
+
+.dashboard .reports .palette .v-image {
+	width: 75px;
+	height: 47px;
+}
+
+.dashboard .canvas-layout {
+	min-height: 29cm;
+	background: #fff;
+	padding: 1.5cm;
+	-webkit-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.dashboard .canvas-layout  > .v-slot > .v-widget {
+	-webkit-animation: valo-animate-in-fade 500ms 10ms backwards, animate-in-scale-up 300ms 10ms backwards;
+	-moz-animation: valo-animate-in-fade 500ms 10ms backwards, animate-in-scale-up 300ms 10ms backwards;
+	animation: valo-animate-in-fade 500ms 10ms backwards, animate-in-scale-up 300ms 10ms backwards;
+}
+
+.dashboard .canvas-layout  > .v-slot > .v-widget.title, .dashboard .canvas-layout  > .v-slot > .v-widget.placeholder {
+	-webkit-animation: none;
+	-moz-animation: none;
+	animation: none;
+}
+
+.dashboard .reports .canvas .title:hover {
+	background: #fff9e6;
+}
+
+.dashboard .reports .canvas .title:focus {
+	cursor: text;
+	border-color: #eee;
+	background: transparent;
+}
+
+.dashboard .reports .canvas .placeholder {
+	text-align: center;
+}
+
+.dashboard .reports .canvas .placeholder .v-label {
+	min-height: 10cm;
+	line-height: 5cm;
+	font-size: 18px;
+}
+
+.dashboard .reports .v-tabsheet-content {
+	background-color: #fafafa;
+	background-image: -webkit-linear-gradient(top, #fafafa 2%, #efefef 98%);
+	background-image: linear-gradient(to bottom,#fafafa 2%, #efefef 98%);
+}
+
+.dashboard .reports .v-timeline-widget-display-hscale-left {
+	font-size: 10px;
+	margin-top: -14px;
+	padding-left: 3px;
+}
+
+.dashboard .reports .canvas .v-ddwrapper {
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+.dashboard .reports .text-editor {
+	position: relative;
+	overflow: visible;
+}
+
+.dashboard .reports .text-editor:hover {
+	background: #fff9e6;
+}
+
+.dashboard .reports .text-editor.edit:hover {
+	background: transparent;
+}
+
+.dashboard .text-editor .v-button {
+	position: absolute;
+	top: 50%;
+	margin-top: -12px;
+	right: -20px;
+	display: none;
+}
+
+.dashboard .text-editor .v-button-wrap:before {
+	margin: 0 -0.3em;
+}
+
+.dashboard .text-editor:hover .v-button {
+	display: inline-block;
+}
+
+.dashboard .reports .text-editor.edit .v-button {
+	display: inline-block;
+	position: static;
+	margin-top: 3px;
+}
+
+.dashboard .delete-button {
+	width: 19px;
+	height: 19px;
+	border: 1px solid #a3a7ab;
+	border-radius: 2px;
+	background: #73767a;
+	color: #fff;
+	font: inherit;
+	font-size: 16px;
+	line-height: 1;
+	text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+	text-align: center;
+	cursor: default;
+	-webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.dashboard .delete-button:hover {
+	background: #4e5153;
+}
+
+.dashboard .delete-button:focus {
+	outline: none;
+}
+
+.dashboard .delete-button:active {
+	background: #3c3f40;
+}
+
+.dashboard .draft-thumb .delete-button {
+	position: absolute;
+	top: 1px;
+	right: 1px;
+	display: none;
+}
+
+.dashboard .draft-thumb:hover .delete-button {
+	display: block;
+}
+
+.dashboard .help-overlay.palette {
+	top: 200px !important;
+	left: 200px !important;
+}
+
+.dashboard .help-overlay.reorder {
+	margin-left: 200px !important;
+}
+
+.dashboard .reports .transaction {
+	position: relative;
+	float: left;
+	width: 47%;
+	margin-right: 2.5%;
+	margin-top: 10px;
+	overflow: hidden;
+	background: #eee;
+	border: 1px solid #e0e0e0;
+}
+
+.dashboard .reports .transaction .time, .dashboard .reports .transaction .seats {
+	font-size: 12px;
+	color: #9fa2a6;
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	line-height: normal;
+}
+
+.dashboard .reports .transaction .movie-title {
+	font-size: 16px;
+	font-weight: 300;
+	white-space: normal;
+	padding: 40px 5px 5px;
+}
+
+.dashboard .reports .transaction .seats {
+	left: 60%;
+}

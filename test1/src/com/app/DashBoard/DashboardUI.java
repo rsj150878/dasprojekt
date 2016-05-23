@@ -43,7 +43,8 @@ public final class DashboardUI extends UI {
 	 
     //private final DataProvider dataProvider = new DummyDataProvider();
     private final DashBoardEventBus dashboardEventbus = new DashBoardEventBus();
-
+    
+    
     @Override
     protected void init(final VaadinRequest request) {
         setLocale(Locale.GERMANY);
@@ -54,6 +55,7 @@ public final class DashboardUI extends UI {
 
         updateContent();
 
+        
         // Some views need to be aware of browser resize events so a
         // BrowserResizeEvent gets fired to the event bus on every occasion.
         Page.getCurrent().addBrowserWindowResizeListener(
@@ -118,5 +120,13 @@ public final class DashboardUI extends UI {
 
     public static DashBoardEventBus getDashboardEventbus() {
         return ((DashboardUI) getCurrent()).dashboardEventbus;
+    }
+    
+    public static boolean getUseProdUrl() {
+    	return Page.getCurrent().getLocation().toString().contains("prod");
+    }
+    
+    public static boolean getUseLocalUrl() {
+    	return Page.getCurrent().getLocation().toString().contains("localhost");
     }
 }

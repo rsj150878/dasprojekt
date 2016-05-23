@@ -1,63 +1,51 @@
 package com.app.dbIO;
 
+import java.util.Enumeration;
+
+import javax.servlet.ServletContext;
+
+import com.app.DashBoard.DashboardServlet;
+import com.app.DashBoard.DashboardUI;
 import com.vaadin.data.util.sqlcontainer.connection.JDBCConnectionPool;
 import com.vaadin.data.util.sqlcontainer.connection.SimpleJDBCConnectionPool;
 
 public class DBConnection {
-	
-	
-//	@Context 
-//    private ServletContext servletContext; 
-	
+
 	private final static String DRIVER_NAME = "com.mysql.jdbc.Driver";
-	
 
-	//private final static String DATABASE_URL = "jdbc:mysql://localhost:3306/usr_web408_1";
-	private final static String DATABASE_URL = "jdbc:mysql://localhost:3306/test";
-    //private final static String DATABASE_URL = "jdbc:mysql://profi1.de:3306/test";
+	private final static String DB_USER = "retrieverdata.at";
+	private final static String DB_PASSWORD = "waterloo123";
 
-	private final static String DB_USER = "root";
-	private final static String DB_PASSWORD = "";
-	//private final static String DB_PASSWORD = "waterloo";
-
-	//private final static String DB_USER = "usr_web408_1";
-	//private final static String DB_PASSWORD = "koVzMlAZ";
-	//private final static String DB_USER = "retrieverdata.at";
-	//private final static String DB_PASSWORD = "waterloo123";
-	//private final static String DB_USER = "usr_web408_1";
-	//private final static String DB_PASSWORD = "koVzMlAZ";
-	//private final static String DB_USER = "retrieverdata.at";
-	//private final static String DB_PASSWORD = "waterloo123";
-
-	
 	private static JDBCConnectionPool connectionPool;
-	
+
 	public final static DBConnection INSTANCE = new DBConnection();
-	
+
 	protected DBConnection() {
-		
-		//String jndiName = servletContext.getInitParameter("jndiDatasourceName"); 
-		
+
+		ServletContext sc = DashboardServlet.getCurrent().getServletContext();
+
+		String dbUrl = "";
+		if (DashboardUI.getUseLocalUrl()) {
+			dbUrl = sc.getInitParameter("DBURLLocal");
+		} else if (DashboardUI.getUseProdUrl()) {
+			dbUrl = sc.getInitParameter("DBURLProd");
+
+		} else {
+			dbUrl = sc.getInitParameter("DBURL");
+		}
+
 		try {
-//			Context ctx = new InitialContext();
-//			ds = (DataSource)ctx.lookup("java:comp/env/jdbc/mkyongdb");;
-//			
-//			connectionPool = new JDBCConnectionPool(jndiName);
-			connectionPool = new SimpleJDBCConnectionPool(
-                  	DRIVER_NAME,
-                  	DATABASE_URL, DB_USER, DB_PASSWORD, 2, 5);
+
+			connectionPool = new SimpleJDBCConnectionPool(DRIVER_NAME, dbUrl,
+					DB_USER, DB_PASSWORD, 2, 5);
 
 		} catch (Exception e) {
 			System.out.println(e);
 		}
 	}
-	
+
 	public JDBCConnectionPool getConnectionPool() {
 		return this.connectionPool;
 	}
-	
-	
-	
-	
 
 }

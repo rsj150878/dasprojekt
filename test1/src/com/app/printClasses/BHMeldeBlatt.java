@@ -287,36 +287,36 @@ public class BHMeldeBlatt extends CustomComponent {
 			fields.setField("Anmeldung BGH-1", "Ja");
 
 			if (hundContainer.getItem(hundContainer.firstItemId())
-					.getItemProperty("bh_datum").getValue() != null) {
+					.getItemProperty("bhdatum").getValue() != null) {
 				fields.setField(
 						"Datum der bestandenen BH-Prüfung (BGH-1)",
 						dateFormat1.format(hundContainer
 								.getItem(hundContainer.firstItemId())
-								.getItemProperty("bh_datum").getValue()));
+								.getItemProperty("bhdatum").getValue()));
 			}
 		} else if (defStufe == VeranstaltungsStufen.STUFE_BGH2) {
 			fields.setField("Anmeldung BGH-2", "Ja");
 
 			if (hundContainer.getItem(hundContainer.firstItemId())
-					.getItemProperty("bh_datum").getValue() != null) {
+					.getItemProperty("bhdatum").getValue() != null) {
 
 				fields.setField(
 						"Datum der bestandenen BH-Prüfung (BGH-2)",
 						dateFormat1.format(hundContainer
 								.getItem(hundContainer.firstItemId())
-								.getItemProperty("bh_datum").getValue()));
+								.getItemProperty("bhdatum").getValue()));
 			}
 		} else if (defStufe == VeranstaltungsStufen.STUFE_BGH3) {
 			fields.setField("Anmeldung BGH-3", "Ja");
 
 			if (hundContainer.getItem(hundContainer.firstItemId())
-					.getItemProperty("bh_datum").getValue() != null) {
+					.getItemProperty("bhdatum").getValue() != null) {
 
 				fields.setField(
 						"Datum der bestandenen BH-Prüfung (BGH-3)",
 						dateFormat1.format(hundContainer
 								.getItem(hundContainer.firstItemId())
-								.getItemProperty("bh_datum").getValue()));
+								.getItemProperty("bhdatum").getValue()));
 			}
 		}
 

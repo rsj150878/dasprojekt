@@ -24,6 +24,8 @@ import com.vaadin.data.Container.Filter;
 import com.vaadin.data.Container.Filterable;
 import com.vaadin.data.Item;
 import com.vaadin.data.sort.Sort;
+import com.vaadin.data.util.GeneratedPropertyContainer;
+import com.vaadin.data.util.PropertyValueGenerator;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.event.ItemClickEvent;
@@ -47,6 +49,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.renderers.ClickableRenderer.RendererClickEvent;
 import com.vaadin.ui.renderers.ClickableRenderer.RendererClickListener;
 import com.vaadin.ui.themes.ValoTheme;
@@ -193,79 +196,150 @@ public class MitgliederView extends VerticalLayout implements View {
 		mitgliederListe = new TempTransactionsContainer(
 				DataProvider.getMitgliederList());
 
-		gridTable.setContainerDataSource(mitgliederListe);
+		//gridTable.setContainerDataSource(mitgliederListe);
+
+		GeneratedPropertyContainer gpc =
+			    new GeneratedPropertyContainer(mitgliederListe);
+		gpc.addGeneratedProperty("edit",
+			    new PropertyValueGenerator<String>() {
+
+			    @Override
+			    public String getValue(Item item, Object itemId,
+			                           Object propertyId) {
+			        return "Edit"; // The caption
+			    }
+
+			    @Override
+			    public Class<String> getType() {
+			        return String.class;
+			    }
+			});
+			
+		gpc.addGeneratedProperty("hundeforbutton",
+			    new PropertyValueGenerator<String>() {
+
+			    @Override
+			    public String getValue(Item item, Object itemId,
+			                           Object propertyId) {
+			        return "Hunde"; // The caption
+			    }
+
+			    @Override
+			    public Class<String> getType() {
+			        return String.class;
+			    }
+			});
+		gridTable.setContainerDataSource(gpc);
 
 		gridTable.sort(Sort.by("familienName", SortDirection.ASCENDING).then(
 				"vorName", SortDirection.ASCENDING));
 
-		gridTable.setColumnOrder("vorName", "familienName", "adresse", "edit","hundeforbutton");
+		gridTable.setColumnOrder("vorName", "familienName", "adresse", "edit",
+				"hundeforbutton");
 		gridTable.getColumn("vorName").setHeaderCaption("Vorname");
 
 		gridTable.getColumn("familienName").setHeaderCaption("Familienname");
 		gridTable.getColumn("adresse").setHeaderCaption("Adresse");
-		gridTable.getColumn("edit").setHeaderCaption("Hunde");
-		gridTable.setColumns("vorName", "familienName", "adresse", "edit","hundeforbutton");
+		//gridTable.getColumn("edit").setHeaderCaption("Hunde");
+		gridTable.setColumns("familienName","vorName", "adresse", "edit", "hundeforbutton");
 		gridTable.getColumn("edit").setHeaderCaption("bearb");
-		gridTable.getColumn("edit").setWidth(54);
 		gridTable.getColumn("hundeforbutton").setHeaderCaption("Hunde");
-		gridTable.getColumn("hundeforbutton").setWidth(54);
 
-		gridTable.getDefaultHeaderRow().join("edit","hundeforbutton").setText("Tools");
-		
+		gridTable.getDefaultHeaderRow().join("edit", "hundeforbutton")
+				.setText("Tools");
+
 		gridTable.setFrozenColumnCount(2);
 
 		gridTable.getColumn("edit").setRenderer(
-				new EditButtonValueRenderer(new RendererClickListener() {
+				new ButtonRenderer(new RendererClickListener() {
 
 					@Override
-					public void click(final RendererClickEvent event) {
-						
-						//System.out.println("item: " + event.getItem());
-						MitgliederListe zw = (MitgliederListe) event.getItemId();
+					public void click(RendererClickEvent event) {
+						MitgliederListe zw = (MitgliederListe) event
+								.getItemId();
 						ProfilePreferencesWindow.open(zw.getPerson(), true);
-					}	
-				})				);
 
+					}
 
+				}));
+		
 		gridTable.getColumn("hundeforbutton").setRenderer(
-				new EditButtonValueRenderer(new RendererClickListener() {
+				new ButtonRenderer(new RendererClickListener() {
 
 					@Override
-					public void click(final RendererClickEvent event) {
-						MitgliederListe zw = (MitgliederListe) event.getItemId();
-						HundeDetailWindow.open(zw.getPerson(), zw.getHunde());	
+					public void click(RendererClickEvent event) {
+						MitgliederListe zw = (MitgliederListe) event
+								.getItemId();
+						HundeDetailWindow.open(zw.getPerson(),
+								zw.getHunde());
+
 					}
-				})				);
 
-		
-		gridTable.setCellStyleGenerator(new CellStyleGenerator() {
-		    @Override
-		    public String getStyle(final CellReference cellReference) {
-		        if (cellReference.getPropertyId()
-		                .equals("edit")) {
-		            return "link-icon";
-		        } if (cellReference.getPropertyId().equals("hundeforbutton"))
-		        	return "link-icon-hund";
-		        else {
-		            return null;
-		        }
-		    }
-		});
-		gridTable.addItemClickListener(new ItemClickListener() {
+				}));
 
-			@Override
-			public void itemClick(ItemClickEvent event) {
-				if (event.isDoubleClick()) {
-
-					// Long movieId = (Long) item.getItemProperty("movieId")
-					// .getValue();
-					// MovieDetailsWindow.open(DashboardUI.getDataProvider()
-					// .getMovie(movieId), null, null);
-				}
-
-			}
-
-		});
+//		gridTable
+//				.getColumn("edit")
+//				.setRenderer(
+//						new EditButtonValueRenderer(
+//								new RendererClickListener() {
+//
+//									@Override
+//									public void click(
+//											final RendererClickEvent event) {
+//
+//										// System.out.println("item: " +
+//										// event.getItem());
+//										MitgliederListe zw = (MitgliederListe) event
+//												.getItemId();
+//										ProfilePreferencesWindow.open(
+//												zw.getPerson(), true);
+//									}
+//								})).setWidth(80);
+//
+//		gridTable
+//				.getColumn("hundeforbutton")
+//				.setRenderer(
+//						new EditButtonValueRenderer(
+//								new RendererClickListener() {
+//
+//									@Override
+//									public void click(
+//											final RendererClickEvent event) {
+//										MitgliederListe zw = (MitgliederListe) event
+//												.getItemId();
+//										HundeDetailWindow.open(zw.getPerson(),
+//												zw.getHunde());
+//									}
+//								})).setWidth(80);
+//
+//		gridTable.setCellStyleGenerator(new CellStyleGenerator() {
+//			@Override
+//			public String getStyle(final CellReference cellReference) {
+//				if (cellReference.getPropertyId().equals("edit")) {
+//					return "link-icon-user";
+//				}
+//				if (cellReference.getPropertyId().equals("hundeforbutton"))
+//					return "link-icon-hund";
+//				else {
+//					return null;
+//				}
+//			}
+//		});
+//		gridTable.addItemClickListener(new ItemClickListener() {
+//
+//			@Override
+//			public void itemClick(ItemClickEvent event) {
+//				if (event.isDoubleClick()) {
+//
+//					// Long movieId = (Long) item.getItemProperty("movieId")
+//					// .getValue();
+//					// MovieDetailsWindow.open(DashboardUI.getDataProvider()
+//					// .getMovie(movieId), null, null);
+//				}
+//
+//			}
+//
+//		});
 
 		gridTable.setImmediate(true);
 
@@ -278,9 +352,9 @@ public class MitgliederView extends VerticalLayout implements View {
 		MitgliederListe zw = new MitgliederListe();
 		zw.setPerson(event.getPerson());
 		mitgliederListe.addItem(zw);
-	
+
 	}
-	
+
 	@Subscribe
 	public void updateUserEvent(UpdateUserEvent event) {
 		mitgliederListe.update();
@@ -372,6 +446,7 @@ public class MitgliederView extends VerticalLayout implements View {
 				final Collection<MitgliederListe> collection) {
 			super(collection);
 		}
+
 		public void update() {
 			fireItemSetChange();
 		}

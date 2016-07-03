@@ -76,6 +76,7 @@ public class BewertungsListeNeu extends CustomComponent {
 			File outputFile = new File(RESULT);
 
 			WritableWorkbook workbook = Workbook.createWorkbook(outputFile);
+			
 
 			WritableSheet sheet = workbook.createSheet("Bewertungsliste", 0);
 
@@ -123,7 +124,7 @@ public class BewertungsListeNeu extends CustomComponent {
 						"yyyy-MM-dd").parse(hundContainer
 						.getItem(hundContainer.firstItemId())
 						.getItemProperty("wurfdatum").getValue().toString()),
-						cf1, DateTime.GMT);
+						cf1);
 
 				sheet.addCell(dt);
 
@@ -135,15 +136,17 @@ public class BewertungsListeNeu extends CustomComponent {
 				Label geschlecht = new Label(4, i, hundContainer
 						.getItem(hundContainer.firstItemId())
 						.getItemProperty("geschlecht").getValue().toString());
+			
 				sheet.addCell(geschlecht);
 
 				NumberFormat chipNrFormat = new NumberFormat(
 						"000 000 000 000 000");
 				WritableCellFormat chipCell = new WritableCellFormat(
 						chipNrFormat);
-				Number n = new Number(5, i, Float.valueOf(hundContainer
+				
+				Number n = new Number(5, i, Double.valueOf(hundContainer
 						.getItem(hundContainer.firstItemId())
-						.getItemProperty("chipnummer").getValue().toString()),
+						.getItemProperty("chipnummer").getValue().toString()).doubleValue(),
 						chipCell);
 				sheet.addCell(n);
 
@@ -191,7 +194,8 @@ public class BewertungsListeNeu extends CustomComponent {
 
 					Label bestanden = new Label(8, i, bestandenString);
 					sheet.addCell(bestanden);
-
+					
+					
 				} else {
 					Number punkte = null;
 					if (teilnehmerContainer.getItem(zw)
@@ -207,6 +211,12 @@ public class BewertungsListeNeu extends CustomComponent {
 					sheet.addCell(punkte);
 
 				}
+				
+				Label email = new Label(9,i,personContainer
+						.getItem(personContainer.firstItemId())
+						.getItemProperty("email").getValue().toString());
+
+				sheet.addCell(email);
 
 				hundContainer.removeAllContainerFilters();
 				personContainer.removeAllContainerFilters();

@@ -80,8 +80,8 @@ public class Hund implements QueryDelegate.RowIdChangeListener {
 			hundContainer.addContainerFilter(new Equal("idhund", idhund));
 			hundItem = hundContainer.getItem(hundContainer.firstItemId());
 
-			this.bhdatum = hundItem.getItemProperty("bh_datum").getValue() == null ? null
-					: (Date) hundItem.getItemProperty("bh_datum").getValue();
+			this.bhdatum = hundItem.getItemProperty("bhdatum").getValue() == null ? null
+					: (Date) hundItem.getItemProperty("bhdatum").getValue();
 			
 			this.chipnummer = hundItem.getItemProperty("chipnummer").getValue().toString();
 			this.farbe = hundItem.getItemProperty("farbe").getValue() == null ? null : hundItem.getItemProperty("farbe").getValue().toString();
@@ -118,7 +118,7 @@ public class Hund implements QueryDelegate.RowIdChangeListener {
 		hundItem.getItemProperty("wurfdatum").setValue(this.wurfdatum);
 		hundItem.getItemProperty("rasse").setValue(this.rasse);
 		hundItem.getItemProperty("chipnummer").setValue(this.chipnummer);
-		hundItem.getItemProperty("bh_datum").setValue(this.bhdatum);
+		hundItem.getItemProperty("bhdatum").setValue(this.bhdatum);
 		hundItem.getItemProperty("farbe").setValue(this.farbe);
 		hundItem.getItemProperty("zuechter").setValue(this.zuechter);
 		hundItem.getItemProperty("geschlecht").setValue(this.geschlecht);

@@ -54,7 +54,7 @@ public class HundeDetailWindow extends Window {
 
 	private BeanFieldGroup<Hund> fieldGroup;
 
-	@PropertyId("bh_datum")
+	@PropertyId("bhdatum")
 	private DateField bhDatumField;
 	@PropertyId("chipnummer")
 	private TextField chipnummerField;
@@ -303,6 +303,7 @@ public class HundeDetailWindow extends Window {
 		details.addComponent(zwingernameField);
 
 		chipnummerField = new TextField("Chipnummer");
+		chipnummerField.setNullRepresentation("");
 		details.addComponent(chipnummerField);
 
 		zuchtbuchnummerField = new TextField("Zuchtbuchnummer");

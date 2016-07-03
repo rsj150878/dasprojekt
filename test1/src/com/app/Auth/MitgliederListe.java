@@ -13,8 +13,8 @@ public class MitgliederListe {
 	private Person person;
 	private Collection<Hund> hunde;
 	private String hundeNamen;
-	private String edit;
-	private String hundeforbutton;
+//	private String edit;
+//	private String hundeforbutton;
 
 	public String getFamilienName() {
 		return person.getLastName();
@@ -71,17 +71,5 @@ public class MitgliederListe {
 		}
 		
 	}
-//	
-	public String getedit() {
-		return null;
-	}
-	
-	public String gethundeforbutton() {
-		return null;
-		
-	}
-	
-//	
-	
 
 }

@@ -33,10 +33,14 @@ public class DBConnection {
 		} else {
 			dbUrl = sc.getInitParameter("DBURL");
 		}
+		
+		String dataBase = sc.getInitParameter("Database");
+		System.out.println("database: " + dataBase);
+		dataBase = "jdbc:mysql://localhost:3306" + dataBase;
 
 		try {
 
-			connectionPool = new SimpleJDBCConnectionPool(DRIVER_NAME, dbUrl,
+			connectionPool = new SimpleJDBCConnectionPool(DRIVER_NAME, dataBase,
 					DB_USER, DB_PASSWORD, 2, 5);
 
 		} catch (Exception e) {

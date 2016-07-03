@@ -100,13 +100,13 @@ public class GAP1RichterBlatt extends CustomComponent {
 						veranstaltungsStufe, teilnehmerContainer.getItem(id)));
 				copy.addDocument(zwReader);
 				listForClose.add(zwReader);
-				
-				//zwReader.close();
+
+				// zwReader.close();
 			}
 
 			copy.close();
-			
-			for(int i=0;i<listForClose.size();i++) {
+
+			for (int i = 0; i < listForClose.size(); i++) {
 				listForClose.get(i).close();
 			}
 
@@ -131,6 +131,13 @@ public class GAP1RichterBlatt extends CustomComponent {
 
 		PdfReader reader = new PdfReader(DATASHEET);
 		// fos = new FileOutputStream(RESULT);
+
+		AcroFields form = reader.getAcroFields();
+		// // Loop over the fields and get info about them
+		Set<String> fieldsxx = form.getFields().keySet();
+		for (String key : fieldsxx) {
+			System.out.println(key);
+		}
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		PdfStamper stamper = new PdfStamper(reader, baos);
 		AcroFields fields = stamper.getAcroFields();
@@ -159,11 +166,11 @@ public class GAP1RichterBlatt extends CustomComponent {
 				hundContainer.getItem(hundContainer.firstItemId())
 						.getItemProperty("zwingername").getValue().toString());
 
-		if (!(hundContainer.getItem(hundContainer.firstItemId())
-				.getItemProperty("bh_datum").getValue() == null)) {
+		if (hundContainer.getItem(hundContainer.firstItemId())
+				.getItemProperty("bhdatum").getValue() != null) {
 			fields.setField("BH/BGH",
-					hundContainer.getItem(hundContainer.firstItemId())
-							.getItemProperty("bh_datum").getValue().toString());
+					dateFormat1.format(hundContainer.getItem(hundContainer.firstItemId())
+							.getItemProperty("bhdatum").getValue()));
 		}
 
 		for (Rassen o : Rassen.values()) {
@@ -214,10 +221,10 @@ public class GAP1RichterBlatt extends CustomComponent {
 				.getItem(hundContainer.firstItemId())
 				.getItemProperty("geschlecht").getValue().toString())) {
 			fields.setField("RÜDE", "Ja");
-			fields.setField("HÜNDIN","Off");
+			fields.setField("HÜNDIN", "Off");
 		} else {
 			fields.setField("HÜNDIN", "Ja");
-			fields.setField("RÜDE","Off");
+			fields.setField("RÜDE", "Off");
 		}
 
 		hundContainer.removeAllContainerFilters();

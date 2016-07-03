@@ -148,10 +148,10 @@ public class GAP3RichterBlatt extends CustomComponent {
 						.getItemProperty("zwingername").getValue().toString());
 
 		if (!(hundContainer.getItem(hundContainer.firstItemId())
-						.getItemProperty("bh_datum").getValue() == null)) {
+						.getItemProperty("bhdatum").getValue() == null)) {
 			fields.setField("BH/BGH",
 					hundContainer.getItem(hundContainer.firstItemId())
-					.getItemProperty("bh_datum").getValue().toString());
+					.getItemProperty("bhdatum").getValue().toString());
 		}
 		
 		for (Rassen o : Rassen.values()) {

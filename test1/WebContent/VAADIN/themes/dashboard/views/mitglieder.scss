@@ -5,42 +5,21 @@
       padding: $view-padding;
       border-bottom: valo-border($strength: 0.5);
     }
-    .v-button-value-cell {
-	clear: both;
-	position: relative;
-	width: 100%;
-}
-.v-button-value-cell .v-button-bar {
-	position: absolute;
-	left: -4px;
-	top: -4px;
-	display: inline-block;
-	text-align: center;
-}
-.v-button-value-cell .v-button-bar button {
-	cursor: pointer;
-	width: 30px;
-	height: 30px;
-	font-family: FontAwesome !important;
-	font-style: normal;
-	font-weight: normal;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	margin-right: 2px;
-}
-
-    .v-grid-cell.link-icon .v-button-bar button.v-edit span:before {
-      /*  color: blue;  recolor icon */
-       content: "\f044"; /* content-code of FontAwesome that is served by vaadin! */
-       
-    }
-
-    .v-grid-cell.link-icon-hund .v-button-bar button.v-edit span:before {
-       /* color: blue; recolor icon */
-       /* float: center; */
-       content: "\f281"; /* content-code of FontAwesome that is served by vaadin! */
-       
-    }
+ 
+   
   }
+  
+  .v-grid-cell.link-icon-user .v-button-bar button.v-edit span:before {
+	/*  color: blue;  recolor icon */
+	content: "\f044";
+	/* content-code of FontAwesome that is served by vaadin! */
+}
 
+.v-grid-cell.link-icon-hund .v-button-bar button.v-edit span:before {
+	/* color: blue; recolor icon */
+	/* float: center; */
+	content: "\f281";
+	/* content-code of FontAwesome that is served by vaadin! */
+}
+  
 }

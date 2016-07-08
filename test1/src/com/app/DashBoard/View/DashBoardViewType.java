@@ -9,6 +9,7 @@ public enum DashBoardViewType {
     DASHBOARD("Dashboard", DashboardView.class, FontAwesome.HOME, true),
     MYDOGS("Meine Hunde", MyHundeView.class, FontAwesome.BAR_CHART_O, false),  
     MITGLIEDER("Mitgliederliste", MitgliederView.class, FontAwesome.TABLE, false),
+    EMAILZUSATZ("Emailadresse alt", EmailAdressNewsletterView.class, FontAwesome.EMPIRE, false),
     VERANSTALTUNG("Veranstaltungen", VeranstaltungsUebersicht.class, FontAwesome.PARAGRAPH, false),
     MAILABGLEICH("Mailadressenabgleich", MailReplicateView.class, FontAwesome.MAIL_FORWARD, false),
     SCHOWIMPORT("SchowDatenImport", ShowImporter.class, FontAwesome.EXCLAMATION, false);

@@ -39,6 +39,7 @@ public class EwsReplClass {
 
 	private static int EWS_TYP_CONTACT = 1;
 	private static int EWS_TYP_GROUP_MEMBER = 2;
+	private static int EWS_TYP_GROUP_MEMBER_EMAIL = 3;
 
 	private ArrayList ewsList = new ArrayList();
 
@@ -79,7 +80,7 @@ public class EwsReplClass {
 						zwString[1]);
 
 				for (Object o : personCollection.getItemIds()) {
-					
+
 					Item personItem = (Item) personCollection.getItem(o);
 					speichereVerknuepfungForEmail(personItem, service,
 							zwString[0], zwString[1]);
@@ -87,6 +88,9 @@ public class EwsReplClass {
 					indicator.setValue(new Float(y / size));
 
 				}
+
+				speichereVerknuepfungForEmailAlt(service, zwString[0],
+						zwString[1]);
 
 			}
 
@@ -103,8 +107,9 @@ public class EwsReplClass {
 
 		ExchangeCredentials credentials = new WebCredentials(email, password);
 		service.setCredentials(credentials);
-		//service.autodiscoverUrl(email, new URLCallBack());
-		service.setUrl(new URI("https://exchange.world4you.com/EWS/exchange.asmx"));
+		// service.autodiscoverUrl(email, new URLCallBack());
+		service.setUrl(new URI(
+				"https://exchange.world4you.com/EWS/exchange.asmx"));
 		return service;
 	}
 
@@ -240,7 +245,8 @@ public class EwsReplClass {
 			for (microsoft.exchange.webservices.data.core.service.item.Item item : findResults
 					.getItems()) {
 
-				if (item.getSubject().equals("newsletter") && !(person.getItemProperty("email").getValue() == null)) {
+				if (item.getSubject().equals("newsletter")
+						&& !(person.getItemProperty("email").getValue() == null)) {
 					ContactGroup contactGroup = ContactGroup.bind(service,
 							item.getId());
 
@@ -274,9 +280,9 @@ public class EwsReplClass {
 
 					// contactGroup.tryGetProperty(propertyDefinition,
 					// propertyValue)
-					if (!(person.getItemProperty("newsletter").getValue() == null) &&
-							person.getItemProperty("newsletter").getValue()
-							.toString().equals("J")) {
+					if (!(person.getItemProperty("newsletter").getValue() == null)
+							&& person.getItemProperty("newsletter").getValue()
+									.toString().equals("J")) {
 						contactGroup.getMembers().add(gm);
 					}
 					contactGroup.update(ConflictResolutionMode.AlwaysOverwrite);
@@ -299,7 +305,8 @@ public class EwsReplClass {
 
 					System.out.println("key: " + key);
 					if ((sqlContainer.size() == 0)
-							&& !(person.getItemProperty("newsletter").getValue() == null)
+							&& !(person.getItemProperty("newsletter")
+									.getValue() == null)
 							&& person.getItemProperty("newsletter").getValue()
 									.toString().equals("J")) {
 						Object x = sqlContainer.addItem();
@@ -329,16 +336,141 @@ public class EwsReplClass {
 		}
 
 	}
-	
+
+	private void speichereVerknuepfungForEmailAlt(ExchangeService service,
+			String email, String password) {
+
+		Boolean newContact = false;
+		TableQuery q1 = new TableQuery("ews",
+				DBConnection.INSTANCE.getConnectionPool());
+		q1.setVersionColumn("version");
+
+		TableQuery q3 = new TableQuery("emaillist",
+				DBConnection.INSTANCE.getConnectionPool());
+		q3.setVersionColumn("version");
+
+		// Notification.show("starte Replikation für Email " + email,
+		// Notification.Type.HUMANIZED_MESSAGE);
+
+		try {
+
+			// System.out.println("EmailAddressKey.EmailAddress1" +
+			// EmailAddressKey.EmailAddress1.name());
+
+			Folder folder = Folder.bind(service, WellKnownFolderName.Contacts);
+			ItemView view = new ItemView(999);
+			FindItemsResults<microsoft.exchange.webservices.data.core.service.item.Item> findResults = service
+					.findItems(folder.getId(), view);
+
+			for (microsoft.exchange.webservices.data.core.service.item.Item item : findResults
+					.getItems()) {
+
+				if (item.getSubject().equals("newsletter")) {
+
+					ContactGroup contactGroup = ContactGroup.bind(service,
+							item.getId());
+
+					SQLContainer emailListContainer = new SQLContainer(q3);
+
+					for (Object id : emailListContainer.getItemIds()) {
+						Item emailItem = emailListContainer.getItem(id);
+
+						sqlContainer.addContainerFilter(new Equal("idperson",
+								emailItem.getItemProperty("id").getValue()));
+						sqlContainer.addContainerFilter(new Equal("ews_fuer",
+								email));
+
+						sqlContainer.addContainerFilter(new Equal("typ",
+								EWS_TYP_GROUP_MEMBER_EMAIL));
+
+						GroupMember gm = null;
+
+						if (sqlContainer.size() > 0) {
+							gm = contactGroup
+									.getMembers()
+									.find(sqlContainer
+											.getItem(sqlContainer.firstItemId())
+											.getItemProperty("ews_id")
+											.getValue().toString());
+						}
+
+						if (gm != null) {
+							contactGroup.getMembers().remove(gm);
+							sqlContainer.removeItem(sqlContainer.firstItemId());
+							contactGroup
+									.update(ConflictResolutionMode.AlwaysOverwrite);
+						}
+
+						gm = new GroupMember(emailItem
+								.getItemProperty("emailadresse").getValue()
+								.toString(), emailItem
+								.getItemProperty("emailadresse").getValue()
+								.toString());
+
+						if (emailItem.getItemProperty("newsletter").getValue()
+								.equals("J")) {
+
+							contactGroup.getMembers().add(gm);
+						}
+
+						contactGroup
+								.update(ConflictResolutionMode.AlwaysOverwrite);
+
+						contactGroup = ContactGroup.bind(service, item.getId());
+
+						String key = null;
+						for (GroupMember x : contactGroup.getMembers()) {
+							if (x.getAddressInformation()
+									.getAddress()
+									.equals(emailItem
+											.getItemProperty("emailadresse")
+											.getValue().toString())) {
+								key = x.getKey();
+							}
+
+						}
+
+						System.out.println("key: " + key);
+						if (sqlContainer.size() == 0
+								&& emailItem.getItemProperty("newsletter")
+										.getValue().equals("J")) {
+							Object x = sqlContainer.addItem();
+							Item ews = sqlContainer.getItemUnfiltered(x);
+
+							ews.getItemProperty("typ").setValue(
+									EWS_TYP_GROUP_MEMBER_EMAIL);
+							ews.getItemProperty("ews_fuer").setValue(email);
+							ews.getItemProperty("ews_id").setValue(key);
+							ews.getItemProperty("idperson").setValue(
+									emailItem.getItemProperty("id").getValue());
+
+						}
+
+						sqlContainer.commit();
+						sqlContainer.removeAllContainerFilters();
+
+
+					}
+				}
+
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	public class URLCallBack implements IAutodiscoverRedirectionUrl {
 
-	    @Override
-	    public boolean autodiscoverRedirectionUrlValidationCallback(String arg0)
-	            throws AutodiscoverLocalException {
+		@Override
+		public boolean autodiscoverRedirectionUrlValidationCallback(String arg0)
+				throws AutodiscoverLocalException {
 
-	        // Do your evaluation here
-	        return true;
-	    }
+			// Do your evaluation here
+			return true;
+		}
 
 	}
 

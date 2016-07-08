@@ -1,13 +1,8 @@
 package com.app.DashBoard.View;
 
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-
-import org.vaadin.gridutil.renderer.EditButtonValueRenderer;
 
 import com.app.Auth.DataProvider;
 import com.app.Auth.MitgliederListe;
@@ -28,8 +23,6 @@ import com.vaadin.data.util.GeneratedPropertyContainer;
 import com.vaadin.data.util.PropertyValueGenerator;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
-import com.vaadin.event.ItemClickEvent;
-import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.navigator.View;
@@ -43,8 +36,6 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.CellReference;
-import com.vaadin.ui.Grid.CellStyleGenerator;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
@@ -59,11 +50,6 @@ public class MitgliederView extends VerticalLayout implements View {
 
 	private final Grid table;
 	private Button neuesMitglied;
-	private static final DateFormat DATEFORMAT = new SimpleDateFormat(
-			"MM/dd/yyyy hh:mm:ss a");
-	private static final DecimalFormat DECIMALFORMAT = new DecimalFormat("#.##");
-	private static final String[] DEFAULT_COLLAPSIBLE = { "country", "city",
-			"theater", "room", "title", "seats" };
 	private TempTransactionsContainer mitgliederListe;
 
 	public MitgliederView() {
@@ -456,24 +442,16 @@ public class MitgliederView extends VerticalLayout implements View {
 		// // BeanComparator get resolved.
 		@Override
 		public void sort(final Object[] propertyId, final boolean[] ascending) {
-			System.out.println("in sort");
 			if (ascending.length != 0) {
 				final boolean sortAscending = ascending[0];
 				final Object sortContainerPropertyId = propertyId[0];
-				if (sortAscending) {
-					System.out.println("true");
-				} else {
-					System.out.println("false");
-				}
-				;
-
+			
 				Collections.sort(getBackingList(),
 						new Comparator<MitgliederListe>() {
 							@Override
 							public int compare(final MitgliederListe o1,
 									final MitgliederListe o2) {
 
-								System.out.println("bin in compare");
 								int result = 0;
 								if ("vorName".equals(sortContainerPropertyId)) {
 									result = o1.getVorName().compareTo(
@@ -488,16 +466,12 @@ public class MitgliederView extends VerticalLayout implements View {
 									result *= -1;
 								}
 
-								System.out.println(" result " + result);
-
-								return result;
+											return result;
 							}
 						}
 
 				);
 				fireItemSetChange();
-				System.out.println("getBackingList.size "
-						+ getBackingList().size());
 			}
 		}
 

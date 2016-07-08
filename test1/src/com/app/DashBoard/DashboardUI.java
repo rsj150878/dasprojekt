@@ -2,7 +2,7 @@ package com.app.DashBoard;
 
 import java.util.Locale;
 
-import javax.servlet.annotation.WebServlet;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.app.Auth.User;
 import com.app.DashBoard.Event.DashBoardEvent.BrowserResizeEvent;
@@ -10,20 +10,19 @@ import com.app.DashBoard.Event.DashBoardEvent.CloseOpenWindowsEvent;
 import com.app.DashBoard.Event.DashBoardEvent.UserLoggedOutEvent;
 import com.app.DashBoard.Event.DashBoardEvent.UserLoginRequestedEvent;
 import com.app.DashBoard.Event.DashBoardEventBus;
-import com.app.DashBoard.View.MainView;
 import com.app.DashBoard.View.LoginView;
+import com.app.DashBoard.View.MainView;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
-import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
 import com.vaadin.server.Page;
 import com.vaadin.server.Page.BrowserWindowResizeEvent;
 import com.vaadin.server.Page.BrowserWindowResizeListener;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.server.VaadinSession;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
@@ -90,8 +89,14 @@ public final class DashboardUI extends UI {
     @Subscribe
      public void userLoginRequested(final UserLoginRequestedEvent event) {
     	// TODO
-        User user = new User(event.getUserName(), event.getPassword());
-        VaadinSession.getCurrent().setAttribute(User.class.getName(), user);
+    	User user = null;
+    	try {
+    		user = new User(event.getUserName(), event.getPassword());
+    	} catch (UsernameNotFoundException e) {
+    		Notification.show("User und/oder passwort falsch", Notification.Type.ERROR_MESSAGE);
+    		
+    	}
+    	VaadinSession.getCurrent().setAttribute(User.class.getName(), user);
         updateContent();
     }
 

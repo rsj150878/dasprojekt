@@ -1,5 +1,7 @@
 package com.app.DashBoard.View;
 
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import com.app.DashBoard.Event.DashBoardEvent.UserLoginRequestedEvent;
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.vaadin.event.ShortcutAction.KeyCode;
@@ -14,6 +16,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -77,8 +80,10 @@ public class LoginView extends VerticalLayout {
         signin.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(final ClickEvent event) {
-                DashBoardEventBus.post(new UserLoginRequestedEvent(username
+            	DashBoardEventBus.post(new UserLoginRequestedEvent(username
                         .getValue(), password.getValue()));
+                
+            	
             }
         });
         return fields;

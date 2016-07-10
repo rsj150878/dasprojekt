@@ -93,13 +93,13 @@ public class LoginView extends VerticalLayout {
         CssLayout labels = new CssLayout();
         labels.addStyleName("labels");
 
-        Label welcome = new Label("Welcome");
+        Label welcome = new Label("Willkommen");
         welcome.setSizeUndefined();
         welcome.addStyleName(ValoTheme.LABEL_H4);
         welcome.addStyleName(ValoTheme.LABEL_COLORED);
         labels.addComponent(welcome);
 
-        Label title = new Label("QuickTickets Dashboard");
+        Label title = new Label("Hundeschule Retriever in Ebreichsdorf");
         title.setSizeUndefined();
         title.addStyleName(ValoTheme.LABEL_H3);
         title.addStyleName(ValoTheme.LABEL_LIGHT);

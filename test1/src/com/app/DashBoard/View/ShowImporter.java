@@ -288,8 +288,10 @@ public class ShowImporter extends VerticalLayout implements View {
 								.setValue(row.getString("Zuchtbuchnummer"));
 						schauHundItem.getItemProperty("chipnummer").setValue(
 								"000");
+						
 						schauHundItem.getItemProperty("klasse").setValue(
 								row.getString("Klasse"));
+						
 
 						schauHundItem.getItemProperty("vater").setValue(
 								row.getString("Vater"));
@@ -306,6 +308,8 @@ public class ShowImporter extends VerticalLayout implements View {
 												+ row.getString("aNummer")
 														.trim());
 
+						schauHundItem.getItemProperty("sort_kat_nr").setValue(row.getInt("Katalognummer"));
+						
 						if (!(row.getString("Beschreibung") == null)) {
 							schauHundItem.getItemProperty("bewertung")
 									.setValue(row.getString("Beschreibung"));

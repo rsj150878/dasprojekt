@@ -88,6 +88,7 @@ public final class ShowInfoUI extends UI {
 			ringContainer = new SQLContainer(q2);
 			hundContainer = new SQLContainer(q3);
 
+			hundContainer.addOrderBy(new OrderBy("sort_kat_nr", true));
 			hundContainer.addOrderBy(new OrderBy("katalognummer", true));
 
 		} catch (SQLException e) {

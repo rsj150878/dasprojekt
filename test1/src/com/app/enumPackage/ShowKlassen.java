@@ -1,53 +1,67 @@
 package com.app.enumPackage;
 
 public enum ShowKlassen {
-	BABYKLASSE("BK", "Babyklasse"),
-	JUENGSTENKLASSE("JÜ","Jüngstenklasse"),
-	JUGENDKLASSE("JU","Jugendklasse"),
-	ZWISCHENKLASSE("ZK","Zwischenklasse"),
-	OFFENEKLASSE("OF","Offene Klasse"),
-	GEBRAUCHSHUNDEKLASSE("GB","Gebrauchshundeklasse"),
-	CHAMPIONKLASSE("CH","Championklasse"),
-	VETERANENKLASSE("VK","Veteranenklasse");
-	
+	BABYKLASSE("BK", "Babyklasse", "N"), JUENGSTENKLASSE("JÜ",
+			"Jüngstenklasse", "N"), JUGENDKLASSE("JU", "Jugendklasse", "J"), ZWISCHENKLASSE(
+			"ZK", "Zwischenklasse", "J"), OFFENEKLASSE("OF", "Offene Klasse",
+			"J"), GEBRAUCHSHUNDEKLASSE("GB", "Gebrauchshundeklasse", "J"), CHAMPIONKLASSE(
+			"CH", "Championklasse", "J"), VETERANENKLASSE("VE",
+			"Veteranenklasse", "J");
+
 	private final String showKlasseKurzBezeichnung;
 	private final String showKlasseLangBezeichnung;
-	 
-	private ShowKlassen(String kurzBezeichnung, String langBezeichnung) {
+	private final String platzierungWirdBerechnet;
+
+	private ShowKlassen(String kurzBezeichnung, String langBezeichnung,
+			String platzierungWirdBerechnet) {
 		this.showKlasseKurzBezeichnung = kurzBezeichnung;
 		this.showKlasseLangBezeichnung = langBezeichnung;
+		this.platzierungWirdBerechnet = platzierungWirdBerechnet;
 	}
-	
+
 	public String getShowKlasseLangBezeichnung() {
 		return this.showKlasseLangBezeichnung;
 	}
-	
-	public String getRassenKurzBezeichnung() {
+
+	public String getShowKlassenKurzBezeichnung() {
 		return this.showKlasseKurzBezeichnung;
 	}
-	
-	public static String getLangBezeichnungFuerKurzBezeichnung(String kurzbezeichnung) {
-		
-		for (ShowKlassen o: ShowKlassen.values()) {
+
+	public static String getLangBezeichnungFuerKurzBezeichnung(
+			String kurzbezeichnung) {
+
+		for (ShowKlassen o : ShowKlassen.values()) {
 			if (o.showKlasseKurzBezeichnung.equals(kurzbezeichnung)) {
 				return o.showKlasseLangBezeichnung;
 			}
-			
+
 		}
 		return "";
 	}
-	
+
 	public static ShowKlassen getKlasseForKurzBezeichnung(String kurzbezeichnung) {
-		
-		for (ShowKlassen o: ShowKlassen.values()) {
+
+		for (ShowKlassen o : ShowKlassen.values()) {
 			if (o.showKlasseKurzBezeichnung.equals(kurzbezeichnung)) {
 				return o;
 			}
-			
+
 		}
 		return null;
 	}
 
-	
+	public static boolean platzWirdFuerKlasseBerechnet(String kurzbezeichnung) {
+		for (ShowKlassen o : ShowKlassen.values()) {
+			if (o.showKlasseKurzBezeichnung.equals(kurzbezeichnung)) {
+				if (o.platzierungWirdBerechnet.equals("J"))
+					return true;
+				else
+					return false;
+			}
+
+		}
+		return false;
+
+	}
 
 }

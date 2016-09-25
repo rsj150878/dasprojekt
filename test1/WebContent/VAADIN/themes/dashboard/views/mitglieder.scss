@@ -22,4 +22,8 @@
 	/* content-code of FontAwesome that is served by vaadin! */
 }
   
+  .time-only .v-datefield-calendarpanel-header,
+.time-only .v-datefield-calendarpanel-body {
+  display: none;
+}
 }

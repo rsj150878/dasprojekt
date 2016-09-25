@@ -15,6 +15,7 @@ public class EmailForEmailVerteiler implements
 	private Integer id;
 	private String emailAdresse;
 	private String newsLetter;
+	private String telefonnummer;
 
 	public EmailForEmailVerteiler() {
 		id = 0;
@@ -81,6 +82,14 @@ public class EmailForEmailVerteiler implements
 
 		this.id = new Integer(newID.intValue());
 
+	}
+
+	public String getTelefonnummer() {
+		return telefonnummer;
+	}
+
+	public void setTelefonnummer(String telefonnummer) {
+		this.telefonnummer = telefonnummer;
 	}
 
 }

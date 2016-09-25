@@ -13,9 +13,8 @@ public enum DashBoardViewType {
     VERANSTALTUNG("Veranstaltungen", VeranstaltungsUebersicht.class, FontAwesome.PARAGRAPH, false),
     MAILABGLEICH("Mailadressenabgleich", MailReplicateView.class, FontAwesome.MAIL_FORWARD, false),
     SCHOWIMPORT("SchowDatenImport", ShowImporter.class, FontAwesome.EXCLAMATION, false),
-    KURSGRUNDDATEN("KursGrundDaten", KursDetails.class, FontAwesome.CODE, false);
-   // REPORTS("Verwaltung", null, FontAwesome.FILE_TEXT_O, true); //, SCHEDULE(
-//            "schedule", ScheduleView.class, FontAwesome.CALENDAR_O, false);
+    KURSGRUNDDATEN("KursGrundDaten", KursDetails.class, FontAwesome.CODE, false),
+    CUPBASISBERECHUNG("ShowCup Basis", CupBasisBerechnungsView.class, FontAwesome.SHOPPING_BAG, false);
 
     private final String viewName;
     private final Class<? extends View> viewClass;

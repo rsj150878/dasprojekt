@@ -1,8 +1,13 @@
 com.vaadin.integration.eclipse.previousCompileAction=theme
 com.vaadin.integration.eclipse.useLatestNightly=false
 com.vaadin.integration.eclipse.widgetsetBuildsSuspended=true
+<<<<<<< HEAD
 com.vaadin.integration.eclipse.widgetsetCompilationEta=148925
 com.vaadin.integration.eclipse.widgetsetDirty=false
+=======
+com.vaadin.integration.eclipse.widgetsetCompilationEta=206647
+com.vaadin.integration.eclipse.widgetsetDirty=true
+>>>>>>> branch 'master' of https://github.com/rsj150878/dasprojekt.git
 com.vaadin.integration.eclipse.widgetsetParallelism=2
 com.vaadin.integration.eclipse.widgetsetStyle=DRAFT
 com.vaadin.integration.eclipse.widgetsetVerbose=true

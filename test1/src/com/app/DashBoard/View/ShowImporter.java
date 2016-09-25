@@ -370,15 +370,15 @@ public class ShowImporter extends VerticalLayout implements View {
 
 						if (!(row.getInt("Juengstenklasse") == null)) {
 							switch (row.getInt("Juengstenklasse")) {
-							case 6:
+							case 1:
 								schauHundItem.getItemProperty("formwert")
 										.setValue("vv");
 								break;
-							case 7:
+							case 2:
 								schauHundItem.getItemProperty("formwert")
 										.setValue("v");
 								break;
-							case 8:
+							case 3:
 								schauHundItem.getItemProperty("formwert")
 										.setValue("g");
 								break;

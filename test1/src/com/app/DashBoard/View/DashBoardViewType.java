@@ -14,6 +14,7 @@ public enum DashBoardViewType {
     MAILABGLEICH("Mailadressenabgleich", MailReplicateView.class, FontAwesome.MAIL_FORWARD, false),
     SCHOWIMPORT("SchowDatenImport", ShowImporter.class, FontAwesome.EXCLAMATION, false),
     KURSGRUNDDATEN("KursGrundDaten", KursDetails.class, FontAwesome.CODE, false),
+    KURSUEBERSICHT("KursÜbersicht", KursUebersicht.class, FontAwesome.CLIPBOARD, false),
     CUPBASISBERECHUNG("ShowCup Basis", CupBasisBerechnungsView.class, FontAwesome.SHOPPING_BAG, false);
 
     private final String viewName;

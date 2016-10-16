@@ -207,8 +207,13 @@ public class KursDetails extends VerticalLayout implements View {
 
 		kursGrid.setEditorEnabled(true);
 
-		kursGrid.setColumns("kursbezeichnung", "startdat", "endedat");
+		kursGrid.setColumns("kursbezeichnung", "startdat", "endedat", "oerc_1_hund", "oerc_2_hund", "noerc_1_hund", "noerc_2_hund");
 
+		kursGrid.getColumn("oerc_1_hund").setHeaderCaption("Preis 1. Hund - ÖRC-Mitglied");
+		kursGrid.getColumn("oerc_2_hund").setHeaderCaption("Preis 2. Hund/Tag - ÖRC-Mitglied");
+		kursGrid.getColumn("noerc_1_hund").setHeaderCaption("Preis 1. Hund - Kein-Mitglied");
+		kursGrid.getColumn("noerc_2_hund").setHeaderCaption("Preis 2. Hund/Tag - Kein Mitglied");
+		
 		kursGrid.setContainerDataSource(kursContainer);
 
 		kursGrid.addSelectionListener(new SelectionListener() {

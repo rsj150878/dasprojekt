@@ -22,6 +22,7 @@ import com.vaadin.server.Page.BrowserWindowResizeListener;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinSession;
+import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
@@ -65,6 +66,8 @@ public final class DashboardUI extends UI {
                         DashBoardEventBus.post(new BrowserResizeEvent());
                     }
                 });
+        
+        
     }
 
     /**
@@ -133,5 +136,11 @@ public final class DashboardUI extends UI {
     
     public static boolean getUseLocalUrl() {
     	return Page.getCurrent().getLocation().toString().contains("localhost");
+    }
+    
+    public static void copyTextToClipboard(String text) {
+    	System.out.println(text);
+    	JavaScript.getCurrent().execute(text);
+    	
     }
 }

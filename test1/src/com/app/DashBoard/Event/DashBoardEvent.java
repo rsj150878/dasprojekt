@@ -111,4 +111,15 @@ public abstract class DashBoardEvent {
     
     public static class DogUpdatedEvent {
     }
+    
+    public static class SearchEvent {
+    	private Integer dogIdResult;
+    	public SearchEvent (Integer id) {
+    		dogIdResult = id;
+    	}
+    	
+    	public Integer getDogIdResult() {
+    		return dogIdResult;
+    	}
+    }
 }

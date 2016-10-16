@@ -12421,7 +12421,7 @@ div.v-layout.v-horizontal.v-widget {
 .dashboard .dashboard-view.dashboard-view .dashboard-panels {
 	display: block;
 	height: 100%;
-	margin: 0 -8px;
+	margin: 0 -4px;
 }
 
 .dashboard .dashboard-view.dashboard-view .dashboard-panels .card {
@@ -12431,7 +12431,7 @@ div.v-layout.v-horizontal.v-widget {
 	position: relative;
 }
 
-.dashboard .dashboard-view.dashboard-view .dashboard-panels .card .v-table, .dashboard .dashboard-view.dashboard-view .dashboard-panels .card .v-table-table {
+.dashboard .dashboard-view.dashboard-view .dashboard-panels .card .v-table .v-table-table {
 	background: transparent;
 }
 
@@ -12459,6 +12459,11 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .dashboard-view.dashboard-view .dashboard-panels .top10-revenue .v-table-cell-content-rowheader .v-table-cell-wrapper {
+	padding-right: 0;
+}
+
+.dashboard .dashboard-view.dashboard-view .dashboard-panels .top10-revenue .top10-revenue-grid .card {
+	padding-left: 0;
 	padding-right: 0;
 }
 

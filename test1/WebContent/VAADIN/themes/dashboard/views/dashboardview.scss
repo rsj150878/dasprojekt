@@ -69,7 +69,7 @@
         padding: $v-unit-size + 2px round($view-padding / 2) 0;
         position: relative;
 
-        .v-table, .v-table-table {
+        .v-table .v-table-table {
           background: transparent;
         }
       }
@@ -100,6 +100,15 @@
             padding-right: 0;
           }
         }
+        
+        .top10-revenue-grid {
+        .card {
+          padding-left: 0;
+          padding-right: 0;
+        }
+           }
+         
+        
       }
 
       .dashboard-panel-slot {

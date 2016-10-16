@@ -58,9 +58,6 @@
  		
  		<dependency org="com.microsoft.ews-java-api" name="ews-java-api" rev="2.0"/>
  		
-		<!-- TestBench 4 -->
-		<dependency org="com.vaadin" name="vaadin-testbench-api" rev="latest.release" conf="nodeploy -> default" />
-
 		<!-- Precompiled DefaultWidgetSet -->
 		<dependency org="com.vaadin" name="vaadin-client-compiled"
 			rev="&vaadin.version;" />

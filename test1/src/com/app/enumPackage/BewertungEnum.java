@@ -16,7 +16,8 @@ public enum BewertungEnum {
 	GAP_BEFRIEDIGEND(12,70,79,"befriedigend"),
 	GAP_GUT(13,80,89,"gut"),
 	GAP_SEHR_GUT(14,90,95,"sehr gut"),
-	GAP_VORZÜGLICH(15,96,100,"vorzüglich");
+	GAP_VORZÜGLICH(15,96,100,"vorzüglich"),
+	TRAINING_WT_BESTANDEN(16,0,100,"bestanden");
 	
 	
 	public Integer id;

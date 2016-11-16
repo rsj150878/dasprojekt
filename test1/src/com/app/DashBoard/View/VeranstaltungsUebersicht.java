@@ -24,7 +24,6 @@ import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.shared.MouseEventDetails.MouseButton;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -46,7 +45,7 @@ import com.vaadin.ui.themes.ValoTheme;
 @SuppressWarnings("serial")
 public class VeranstaltungsUebersicht extends TabSheet implements View,
 		CloseHandler, QueryDelegate.RowIdChangeListener,
-		VeranstaltungsDetailView.VeranstaltungsDetailListener {
+		VeranstaltungsDetailViewNeu.VeranstaltungsDetailListener {
 
 	public static final String CONFIRM_DIALOG_ID = "confirm-dialog";
 	private SQLContainer veranstaltungsContainer;
@@ -128,6 +127,7 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 		final VerticalLayout allDrafts = new VerticalLayout();
 		allDrafts.setSizeFull();
 		allDrafts.setSpacing(true);
+		allDrafts.setMargin(true);
 		//allDrafts.setCaption("Alle Veranstaltungen");
 
 		// VerticalLayout titleAndDrafts = new VerticalLayout();
@@ -284,7 +284,7 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 	}
 	
 	public void openReport (Item toOpenVeranstaltung) {
-		VeranstaltungsDetailView detailView = new VeranstaltungsDetailView(
+		VeranstaltungsDetailViewNeu detailView = new VeranstaltungsDetailViewNeu(
 				toOpenVeranstaltung, this);
 
 		String title = VeranstaltungsTypen.getVeranstaltungsTypForId(
@@ -343,7 +343,7 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 
 		newVeranstaltung = commit();
 
-		VeranstaltungsDetailView detailView = new VeranstaltungsDetailView(
+		VeranstaltungsDetailViewNeu detailView = new VeranstaltungsDetailViewNeu(
 				newVeranstaltung, this);
 
 		String title = VeranstaltungsTypen.getVeranstaltungsTypForId(
@@ -394,7 +394,7 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 			@Override
 			public void buttonClick(final ClickEvent event) {
 				confirmDialog.close();
-				VeranstaltungsDetailView saveComponent = (VeranstaltungsDetailView) tabContent;
+				VeranstaltungsDetailViewNeu saveComponent = (VeranstaltungsDetailViewNeu) tabContent;
 				saveComponent.commit();
 				removeComponent(tabContent);
 				DashBoardEventBus.post(new ReportsCountUpdatedEvent(
@@ -446,6 +446,7 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 		private Button newRbpoWasser = new Button("RBP ohne Wasser");
 		private Button newGap = new Button("GAP");
 		private Button newBgh = new Button("BH/BGH");
+		private Button newWt = new Button("Train-Wt");
 
 		public PopupTextFieldContent() {
 
@@ -485,7 +486,12 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 			layout.setComponentAlignment(newBgh, Alignment.MIDDLE_CENTER);
 			newBgh.setData(VeranstaltungsTypen.BH_BGH_PRÜFUNG);
 			newBgh.addClickListener(listener);
-
+			
+			layout.addComponent(newWt);
+			layout.setComponentAlignment(newWt, Alignment.MIDDLE_CENTER);
+			newWt.setData(VeranstaltungsTypen.TRAIN_WT);
+			newWt.addClickListener(listener);
+			
 			menuPanel.setContent(layout);
 		}
 
@@ -505,7 +511,7 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 
 	@Override
 	public void titleChanged(final String newTitle,
-			final VeranstaltungsDetailView editor) {
+			final VeranstaltungsDetailViewNeu editor) {
 		getTab(editor).setCaption(newTitle);
 	}
 

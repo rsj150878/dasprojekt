@@ -45,8 +45,6 @@ public class BHRichterBlatt extends CustomComponent {
 
 	public BHRichterBlatt(Item veranstaltung, Item veranstaltungsStufe) {
 
-		
-
 		q3 = new TableQuery("veranstaltungs_teilnehmer",
 				DBConnection.INSTANCE.getConnectionPool());
 		q3.setVersionColumn("version");
@@ -152,10 +150,15 @@ public class BHRichterBlatt extends CustomComponent {
 				hundContainer.getItem(hundContainer.firstItemId())
 						.getItemProperty("rasse").getValue().toString());
 		fields.setField("Verbandsverein", "Österreichischer Retrieverclub");
-		fields.setField("Zuchtbuchnummer/RegNr",
-				hundContainer.getItem(hundContainer.firstItemId())
-						.getItemProperty("zuchtbuchnummer").getValue()
-						.toString());
+
+		if (!(hundContainer.getItem(hundContainer.firstItemId())
+				.getItemProperty("zuchtbuchnummer").getValue() == null)) {
+			fields.setField("Zuchtbuchnummer/RegNr",
+					hundContainer.getItem(hundContainer.firstItemId())
+							.getItemProperty("zuchtbuchnummer").getValue()
+							.toString());
+		}
+		
 		fields.setField("Name des Hundes",
 				hundContainer.getItem(hundContainer.firstItemId())
 						.getItemProperty("zwingername").getValue().toString());

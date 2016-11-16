@@ -3,7 +3,6 @@ package com.app.DashBoard.Component;
 import java.sql.SQLException;
 import java.util.Locale;
 
-import com.app.DashBoard.DashboardUI;
 import com.app.DashBoard.Event.DashBoardEvent.SearchEvent;
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.dbIO.DBConnection;
@@ -22,7 +21,6 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.OptionGroup;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.renderers.ClickableRenderer.RendererClickEvent;
 import com.vaadin.ui.renderers.ClickableRenderer.RendererClickListener;
@@ -30,6 +28,11 @@ import com.vaadin.ui.renderers.HtmlRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 
 public class HundeSchulStundeUebersichtGrid extends Grid {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6141955154197613028L;
+
 	private TableQuery kursTeilnehmerQuery;
 
 	private SQLContainer kursTeilnehmerContainer;
@@ -131,6 +134,11 @@ public class HundeSchulStundeUebersichtGrid extends Grid {
 		setColumns("kursteilnehmer", "kursbezahlt", "abwfuehrer", "delete");
 		getColumn("delete").setRenderer(
 				new ButtonRenderer(new RendererClickListener() {
+					/**
+					 * 
+					 */
+					private static final long serialVersionUID = -5189664162539062746L;
+
 					@Override
 					public void click(RendererClickEvent event) {
 						cpContainer.removeItem(event.getItemId());
@@ -147,6 +155,11 @@ public class HundeSchulStundeUebersichtGrid extends Grid {
 
 		getColumn("kursbezahlt").setRenderer(new HtmlRenderer(),
 				new Converter<String, String>() {
+					/**
+					 * 
+					 */
+					private static final long serialVersionUID = -1289049726888267048L;
+
 					@Override
 					public String convertToModel(String value,
 							Class<? extends String> targetType, Locale locale)
@@ -176,6 +189,11 @@ public class HundeSchulStundeUebersichtGrid extends Grid {
 		setEditorEnabled(true);
 
 		getEditorFieldGroup().addCommitHandler(new CommitHandler() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -6469506458961134644L;
 
 			@Override
 			public void preCommit(CommitEvent commitEvent)

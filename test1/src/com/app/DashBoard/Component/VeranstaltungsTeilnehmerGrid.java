@@ -283,6 +283,7 @@ public class VeranstaltungsTeilnehmerGrid extends Grid {
 			newItem.getItemProperty("id_person").setValue(
 					dogItem.getItemProperty("idperson").getValue());
 			newItem.getItemProperty("bezahlt").setValue("N");
+			newItem.getItemProperty("bestanden").setValue("N");
 
 			try {
 				veranstaltungsTeilnehmerContainer.commit();

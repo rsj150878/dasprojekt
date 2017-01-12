@@ -1,10 +1,10 @@
 =\=\=\=\=\=\=
 <<<<<<<=HEAD
 >>>>>>>=branch 'master' of https\://github.com/rsj150878/dasprojekt.git
-com.vaadin.integration.eclipse.previousCompileAction=theme
+com.vaadin.integration.eclipse.previousCompileAction=both
 com.vaadin.integration.eclipse.useLatestNightly=false
 com.vaadin.integration.eclipse.widgetsetBuildsSuspended=true
-com.vaadin.integration.eclipse.widgetsetCompilationEta=107201
+com.vaadin.integration.eclipse.widgetsetCompilationEta=127913
 com.vaadin.integration.eclipse.widgetsetDirty=true
 com.vaadin.integration.eclipse.widgetsetParallelism=2
 com.vaadin.integration.eclipse.widgetsetStyle=DRAFT

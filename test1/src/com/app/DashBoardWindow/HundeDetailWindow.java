@@ -115,6 +115,8 @@ public class HundeDetailWindow extends Window {
 		addStyleName("profile-window");
 		setId(ID);
 		Responsive.makeResponsive(this);
+		//addStyleName("profile-form");
+
 
 		setModal(true);
 		setCloseShortcut(KeyCode.ESCAPE, null);
@@ -177,8 +179,13 @@ public class HundeDetailWindow extends Window {
 		layout.setSizeFull();
 		layout.setSpacing(true);
 		layout.setMargin(true);
-		layout.setWidth(100.0f, Unit.PERCENTAGE);
+		//layout.setWidth(100.0f, Unit.PERCENTAGE);
 
+		HorizontalLayout buttonLayout = new HorizontalLayout();
+		buttonLayout.setSizeUndefined();
+		buttonLayout.setSpacing(true);
+		buttonLayout.setMargin(true);
+		
 		Button newDog = new Button("neuer Hund", new ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
@@ -190,44 +197,55 @@ public class HundeDetailWindow extends Window {
 				dogTable.setContainerDataSource(containerSource);
 				dogTable.setVisibleColumns("rufname", "zwingername");
 				dogTable.setColumnHeaders("Rufname", "Zwingername");
-				
+
 				containerSource.update();
-				dogTable.select(newHund);
+				dogTable.select(newHund.getIdhund());
 
 			}
 
 		});
-		layout.addComponent(newDog);
+		buttonLayout.addComponent(newDog);
 		newDog.addStyleName(ValoTheme.BUTTON_TINY);
 
+		Button delDog = new Button("Hund löschen", new ClickListener() {
+			@Override
+			public void buttonClick(ClickEvent event) {
+			
+			}
+
+		});
+		buttonLayout.addComponent(delDog);
+		delDog.addStyleName(ValoTheme.BUTTON_TINY);
+		
+		layout.addComponent(buttonLayout);
+		
 		dogTable = new Table();
 		layout.addComponent(dogTable);
 		dogTable.setSizeFull();
 
 		dogTable.addStyleName(ValoTheme.TABLE_BORDERLESS);
 		dogTable.addStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
-		dogTable.addStyleName(ValoTheme.TABLE_COMPACT);
+		//dogTable.addStyleName(ValoTheme.TABLE_);
 
 		if (hundeCollection.size() > 0) {
 			containerSource = new TempTransactionsContainer(hundeCollection);
 			dogTable.setContainerDataSource(containerSource);
 			dogTable.setVisibleColumns("rufname", "zwingername");
 			dogTable.setColumnHeaders("Rufname", "Zwingername");
-			
 
 		}
 
 		dogTable.setSelectable(true);
 
-		
-		
 		dogTable.addItemClickListener(new ItemClickListener() {
 
 			@Override
 			public void itemClick(ItemClickEvent event) {
 				// TODO Auto-generated method stub
 				try {
-					fieldGroup.commit();
+					if (!(fieldGroup.getItemDataSource() == null)) {
+						fieldGroup.commit();
+					}
 					// Updated user should also be persisted to database. But
 					// not in this demo.
 
@@ -347,6 +365,7 @@ public class HundeDetailWindow extends Window {
 		bhDatumField.setWidth("100%");
 		bhDatumField.setResolution(Resolution.DAY);
 		bhDatumField.setDateFormat("dd.MM.yyyy");
+
 		details.addComponent(bhDatumField);
 
 		// Label section = new Label("Contact Info");

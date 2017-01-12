@@ -3,6 +3,7 @@ package com.app.DashBoard.View;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.dbIO.DBConnection;
@@ -26,6 +27,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.OptionGroup;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.Upload.FailedEvent;
 import com.vaadin.ui.Upload.FailedListener;
@@ -38,6 +40,7 @@ import com.vaadin.ui.themes.ValoTheme;
 public class ShowImporter extends VerticalLayout implements View {
 
 	OptionGroup showType;
+	TextField result;
 
 	public ShowImporter() {
 		DashBoardEventBus.register(this);
@@ -97,6 +100,11 @@ public class ShowImporter extends VerticalLayout implements View {
 
 		mainLayout.addComponent(upload);
 
+		result = new TextField();
+
+		mainLayout.addComponent(result);
+		;
+
 		return (mainLayout);
 
 	}
@@ -149,9 +157,17 @@ public class ShowImporter extends VerticalLayout implements View {
 				Database db = DatabaseBuilder.open(file);
 				Table table = db.getTable("T_Ausstellungsdaten");
 
+				ArrayList<String> rassen = new ArrayList<String>();
+				int anzahlImport = 0;
 				for (Row row : table) {
 
 					String rasse = "";
+
+					if (rassen.contains(row.getString("Rassename"))) {
+
+					} else {
+						rassen.add(row.getString("Rassename"));
+					}
 					switch (row.getString("Rassename")) {
 					case "Golden Retriever":
 						rasse = Rassen.GOLDEN_RETRIEVER
@@ -165,6 +181,11 @@ public class ShowImporter extends VerticalLayout implements View {
 						rasse = Rassen.FLAT_COATED_RETRIEVER
 								.getRassenKurzBezeichnung();
 						break;
+					case "Flat Coated Retriever":
+						rasse = Rassen.FLAT_COATED_RETRIEVER
+								.getRassenKurzBezeichnung();
+						break;
+
 					case "Nova Scotia Duck Tolling Retriever":
 						rasse = Rassen.NOVA_SCOTIA_DUCK_TOLLING_RETRIEVER
 								.getRassenKurzBezeichnung();
@@ -177,11 +198,19 @@ public class ShowImporter extends VerticalLayout implements View {
 						rasse = Rassen.CURLY_COATED_RETRIEVER
 								.getRassenKurzBezeichnung();
 						break;
+					case "Curly Coated Retriever":
+						rasse = Rassen.CURLY_COATED_RETRIEVER
+								.getRassenKurzBezeichnung();
+						break;
+
 					default:
 						break;
 					}
 
 					if (!"".equals(rasse)) {
+
+						anzahlImport += 1;
+
 						String show = row.getString("AusstellungsCode");
 
 						schauContainer = new SQLContainer(q1);
@@ -273,13 +302,10 @@ public class ShowImporter extends VerticalLayout implements View {
 							schauHundItem = schauHundContainer.getItem(id);
 						}
 
-						System.out.println("value: "
-								+ schauRingContainerItem.getItemProperty(
-										"idschauring").getValue());
 						schauHundItem.getItemProperty("idschauring").setValue(
-
 								schauRingContainerItem.getItemProperty(
 										"idschauring").getValue());
+
 						schauHundItem.getItemProperty("name").setValue(
 								row.getString("Hundename"));
 						schauHundItem.getItemProperty("wurftag").setValue(
@@ -288,15 +314,24 @@ public class ShowImporter extends VerticalLayout implements View {
 								.setValue(row.getString("Zuchtbuchnummer"));
 						schauHundItem.getItemProperty("chipnummer").setValue(
 								"000");
-						
+
 						schauHundItem.getItemProperty("klasse").setValue(
 								row.getString("Klasse"));
-						
 
-						schauHundItem.getItemProperty("vater").setValue(
-								row.getString("Vater"));
-						schauHundItem.getItemProperty("mutter").setValue(
-								row.getString("Mutter"));
+						if (!(row.getString("Vater") == null)) {
+						
+							schauHundItem.getItemProperty("vater").setValue(
+									row.getString("Vater"));
+						} else
+							schauHundItem.getItemProperty("vater").setValue(
+									"--");
+
+						if (!(row.getString("Mutter") == null)) {
+							schauHundItem.getItemProperty("mutter").setValue(
+									row.getString("Mutter"));
+						} else
+							schauHundItem.getItemProperty("mutter").setValue(
+									"--");
 
 						schauHundItem.getItemProperty("besitzershow").setValue(
 								row.getString("Besitzername"));
@@ -308,20 +343,21 @@ public class ShowImporter extends VerticalLayout implements View {
 												+ row.getString("aNummer")
 														.trim());
 
-						schauHundItem.getItemProperty("sort_kat_nr").setValue(row.getInt("Katalognummer"));
-						
+						schauHundItem.getItemProperty("sort_kat_nr").setValue(
+								row.getInt("Katalognummer"));
+
 						if (!(row.getString("Beschreibung") == null)) {
 							schauHundItem.getItemProperty("bewertung")
 									.setValue(row.getString("Beschreibung"));
-							
 
 						}
 
-						schauHundItem
-						.getItemProperty("hundfehlt")
-						.setValue(
+						schauHundItem.getItemProperty("hundfehlt").setValue(
 								row.getBoolean("fehlt") ? "J" : "N");
-						
+
+						if (row.getBoolean("Klubsieger")) {
+							schauHundItem.getItemProperty("clubsieger").setValue("C");
+						}
 						schauHundItem.getItemProperty("rasse").setValue(rasse);
 						schauHundItem.getItemProperty("idschau").setValue(
 								newItem.getItemProperty("idschau").getValue());
@@ -434,6 +470,10 @@ public class ShowImporter extends VerticalLayout implements View {
 						}
 
 						schauHundContainer.commit();
+						result.setValue("Anzahl import: " + anzahlImport);
+						for (int i = 0; i < rassen.size(); i++) {
+							System.out.println(rassen.get(i));
+						}
 
 					}
 				}

@@ -32,7 +32,7 @@ public class Urkunde extends CustomComponent {
 
 	private FileOutputStream fos;
 	/** The original PDF file. */
-	public static final String DATASHEET = "files/Urkunde_NEU_F.pdf";
+	public static final String DATASHEET = "files/Urkunde allgemein_FORMULAR1.pdf";
 	public static final String FONT = "files/arialuni.ttf";
 
 	public static final String RESULT = "Urkunde.pdf";
@@ -180,14 +180,18 @@ public class Urkunde extends CustomComponent {
 		personContainer.addContainerFilter(new Equal("idperson", teilnehmerItem
 				.getItemProperty("id_person").getValue()));
 
-		if (teilnehmerItem.getItemProperty("hundefuehrer").getValue() != null) {
+		if (teilnehmerItem.getItemProperty("hundefuehrer").getValue() != null
+				&& !teilnehmerItem.getItemProperty("hundefuehrer").getValue()
+						.toString().isEmpty()
+				&& teilnehmerItem.getItemProperty("hundefuehrer").getValue()
+						.toString().length() > 0) {
 
-			fields.setField("HUNDEFÜHRERIN",
+			fields.setField("HUNDEFÜHRER/IN",
 					teilnehmerItem.getItemProperty("hundefuehrer").getValue()
 							.toString());
 		} else {
 			fields.setField(
-					"HUNDEFÜHRERIN",
+					"HUNDEFÜHRER/IN",
 					personContainer.getItem(personContainer.firstItemId())
 							.getItemProperty("nachname").getValue().toString()
 							+ " "
@@ -244,53 +248,60 @@ public class Urkunde extends CustomComponent {
 						.getItemProperty("zwingername").getValue().toString());
 
 		fields.setField(
-				"Ort  Datum",
+				"ORT/DATUM",
 				veranstaltung.getItemProperty("veranstaltungsort").getValue()
 						.toString()
 						+ " "
 						+ dateFormat1.format(veranstaltung.getItemProperty(
 								"datum").getValue()));
 
+		fields.setField("VERANSTALTER/AUSBILDUNGSSTÄTTE", veranstaltung
+				.getItemProperty("veranstalter").getValue().toString());
 		VeranstaltungsStufen defStufe = VeranstaltungsStufen
 				.getBezeichnungForId(new Integer(veranstaltungsStufe
 						.getItemProperty("stufen_typ").getValue().toString()));
 
-		fields.setField("PRÜFUNGSZEILE", defStufe.getLangBezeichnung());
+		fields.setField("PRÜFUNG", defStufe.getLangBezeichnung());
 
 		fields.setField("ZEILE 3", "");
 		fields.setField("ZEILE 1", defStufe.getLangBezeichnung());
 
-		if ("N".equals(teilnehmerItem.getItemProperty("bestanden").getValue()
-				.toString())) {
-			fields.setField("ZEILE 2", "leider nicht bestanden");
-		} else if (defStufe == VeranstaltungsStufen.STUFE_BH) {
-			fields.setField("ZEILE 2", "erfolgreich bestanden");
+		if (teilnehmerItem.getItemProperty("bestanden").getValue() != null) {
 
-		} else if (defStufe == VeranstaltungsStufen.STUFE_BGH1
-				|| defStufe == VeranstaltungsStufen.STUFE_BGH2
-				|| defStufe == VeranstaltungsStufen.STUFE_BGH3
-				|| defStufe == VeranstaltungsStufen.STUFE_RBP4_O_WASSER
-				|| defStufe == VeranstaltungsStufen.STUFE_RBP4_M_WASSER
-				|| defStufe == VeranstaltungsStufen.STUFE_RBP3
-				|| defStufe == VeranstaltungsStufen.STUFE_RBP2
-				|| defStufe == VeranstaltungsStufen.STUFE_RBP1
-				|| defStufe == VeranstaltungsStufen.STUFE_GAP1
-				|| defStufe == VeranstaltungsStufen.STUFE_GAP2
-				|| defStufe == VeranstaltungsStufen.STUFE_GAP3
+			if ("N".equals(teilnehmerItem.getItemProperty("bestanden")
+					.getValue().toString())) {
+				fields.setField("ZEILE 2", "leider nicht bestanden");
+			} else if (defStufe == VeranstaltungsStufen.STUFE_BH) {
+				fields.setField("ZEILE 2", "erfolgreich bestanden");
 
-		) {
-			fields.setField(
-					"ZEILE 2",
-					"erfolgreich mit "
-							+ teilnehmerItem.getItemProperty("ges_punkte")
-									.getValue().toString()
-							+ " Punkten und "
-							+ defStufe.getBewertung(new Integer(teilnehmerItem
-									.getItemProperty("ges_punkte").getValue()
-									.toString())));
-			fields.setField("ZEILE 3", "bestanden");
+			} else if (defStufe == VeranstaltungsStufen.STUFE_BGH1
+					|| defStufe == VeranstaltungsStufen.STUFE_BGH2
+					|| defStufe == VeranstaltungsStufen.STUFE_BGH3
+					|| defStufe == VeranstaltungsStufen.STUFE_RBP4_O_WASSER
+					|| defStufe == VeranstaltungsStufen.STUFE_RBP4_M_WASSER
+					|| defStufe == VeranstaltungsStufen.STUFE_RBP3
+					|| defStufe == VeranstaltungsStufen.STUFE_RBP2
+					|| defStufe == VeranstaltungsStufen.STUFE_RBP1
+					|| defStufe == VeranstaltungsStufen.STUFE_GAP1
+					|| defStufe == VeranstaltungsStufen.STUFE_GAP2
+					|| defStufe == VeranstaltungsStufen.STUFE_GAP3
 
+			) {
+				fields.setField(
+						"ZEILE 2",
+						"erfolgreich mit "
+								+ teilnehmerItem.getItemProperty("ges_punkte")
+										.getValue().toString()
+								+ " Punkten und "
+								+ defStufe.getBewertung(new Integer(
+										teilnehmerItem
+												.getItemProperty("ges_punkte")
+												.getValue().toString())));
+				fields.setField("ZEILE 3", "bestanden");
+
+			}
 		}
+
 		hundContainer.removeAllContainerFilters();
 		personContainer.removeAllContainerFilters();
 

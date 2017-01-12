@@ -1,5 +1,6 @@
 package com.app.DashBoard.View;
 
+import com.app.Components.HundeImport;
 import com.app.DashBoard.DashboardView;
 import com.vaadin.navigator.View;
 import com.vaadin.server.FontAwesome;
@@ -15,8 +16,10 @@ public enum DashBoardViewType {
     SCHOWIMPORT("SchowDatenImport", ShowImporter.class, FontAwesome.EXCLAMATION, false),
     KURSGRUNDDATEN("KursGrundDaten", KursDetails.class, FontAwesome.CODE, false),
     KURSUEBERSICHT("KursÜbersicht", KursUebersicht.class, FontAwesome.CLIPBOARD, false),
-    CUPBASISBERECHUNG("ShowCup Basis", CupBasisBerechnungsView.class, FontAwesome.SHOPPING_BAG, false);
-
+    CUPBASISBERECHUNG("ShowCup Basis", CupBasisBerechnungsView.class, FontAwesome.SHOPPING_BAG, false),
+    HUNDEIMPORT("Hunde importieren", HundeImport.class, FontAwesome.TICKET, false),
+    SCHAUUEBERSICHT("Schauübersicht", ShowUebersicht.class, FontAwesome.SHARE, false);
+ 
     private final String viewName;
     private final Class<? extends View> viewClass;
     private final Resource icon;

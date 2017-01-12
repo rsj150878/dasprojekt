@@ -17,6 +17,8 @@ import com.vaadin.data.Item;
 import com.vaadin.data.util.filter.Compare.Equal;
 import com.vaadin.data.util.sqlcontainer.SQLContainer;
 import com.vaadin.data.util.sqlcontainer.query.TableQuery;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Page;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Notification;
@@ -28,7 +30,7 @@ import com.vaadin.ui.Upload.SucceededEvent;
 import com.vaadin.ui.Upload.SucceededListener;
 import com.vaadin.ui.VerticalLayout;
 
-public class HundeImport extends CustomComponent {
+public class HundeImport extends CustomComponent implements View{
 
 	private SQLContainer hundContainer;
 	private TableQuery q1;
@@ -170,19 +172,25 @@ public class HundeImport extends CustomComponent {
 					hundItem.getItemProperty("name").setValue(
 							nameCell.getContents());
 					
-					switch (idRasse.getColumn()) {
-					case 4:
+					switch (idRasse.getContents()) {
+					case "4":
 						hundItem.getItemProperty("rasse").setValue("CBR");
-					case 3:
+						break;
+					case "3":
 						hundItem.getItemProperty("rasse").setValue("FCR");
-					case 1:
+						break;
+					case "1":
 						hundItem.getItemProperty("rasse").setValue("GR");
-					case 6:
+						break;
+					case "6":
 						hundItem.getItemProperty("rasse").setValue("CCR");
-					case 5:
+						break;
+					case "5":
 						hundItem.getItemProperty("rasse").setValue("DTR");
-					case 2:
+						break;
+					case "2":
 						hundItem.getItemProperty("rasse").setValue("LR");
+						break;
 
 					}
 
@@ -195,7 +203,9 @@ public class HundeImport extends CustomComponent {
 					hundItem.getItemProperty("zbnr").setValue(
 							zbnr.getContents());
 					
+					
 				}
+				
 				hundContainer.commit();
 				
 			} catch (Exception e) {
@@ -216,5 +226,11 @@ public class HundeImport extends CustomComponent {
 					.show(Page.getCurrent());
 
 		}
+	}
+
+	@Override
+	public void enter(ViewChangeEvent event) {
+		// TODO Auto-generated method stub
+		
 	};
 }

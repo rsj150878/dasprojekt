@@ -1,7 +1,7 @@
 package com.app.Auth;
 
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import com.app.dbIO.DBConnection;
@@ -51,6 +51,7 @@ public class Hund implements QueryDelegate.RowIdChangeListener {
 			hundItem.getItemProperty("rasse").setValue("GR");
 			hundItem.getItemProperty("chipnummer").setValue("0000000000000000");
 			hundItem.getItemProperty("geschlecht").setValue("R");
+			hundItem.getItemProperty("bhdatum").setValue(new Date());
 
 			hundContainer.commit();
 
@@ -59,6 +60,8 @@ public class Hund implements QueryDelegate.RowIdChangeListener {
 			this.geschlecht = "R";
 			this.chipnummer = "0000000000000000";
 			this.wurfdatum = new Date();
+			this.bhdatum = new Date();
+			
 
 		} catch (SQLException e) {
 			e.printStackTrace();

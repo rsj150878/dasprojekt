@@ -6,7 +6,8 @@ public enum VeranstaltungsTypen {
 	RBP_O_WASSER(2,"RBP ohne Wasser",5,6,7,8),
 	RBP_M_WASSER(3,"RBP mit Wasser",5,6,7,9),
 	GAP_PRÜFUNG(4,"GAP",10,11,12),
-	TRAIN_WT(5, "Trainings-Working-Test", 13,14);
+	TRAIN_WT(5, "Trainings-Working-Test", 13,14),
+	WESENSTEST(6, "Wesentest", 15,16,17,18,19,20,21);
 
 	private Integer veranstaltungsTypID;
 	private String veranstaltungsTypBezeichnung;

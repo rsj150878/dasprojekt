@@ -2,8 +2,8 @@ package com.app.DashBoard.Component;
 
 import java.sql.SQLException;
 
-import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.DashBoard.Event.DashBoardEvent.SearchEvent;
+import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.dbIO.DBConnection;
 import com.app.enumPackage.VeranstaltungsStation;
 import com.app.enumPackage.VeranstaltungsStufen;
@@ -18,9 +18,9 @@ import com.vaadin.data.util.filter.Compare.Equal;
 import com.vaadin.data.util.sqlcontainer.SQLContainer;
 import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 import com.vaadin.data.validator.IntegerRangeValidator;
-import com.vaadin.ui.Field;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.renderers.ClickableRenderer.RendererClickEvent;
@@ -160,7 +160,8 @@ public class VeranstaltungsTeilnehmerGrid extends Grid {
 		setEditorEnabled(true);
 
 		setColumns("teilnehmerperson", "teilnehmerhund", "bezahlt",
-				"bestanden", "delete", "ges_punkte","sonderwertung", "hundefuehrer");
+				"bestanden", "delete", "ges_punkte", "sonderwertung",
+				"hundefuehrer");
 
 		if (!(defStufe.getStationen() == null)) {
 
@@ -169,19 +170,34 @@ public class VeranstaltungsTeilnehmerGrid extends Grid {
 			getColumn("ges_punkte").setEditable(false);
 
 			for (VeranstaltungsStation x : defStufe.getStationen().getStation()) {
+
 				addColumn(x.getUebung());
 
-				final TextField ue = new TextField();
-				ue.addValidator(new IntegerRangeValidator(
-						"Punkte müssen zwischen " + x.getMinPunkte() + " und "
-								+ x.getMaxPunkte() + " liegen", x
-								.getMinPunkte(), x.getMaxPunkte()));
+				System.out.println("x: " + x);
+				
+				if (x.equals(VeranstaltungsStation.WESENSTEST_BEMERKUNG)) {
+				
+					
+					final TextArea ue = new TextArea();
+					ue.setColumns(60);
+					getColumn(x.getUebung()).setEditorField(ue);
 
-				ue.setNullRepresentation("0");
-				getColumn(x.getUebung()).setEditorField(ue);
+				} else {
 
+					final TextField ue = new TextField();
+					ue.addValidator(new IntegerRangeValidator(
+							"Punkte müssen zwischen " + x.getMinPunkte()
+									+ " und " + x.getMaxPunkte() + " liegen", x
+									.getMinPunkte(), x.getMaxPunkte()));
+
+					ue.setNullRepresentation("0");
+					getColumn(x.getUebung()).setEditorField(ue);
+
+				}
 			}
 		}
+
+		// getColumn("").getEditorField().setp
 
 		getColumn("delete").setRenderer(
 				new ButtonRenderer(new RendererClickListener() {
@@ -264,36 +280,39 @@ public class VeranstaltungsTeilnehmerGrid extends Grid {
 	public void searchResult(SearchEvent event) {
 		DashBoardEventBus.unregister(this);
 		if (!(event.getDogIdResult() == null)) {
-			Object id = veranstaltungsTeilnehmerContainer.addItem();
-			Item newItem = veranstaltungsTeilnehmerContainer
-					.getItemUnfiltered(id);
-			// newItem.getItemProperty("idkursstunde").setValue(
-			// stunde.getItemProperty("idkursstunde").getValue());
-			newItem.getItemProperty("id_hund").setValue(event.getDogIdResult());
-			newItem.getItemProperty("id_stufe").setValue(
-					stufe.getItemProperty("id_stufe").getValue());
-			newItem.getItemProperty("id_veranstaltung").setValue(
-					stufe.getItemProperty("id_veranstaltung").getValue());
-
-			dogContainer.removeAllContainerFilters();
-			dogContainer.addContainerFilter(new Equal("idhund", event
-					.getDogIdResult()));
-			Item dogItem = dogContainer.getItem(dogContainer.getIdByIndex(0));
-
-			newItem.getItemProperty("id_person").setValue(
-					dogItem.getItemProperty("idperson").getValue());
-			newItem.getItemProperty("bezahlt").setValue("N");
-			newItem.getItemProperty("bestanden").setValue("N");
-
-			try {
-				veranstaltungsTeilnehmerContainer.commit();
-			} catch (Exception e) {
-				Notification.show("fehler beim speichern");
-				e.printStackTrace();
-
-			}
+			meldeHundId(event.getDogIdResult());
 
 		}
+	}
+
+	public void meldeHundId(Integer hundId) {
+		Object id = veranstaltungsTeilnehmerContainer.addItem();
+		Item newItem = veranstaltungsTeilnehmerContainer.getItemUnfiltered(id);
+		// newItem.getItemProperty("idkursstunde").setValue(
+		// stunde.getItemProperty("idkursstunde").getValue());
+		newItem.getItemProperty("id_hund").setValue(hundId);
+		newItem.getItemProperty("id_stufe").setValue(
+				stufe.getItemProperty("id_stufe").getValue());
+		newItem.getItemProperty("id_veranstaltung").setValue(
+				stufe.getItemProperty("id_veranstaltung").getValue());
+
+		dogContainer.removeAllContainerFilters();
+		dogContainer.addContainerFilter(new Equal("idhund", hundId));
+		Item dogItem = dogContainer.getItem(dogContainer.getIdByIndex(0));
+
+		newItem.getItemProperty("id_person").setValue(
+				dogItem.getItemProperty("idperson").getValue());
+		newItem.getItemProperty("bezahlt").setValue("N");
+		newItem.getItemProperty("bestanden").setValue("N");
+
+		try {
+			veranstaltungsTeilnehmerContainer.commit();
+		} catch (Exception e) {
+			Notification.show("fehler beim speichern");
+			e.printStackTrace();
+
+		}
+
 	}
 
 }

@@ -15,6 +15,7 @@ import com.vaadin.data.Item;
 import com.vaadin.data.util.filter.Compare.Equal;
 import com.vaadin.data.util.filter.Compare.GreaterOrEqual;
 import com.vaadin.data.util.filter.Like;
+import com.vaadin.data.util.filter.Or;
 import com.vaadin.data.util.sqlcontainer.SQLContainer;
 import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
 import com.vaadin.data.util.sqlcontainer.query.OrderBy;
@@ -279,13 +280,16 @@ public class CupBasisBerechnungsView extends VerticalLayout implements View,
 			SQLContainer oercHundContainer = new SQLContainer(q3);
 
 			SQLContainer basisContainer = new SQLContainer(q4);
+			basisContainer.addContainerFilter(new Equal("showjahr","2016"));
+			
+			basisContainer.removeAllItems();
+			basisContainer.commit();
+			basisContainer.removeAllContainerFilters();
 
 			for (Object schauId : schauContainer.getItemIds()) {
 				schauHundContainer.addContainerFilter(new Equal("idschau",
 						schauContainer.getItem(schauId)
 								.getItemProperty("idschau").getValue()));
-
-				System.out.println("schau");
 
 				int gefunden = 0;
 				for (Object schauHundId : schauHundContainer.getItemIds()) {
@@ -295,7 +299,7 @@ public class CupBasisBerechnungsView extends VerticalLayout implements View,
 							.getItemProperty("zuchtbuchnummer").getValue()
 							.toString();
 					Matcher m = p.matcher(zuchtBuchNummer);
-					System.out.println("Hund " + zuchtBuchNummer);
+					// System.out.println("Hund " + zuchtBuchNummer);
 					if (m.find()) {
 
 						// System.out.println("gefunden");
@@ -309,9 +313,12 @@ public class CupBasisBerechnungsView extends VerticalLayout implements View,
 								+ zuchtBuchNummer.substring(m.start(), m.end())
 										.trim() + "%";
 
-						System.out.println("filter: '" + zbnrFilterValue + "'");
+						//System.out.println("filter: '" + zbnrFilterValue + "'");
 						oercHundContainer.addContainerFilter(new Like("zbnr",
 								zbnrFilterValue));
+
+						oercHundContainer.addContainerFilter(new Like(
+								"zuchtbuch", "%HZB%"));
 
 						oercHundContainer.addContainerFilter(new Like("rasse",
 								"%"
@@ -320,6 +327,9 @@ public class CupBasisBerechnungsView extends VerticalLayout implements View,
 												.getItemProperty("rasse")
 												.getValue().toString() + "%"));
 
+						if (oercHundContainer.size() > 1) {
+							System.out.println("mehr als einen Hund gefunden");
+						}
 						if (oercHundContainer.size() > 0) {
 
 							basisContainer.addContainerFilter(new Equal(
@@ -344,6 +354,7 @@ public class CupBasisBerechnungsView extends VerticalLayout implements View,
 										.getItem(basisContainer.firstItemId());
 							}
 
+							basisContainerItem.getItemProperty("zbnr_filter_value").setValue(zbnrFilterValue);
 							basisContainerItem.getItemProperty("idschau")
 									.setValue(
 											schauContainer.getItem(schauId)
@@ -365,7 +376,7 @@ public class CupBasisBerechnungsView extends VerticalLayout implements View,
 													.getItem(
 															oercHundContainer
 																	.firstItemId())
-													.getItemProperty("hundenr")
+													.getItemProperty("oercid")
 													.getValue());
 
 							basisContainerItem.getItemProperty("punkte")
@@ -399,7 +410,7 @@ public class CupBasisBerechnungsView extends VerticalLayout implements View,
 					}
 				}
 
-				System.out.println("hunde gefunden " + gefunden);
+				//System.out.println("hunde gefunden " + gefunden);
 
 				schauHundContainer.removeAllContainerFilters();
 
@@ -581,7 +592,7 @@ public class CupBasisBerechnungsView extends VerticalLayout implements View,
 			sb.append("select idausstellungscup_komprimiert, name,");
 			sb.append("rasse, punkte, zu_werten_in, a.oercid as oercid, b.oercid as hundoercid , gespunkte , b.geschlecht ");
 			sb.append("from ausstellungscup_komprimiert a, oerc_hund b ");
-			sb.append("where a.oercid = b.hundenr");
+			sb.append("where a.oercid = b.oercid");
 			sb.append(" and a.showjahr = '2016' ");
 			sb.append("order by b.rasse, a.punkte");
 

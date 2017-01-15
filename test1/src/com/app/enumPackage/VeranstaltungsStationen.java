@@ -27,7 +27,8 @@ public enum VeranstaltungsStationen {
 			VeranstaltungsStation.GAP3_UE5), 
 	BGH1(8, VeranstaltungsStation.BGH1_UE1, VeranstaltungsStation.BGH1_UE2,
 			VeranstaltungsStation.BGH1_UE3, VeranstaltungsStation.BGH1_UE4,
-			VeranstaltungsStation.BGH1_UE5);
+			VeranstaltungsStation.BGH1_UE5),
+	WESENSTEST(9, VeranstaltungsStation.WESENSTEST, VeranstaltungsStation.WESENSTEST_BEMERKUNG);
 
 	public Integer id;
 	private VeranstaltungsStation[] station;

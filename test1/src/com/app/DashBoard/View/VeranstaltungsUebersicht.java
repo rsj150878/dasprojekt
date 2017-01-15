@@ -60,7 +60,7 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 		addStyleName("reports");
 		addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
 		setCloseHandler(this);
-		
+
 		DashBoardEventBus.register(this);
 
 		q1 = new TableQuery("veranstaltung",
@@ -117,18 +117,17 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 	}
 
 	private Component buildDrafts() {
-		
+
 		Panel draftsPanel = new Panel("Alle Veranstaltungen");
 		draftsPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
 		draftsPanel.addStyleName(ValoTheme.PANEL_SCROLL_INDICATOR);
 		draftsPanel.setSizeUndefined();
-		
-		
+
 		final VerticalLayout allDrafts = new VerticalLayout();
 		allDrafts.setSizeFull();
 		allDrafts.setSpacing(true);
 		allDrafts.setMargin(true);
-		//allDrafts.setCaption("Alle Veranstaltungen");
+		// allDrafts.setCaption("Alle Veranstaltungen");
 
 		// VerticalLayout titleAndDrafts = new VerticalLayout();
 		// titleAndDrafts.setSizeUndefined();
@@ -142,7 +141,7 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 		buildDraftsList(allDrafts);
 
 		draftsPanel.setContent(allDrafts);
-		
+
 		return draftsPanel;
 	}
 
@@ -176,16 +175,13 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 
 		for (Object itemId : veranstaltungsContainer.getItemIds()) {
 
-			if (!year.equals(veranstaltungsContainer
-					.getItem(itemId)
+			if (!year.equals(veranstaltungsContainer.getItem(itemId)
 					.getItemProperty("datum").getValue().toString()
 					.substring(0, 4))) {
 
-				
 				yearPanel.setContent(drafts);
-				
-				year = veranstaltungsContainer
-						.getItem(itemId)
+
+				year = veranstaltungsContainer.getItem(itemId)
 						.getItemProperty("datum").getValue().toString()
 						.substring(0, 4);
 
@@ -204,15 +200,13 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 				drafts.setSpacing(true);
 				drafts.setSizeUndefined();
 
-			
-
 			}
 
 			drafts.addComponent(buildDraftThumb(veranstaltungsContainer
 					.getItem(itemId)));
 
 		}
-		
+
 		yearPanel.setContent(drafts);
 
 		return drafts;
@@ -221,12 +215,12 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 	private Component buildDraftThumb(Item veranstaltungsItem) {
 
 		final Item vaItem = veranstaltungsItem;
-		
+
 		VerticalLayout draftThumb = new VerticalLayout();
 		draftThumb.setWidth(160.0f, Unit.PIXELS);
 		draftThumb.setHeight(200.0f, Unit.PIXELS);
 		draftThumb.addStyleName("draft-thumb");
-		 
+
 		draftThumb.setSpacing(true);
 
 		StringBuilder sb = new StringBuilder();
@@ -236,9 +230,8 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 						.toString())).getVeranstaltungsTypBezeichnung());
 
 		sb.append("</b><br>");
-		sb.append(new SimpleDateFormat("dd.MM.yyyy")
-				.format(vaItem
-						.getItemProperty("datum").getValue()));
+		sb.append(new SimpleDateFormat("dd.MM.yyyy").format(vaItem
+				.getItemProperty("datum").getValue()));
 		sb.append("</p>");
 
 		Label draftTitle = new Label(sb.toString(), ContentMode.HTML);
@@ -262,7 +255,7 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 				if (event.getButton() == MouseButton.LEFT
 						&& event.getChildComponent() != delete) {
 
-					 openReport(vaItem);
+					openReport(vaItem);
 				}
 			}
 		});
@@ -282,15 +275,17 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 
 		return createBox;
 	}
-	
-	public void openReport (Item toOpenVeranstaltung) {
-		VeranstaltungsDetailViewNeu detailView = new VeranstaltungsDetailViewNeu(
-				toOpenVeranstaltung, this);
 
-		String title = VeranstaltungsTypen.getVeranstaltungsTypForId(
-				Integer.valueOf(toOpenVeranstaltung.getItemProperty("typ")
-						.getValue().toString()))
-				.getVeranstaltungsTypBezeichnung();
+	public void openReport(Item toOpenVeranstaltung) {
+
+		VeranstaltungsTypen openTyp = VeranstaltungsTypen
+				.getVeranstaltungsTypForId(Integer.valueOf(toOpenVeranstaltung
+						.getItemProperty("typ").getValue().toString()));
+
+		VeranstaltungsDetailViewNeu detailView = new VeranstaltungsDetailViewNeu(
+				openTyp, toOpenVeranstaltung, this);
+
+		String title = openTyp.getVeranstaltungsTypBezeichnung();
 
 		title += " "
 				+ new SimpleDateFormat("dd.MM.yyyy").format(toOpenVeranstaltung
@@ -304,7 +299,6 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 		detailView.setTitle(title);
 		setSelectedTab(getComponentCount() - 1);
 
-		
 	}
 
 	@Subscribe
@@ -344,7 +338,8 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 		newVeranstaltung = commit();
 
 		VeranstaltungsDetailViewNeu detailView = new VeranstaltungsDetailViewNeu(
-				newVeranstaltung, this);
+				neueVeranstaltung.getVeranstaltungsTyp(), newVeranstaltung,
+				this);
 
 		String title = VeranstaltungsTypen.getVeranstaltungsTypForId(
 				Integer.valueOf(newVeranstaltung.getItemProperty("typ")
@@ -399,9 +394,8 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 				removeComponent(tabContent);
 				DashBoardEventBus.post(new ReportsCountUpdatedEvent(
 						getComponentCount() - 1));
-				Notification
-						.show("Die Veranstaltung wurde gespeichert",
-								Type.TRAY_NOTIFICATION);
+				Notification.show("Die Veranstaltung wurde gespeichert",
+						Type.TRAY_NOTIFICATION);
 			}
 		});
 		ok.addStyleName(ValoTheme.BUTTON_PRIMARY);
@@ -447,6 +441,7 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 		private Button newGap = new Button("GAP");
 		private Button newBgh = new Button("BH/BGH");
 		private Button newWt = new Button("Train-Wt");
+		private Button newWesensTest = new Button("Wesenstest");
 
 		public PopupTextFieldContent() {
 
@@ -486,12 +481,17 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 			layout.setComponentAlignment(newBgh, Alignment.MIDDLE_CENTER);
 			newBgh.setData(VeranstaltungsTypen.BH_BGH_PRÜFUNG);
 			newBgh.addClickListener(listener);
-			
+
 			layout.addComponent(newWt);
 			layout.setComponentAlignment(newWt, Alignment.MIDDLE_CENTER);
 			newWt.setData(VeranstaltungsTypen.TRAIN_WT);
 			newWt.addClickListener(listener);
-			
+
+			layout.addComponent(newWesensTest);
+			layout.setComponentAlignment(newWesensTest, Alignment.MIDDLE_CENTER);
+			newWesensTest.setData(VeranstaltungsTypen.WESENSTEST);
+			newWesensTest.addClickListener(listener);
+
 			menuPanel.setContent(layout);
 		}
 

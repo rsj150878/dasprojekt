@@ -10,8 +10,9 @@ import jxl.NumberCell;
 import jxl.Sheet;
 import jxl.Workbook;
 import jxl.biff.EmptyCell;
-import jxl.read.biff.BlankCell;
 
+import com.app.DashBoard.Component.VeranstaltungsTeilnehmerGrid;
+import com.app.DashBoard.View.VeranstaltungsDetailViewNeu.AnmeldungsPanel;
 import com.app.dbIO.DBConnection;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.filter.Compare.Equal;
@@ -21,6 +22,7 @@ import com.vaadin.data.util.sqlcontainer.query.QueryDelegate;
 import com.vaadin.data.util.sqlcontainer.query.QueryDelegate.RowIdChangeEvent;
 import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 import com.vaadin.server.Page;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Upload.FailedEvent;
 import com.vaadin.ui.Upload.FailedListener;
@@ -33,6 +35,11 @@ public class WesensTestImporter implements Receiver, SucceededListener,
 	public File file;
 	public String filename;
 	private RowId personId;
+	private Component meldeComponent;
+
+	public void setComponentForMeldung(Component meldeComponent) {
+		this.meldeComponent = meldeComponent;
+	}
 
 	public OutputStream receiveUpload(String filename, String mimeType) {
 		// Create upload stream
@@ -65,10 +72,13 @@ public class WesensTestImporter implements Receiver, SucceededListener,
 			Sheet sheet = workbook.getSheet(0);
 			SQLContainer hundContainer = new SQLContainer(q2);
 			hundContainer.setAutoCommit(false);
+			hundContainer.addRowIdChangeListener(this);
+
 			SQLContainer personContainer = new SQLContainer(q1);
 			personContainer.setAutoCommit(false);
+			personContainer.addRowIdChangeListener(this);
 
-			for (int i = 1; i < sheet.getRows(); i++) {
+			for (int i = 2; i < sheet.getRows(); i++) {
 
 				System.out.println("verarbeite zeile: " + i);
 				NumberCell personCell = (NumberCell) sheet.getCell(28, i);
@@ -78,15 +88,18 @@ public class WesensTestImporter implements Receiver, SucceededListener,
 				LabelCell familienName = (LabelCell) sheet.getCell(35, i);
 				LabelCell vorName = (LabelCell) sheet.getCell(34, i);
 				LabelCell strasse = (LabelCell) sheet.getCell(37, i);
-				LabelCell ort = (LabelCell) sheet.getCell(40, i);
+				LabelCell ort = (LabelCell) sheet.getCell(41, i);
+				LabelCell email = (LabelCell) sheet.getCell(45, i);
+
 				LabelCell land = (LabelCell) sheet.getCell(38, i);
+
 				String landString = land.getContents();
 
 				if (landString.equals("A")) {
 					landString = "AT";
 				}
 
-				LabelCell plz = (LabelCell) sheet.getCell(41, i);
+				LabelCell plz = (LabelCell) sheet.getCell(40, i);
 
 				if (personNr.equals(0))
 
@@ -111,7 +124,7 @@ public class WesensTestImporter implements Receiver, SucceededListener,
 
 				Item personItem;
 				Object id;
-				if (hundContainer.size() == 0) {
+				if (personContainer.size() == 0) {
 					id = personContainer.addItem();
 					personItem = personContainer.getItemUnfiltered(id);
 				} else {
@@ -121,7 +134,7 @@ public class WesensTestImporter implements Receiver, SucceededListener,
 
 				personContainer.removeAllContainerFilters();
 
-				personItem.getItemProperty("familienname").setValue(
+				personItem.getItemProperty("nachname").setValue(
 						familienName.getContents());
 				personItem.getItemProperty("vorname").setValue(
 						vorName.getContents());
@@ -129,8 +142,11 @@ public class WesensTestImporter implements Receiver, SucceededListener,
 				personItem.getItemProperty("plz").setValue(plz.getContents());
 				personItem.getItemProperty("strasse").setValue(
 						strasse.getContents());
+				personItem.getItemProperty("ort").setValue(ort.getContents());
+				personItem.getItemProperty("email").setValue(
+						email.getContents());
 
-				if (sheet.getCell(33, i) instanceof BlankCell) {
+				if (sheet.getCell(33, i) instanceof EmptyCell) {
 
 				} else {
 					LabelCell titelCell = (LabelCell) sheet.getCell(33, i);
@@ -139,27 +155,28 @@ public class WesensTestImporter implements Receiver, SucceededListener,
 				}
 
 				personItem.getItemProperty("oerc_mitgliedsnummer").setValue(
-						personNr);
+						personNr.toString());
 				personItem.getItemProperty("newsletter").setValue("N");
+				personItem.getItemProperty("hausnummer").setValue("");
 
 				personContainer.commit();
 				personContainer.refresh();
 
 				Integer internPersonId = null;
-				if (personId == null) {
+				if (personItem.getItemProperty("idperson").getValue() != null) {
 					internPersonId = new Integer(personItem
 							.getItemProperty("idperson").getValue().toString());
 				} else {
 					internPersonId = new Integer(personId.getId()[0].toString());
 				}
 
-				NumberCell idRasse = (NumberCell) sheet.getCell(4, i);
-
 				LabelCell chipNr = (LabelCell) sheet.getCell(22, i);
 				String chipString = chipNr.getContents();
-				
-				hundContainer.addContainerFilter(new Equal("idperson", internPersonId));
-				hundContainer.addContainerFilter(new Equal("chipnr", chipString));
+
+				hundContainer.addContainerFilter(new Equal("idperson",
+						internPersonId));
+				hundContainer.addContainerFilter(new Equal("chipnummer",
+						chipString));
 
 				Item hundItem;
 				Object hundId;
@@ -173,71 +190,113 @@ public class WesensTestImporter implements Receiver, SucceededListener,
 
 				hundContainer.removeAllContainerFilters();
 
-				LabelCell geschlecht = (LabelCell) sheet.getCell(6, i);
+				// if (sheet.getCell(14, i) instanceof EmptyCell) {
+				//
+				// } else {
+				// LabelCell titel = (LabelCell) sheet.getCell(14, i);
+				// hundItem.getItemProperty("titel").setValue(
+				// titel.getContents());
+				// }
 
-				if (sheet.getCell(14, i) instanceof EmptyCell) {
+				// if (sheet.getCell(24, i) instanceof EmptyCell) {
+				// } else {
+				// NumberCell mitgliedNr = (NumberCell) sheet.getCell(24, i);
+				// LabelCell mitgliedNachName = (LabelCell) sheet.getCell(25,
+				// i);
+				// LabelCell mitgliedVorname = (LabelCell) sheet
+				// .getCell(26, i);
+				//
+				// hundItem.getItemProperty("mitgliednr").setValue(
+				// Integer.valueOf(mitgliedNr.getContents()));
+				// hundItem.getItemProperty("mitglied_nachname").setValue(
+				// mitgliedNachName.getContents());
+				// hundItem.getItemProperty("mitglied_vorname").setValue(
+				// mitgliedVorname.getContents());
+				// }
+
+				hundItem.getItemProperty("idperson").setValue(internPersonId);
+				hundItem.getItemProperty("chipnummer").setValue(chipString);
+				if (sheet.getCell(16, i) instanceof EmptyCell) {
 
 				} else {
-					LabelCell titel = (LabelCell) sheet.getCell(14, i);
-					hundItem.getItemProperty("titel").setValue(
-							titel.getContents());
+					NumberCell hundeNr = (NumberCell) sheet.getCell(16, i);
+					hundItem.getItemProperty("hundenr").setValue(
+							new Integer(hundeNr.getContents()));
+
 				}
 
-				LabelCell zbnr = (LabelCell) sheet.getCell(19, i);
-
-				if (sheet.getCell(24, i) instanceof EmptyCell) {
-				} else {
-					NumberCell mitgliedNr = (NumberCell) sheet.getCell(24, i);
-					LabelCell mitgliedNachName = (LabelCell) sheet.getCell(25,
-							i);
-					LabelCell mitgliedVorname = (LabelCell) sheet
-							.getCell(26, i);
-
-					hundItem.getItemProperty("mitgliednr").setValue(
-							Integer.valueOf(mitgliedNr.getContents()));
-					hundItem.getItemProperty("mitglied_nachname").setValue(
-							mitgliedNachName.getContents());
-					hundItem.getItemProperty("mitglied_vorname").setValue(
-							mitgliedVorname.getContents());
-				}
-
-				hundItem.getItemProperty("hundenr").setValue(hundeNr);
-				hundItem.getItemProperty("name").setValue(
+				LabelCell nameCell = (LabelCell) sheet.getCell(17, i);
+				hundItem.getItemProperty("zwingername").setValue(
 						nameCell.getContents());
 
+				if (sheet.getCell(18, i) instanceof EmptyCell) {
+					hundItem.getItemProperty("rufname").setValue("");
+
+				} else {
+					LabelCell rufname = (LabelCell) sheet.getCell(18, i);
+					hundItem.getItemProperty("rufname").setValue(
+							rufname.getContents());
+				}
+				LabelCell idRasse = (LabelCell) sheet.getCell(10, i);
 				switch (idRasse.getContents()) {
-				case "4":
+				case "CBRET":
 					hundItem.getItemProperty("rasse").setValue("CBR");
 					break;
-				case "3":
+				case "FRET":
 					hundItem.getItemProperty("rasse").setValue("FCR");
 					break;
-				case "1":
+				case "GRET":
 					hundItem.getItemProperty("rasse").setValue("GR");
 					break;
-				case "6":
+				case "CCRET":
 					hundItem.getItemProperty("rasse").setValue("CCR");
 					break;
-				case "5":
+				case "DRET":
 					hundItem.getItemProperty("rasse").setValue("DTR");
 					break;
-				case "2":
+				case "LRET":
 					hundItem.getItemProperty("rasse").setValue("LR");
 					break;
 
 				}
 
+				LabelCell geschlecht = (LabelCell) sheet.getCell(11, i);
 				if (geschlecht.getContents().contains("dog")) {
 					hundItem.getItemProperty("geschlecht").setValue("R");
 				} else {
 					hundItem.getItemProperty("geschlecht").setValue("H");
 				}
 
-				hundItem.getItemProperty("zbnr").setValue(zbnr.getContents());
+				LabelCell zbnr = (LabelCell) sheet.getCell(21, i);
+				hundItem.getItemProperty("zuchtbuchnummer").setValue(
+						zbnr.getContents());
+
+				DateCell wurfCell = (DateCell) sheet.getCell(19, i);
+				hundItem.getItemProperty("wurfdatum").setValue(
+						wurfCell.getDate());
+
+				hundContainer.commit();
+				hundContainer.refresh();
+
+				if (this.meldeComponent instanceof AnmeldungsPanel) {
+
+					Integer internHundId = null;
+					if (hundItem.getItemProperty("idhund").getValue() != null) {
+						internHundId = new Integer(hundItem
+								.getItemProperty("idhund").getValue()
+								.toString());
+					} else {
+						internHundId = new Integer(
+								personId.getId()[0].toString());
+					}
+
+					Component zw = ((AnmeldungsPanel) meldeComponent)
+							.getMeldeComponent();
+					((VeranstaltungsTeilnehmerGrid) zw)
+							.meldeHundId(internHundId);
+				}
 
 			}
-
-			hundContainer.commit();
 
 		} catch (Exception e) {
 			new Notification("Fehler beim Verarbeiten der Datei",

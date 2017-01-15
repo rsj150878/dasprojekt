@@ -27,7 +27,15 @@ public enum VeranstaltungsStufen {
 	STUFE_GAP2(11,"GAP2","Gehorsam- und Apportierprüfung 2", GAP2RichterBlatt.class, VeranstaltungsStationen.GAP2, 11,12,13,14,15),
 	STUFE_GAP3(12,"GAP3","Gehorsam- und Apportierprüfung 3", GAP3RichterBlatt.class, VeranstaltungsStationen.GAP3, 11,12,13,14,15),
 	TRAININGS_WT_ANFAENGER(13, "Anfänger", "Anfänger", null, null, BewertungEnum.TRAINING_WT_BESTANDEN.id),
-	TRAININGS_WT_FORTGESCHRITTEN(14, "Fortgeschritten", "Fortgeschritten", null, null, BewertungEnum.TRAINING_WT_BESTANDEN.id);
+	TRAININGS_WT_FORTGESCHRITTEN(14, "Fortgeschritten", "Fortgeschritten", null, null, BewertungEnum.TRAINING_WT_BESTANDEN.id),
+	WESENSTEST_GRUPPE_ALLGEMEIN(15, "Wesenstest Allgemein", "WesenstestAllgemein", null, VeranstaltungsStationen.WESENSTEST, 17, 18),
+	WESENSTEST_GRUPPE_1(16, "Wesenstest Gruppe 1", "Wesenstest Gruppe 1", null, VeranstaltungsStationen.WESENSTEST, 17, 18),
+	WESENSTEST_GRUPPE_2(17, "Wesenstest Gruppe 2", "Wesenstest Gruppe 2", null, VeranstaltungsStationen.WESENSTEST, 17, 18),
+	WESENSTEST_GRUPPE_3(18, "Wesenstest Gruppe 3", "Wesenstest Gruppe 3", null, VeranstaltungsStationen.WESENSTEST, 17, 18),
+	WESENSTEST_GRUPPE_4(19, "Wesenstest Gruppe 4", "Wesenstest Gruppe 4", null, VeranstaltungsStationen.WESENSTEST, 17, 18),
+	WESENSTEST_GRUPPE_5(20, "Wesenstest Gruppe 5", "Wesenstest Gruppe 5", null, VeranstaltungsStationen.WESENSTEST, 17, 18),
+	WESENSTEST_GRUPPE_6(21, "Wesenstest Gruppe 6", "Wesenstest Gruppe 6", null, VeranstaltungsStationen.WESENSTEST, 17, 18);
+	;
 	
 	private Integer veranstaltungsStufeId;
 	private String bezeichnung;

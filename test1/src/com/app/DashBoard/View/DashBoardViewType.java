@@ -18,7 +18,8 @@ public enum DashBoardViewType {
     KURSUEBERSICHT("KursÜbersicht", KursUebersicht.class, FontAwesome.CLIPBOARD, false),
     CUPBASISBERECHUNG("ShowCup Basis", CupBasisBerechnungsView.class, FontAwesome.SHOPPING_BAG, false),
     HUNDEIMPORT("Hunde importieren", HundeImport.class, FontAwesome.TICKET, false),
-    SCHAUUEBERSICHT("Schauübersicht", ShowUebersicht.class, FontAwesome.SHARE, false);
+    SCHAUUEBERSICHT("Schauübersicht", ShowUebersicht.class, FontAwesome.SHARE, false),
+    TESTCONNECTION("TestConnection", TestMicrosoftConnection.class, FontAwesome.MICROPHONE, false);
  
     private final String viewName;
     private final Class<? extends View> viewClass;

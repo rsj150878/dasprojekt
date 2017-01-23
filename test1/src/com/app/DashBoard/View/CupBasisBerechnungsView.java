@@ -280,8 +280,8 @@ public class CupBasisBerechnungsView extends VerticalLayout implements View,
 			SQLContainer oercHundContainer = new SQLContainer(q3);
 
 			SQLContainer basisContainer = new SQLContainer(q4);
-			basisContainer.addContainerFilter(new Equal("showjahr","2016"));
-			
+			basisContainer.addContainerFilter(new Equal("showjahr", "2016"));
+
 			basisContainer.removeAllItems();
 			basisContainer.commit();
 			basisContainer.removeAllContainerFilters();
@@ -290,6 +290,9 @@ public class CupBasisBerechnungsView extends VerticalLayout implements View,
 				schauHundContainer.addContainerFilter(new Equal("idschau",
 						schauContainer.getItem(schauId)
 								.getItemProperty("idschau").getValue()));
+
+				schauHundContainer.addContainerFilter(new Equal("hundfehlt",
+						"N"));
 
 				int gefunden = 0;
 				for (Object schauHundId : schauHundContainer.getItemIds()) {
@@ -313,7 +316,8 @@ public class CupBasisBerechnungsView extends VerticalLayout implements View,
 								+ zuchtBuchNummer.substring(m.start(), m.end())
 										.trim() + "%";
 
-						//System.out.println("filter: '" + zbnrFilterValue + "'");
+						// System.out.println("filter: '" + zbnrFilterValue +
+						// "'");
 						oercHundContainer.addContainerFilter(new Like("zbnr",
 								zbnrFilterValue));
 
@@ -328,7 +332,16 @@ public class CupBasisBerechnungsView extends VerticalLayout implements View,
 												.getValue().toString() + "%"));
 
 						if (oercHundContainer.size() > 1) {
-							System.out.println("mehr als einen Hund gefunden");
+
+							System.out
+									.println("mehr als einen Hund gefunden bei zbnr "
+											+ zbnrFilterValue
+											+ " schauhundid: "
+											+ schauHundContainer
+													.getItem(schauHundId)
+													.getItemProperty(
+															"idschauhund")
+													.getValue().toString());
 						}
 						if (oercHundContainer.size() > 0) {
 
@@ -354,7 +367,9 @@ public class CupBasisBerechnungsView extends VerticalLayout implements View,
 										.getItem(basisContainer.firstItemId());
 							}
 
-							basisContainerItem.getItemProperty("zbnr_filter_value").setValue(zbnrFilterValue);
+							basisContainerItem.getItemProperty(
+									"zbnr_filter_value").setValue(
+									zbnrFilterValue);
 							basisContainerItem.getItemProperty("idschau")
 									.setValue(
 											schauContainer.getItem(schauId)
@@ -410,7 +425,7 @@ public class CupBasisBerechnungsView extends VerticalLayout implements View,
 					}
 				}
 
-				//System.out.println("hunde gefunden " + gefunden);
+				// System.out.println("hunde gefunden " + gefunden);
 
 				schauHundContainer.removeAllContainerFilters();
 

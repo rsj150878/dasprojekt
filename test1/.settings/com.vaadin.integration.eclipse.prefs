@@ -1,6 +1,7 @@
 =\=\=\=\=\=\=
 <<<<<<<=HEAD
 >>>>>>>=branch 'master' of https\://github.com/rsj150878/dasprojekt.git
+com.vaadin.integration.eclipse.mavenLatestVersionsUpgrade=["7.7.7"]
 com.vaadin.integration.eclipse.previousCompileAction=both
 com.vaadin.integration.eclipse.useLatestNightly=false
 com.vaadin.integration.eclipse.widgetsetBuildsSuspended=true

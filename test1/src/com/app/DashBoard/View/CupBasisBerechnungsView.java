@@ -142,7 +142,11 @@ public class CupBasisBerechnungsView extends VerticalLayout implements View,
 					veteranenPunkte = new ArrayList<Integer>();
 				}
 
-				if ("JÜ".equals(basisContainer.getItem(basisId)
+				if (
+						"WE".equals(basisContainer.getItem(basisId)
+								.getItemProperty("ausklasse").getValue().toString())
+							||
+						"JÜ".equals(basisContainer.getItem(basisId)
 						.getItemProperty("ausklasse").getValue().toString())
 						|| "JU".equals(basisContainer.getItem(basisId)
 								.getItemProperty("ausklasse").getValue()
@@ -203,7 +207,7 @@ public class CupBasisBerechnungsView extends VerticalLayout implements View,
 			Collections.reverse(gesPunkte);
 
 			Integer sumPunkte = new Integer(0);
-			for (int i = 0; i < Math.min(gesPunkte.size(), 8); i++) {
+			for (int i = 0; i < Math.min(gesPunkte.size(), 9); i++) {
 				System.out.println("pkt: " + gesPunkte.get(i));
 				sumPunkte += gesPunkte.get(i);
 
@@ -447,7 +451,9 @@ public class CupBasisBerechnungsView extends VerticalLayout implements View,
 				break;
 			case "v":
 				if (hundItem.getItemProperty("klasse").getValue()
-						.equals(ShowKlassen.JUENGSTENKLASSE)) {
+						.equals(ShowKlassen.JUENGSTENKLASSE.getShowKlassenKurzBezeichnung())
+						|| hundItem.getItemProperty("klasse").getValue()
+						.equals(ShowKlassen.BABYKLASSE.getShowKlassenKurzBezeichnung())) {
 					summe += 3;
 				} else {
 					summe += 10;
@@ -471,7 +477,7 @@ public class CupBasisBerechnungsView extends VerticalLayout implements View,
 				case "1":
 					summe += 5;
 					if (hundItem.getItemProperty("klasse").getValue()
-							.equals(ShowKlassen.VETERANENKLASSE)) {
+							.equals(ShowKlassen.VETERANENKLASSE.getShowKlassenKurzBezeichnung())) {
 						summe += 4;
 					}
 					break;
@@ -537,8 +543,10 @@ public class CupBasisBerechnungsView extends VerticalLayout implements View,
 		if (!(hundItem.getItemProperty("clubsieger").getValue() == null)) {
 
 			if (hundItem.getItemProperty("klasse").getValue()
-					.equals(ShowKlassen.JUGENDKLASSE)) {
+					.equals(ShowKlassen.JUGENDKLASSE.getShowKlassenKurzBezeichnung())) {
 				summe += 4;
+			} else if (hundItem.getItemProperty("klasse").getValue()
+					.equals(ShowKlassen.VETERANENKLASSE.getShowKlassenKurzBezeichnung()) ){
 			} else {
 				summe += 8;
 			}

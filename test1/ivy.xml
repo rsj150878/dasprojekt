@@ -103,6 +103,10 @@
 		 
 		 <dependency org="org.vaadin.addons" name="filteringtable" rev="0.9.15.v7" />
 		 <dependency org="org.vaadin" name="viritin" rev="1.54" />
+		 
+		 <!-- https://mvnrepository.com/artifact/com.mpay24.payment/mpay24-payment-sdk -->
+		<dependency org="com.mpay24.payment" name="mpay24-payment-sdk" rev="1.3.0.0"/>
+		 
 
 		 <!-- <dependency org="org.apache.httpcomponents" name="httpclient" rev="4.5"/> -->
 		 <!-- <dependency org="org.apache.httpcomponents" name="httpcore" rev="4.4.1"/>  -->

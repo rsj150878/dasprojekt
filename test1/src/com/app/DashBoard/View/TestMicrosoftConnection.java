@@ -4,8 +4,12 @@ import java.sql.SQLException;
 
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.dbIO.DBConnectionMicrosoft;
+import com.app.dbIO.OercMitgliedDelegate;
+import com.vaadin.data.Item;
 import com.vaadin.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
 import com.vaadin.data.util.sqlcontainer.query.TableQuery;
+import com.vaadin.data.util.sqlcontainer.query.generator.MSSQLGenerator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
@@ -53,19 +57,20 @@ public class TestMicrosoftConnection extends VerticalLayout implements View {
 
 	private Component buildWorkingArea() {
 		VerticalLayout mainLayout = new VerticalLayout();
-		SQLContainer schauContainer;
+		SQLContainer wurfContainer;
 		TableQuery q1;
-		
-		q1 = new TableQuery("dbo.TestTAble",
-				DBConnectionMicrosoft.INSTANCE.getConnectionPool());
-		
+
+		MSSQLGenerator msql = new MSSQLGenerator();
+		q1 = new TableQuery("tabMitgliederWurf",
+				DBConnectionMicrosoft.INSTANCE.getConnectionPool(), msql);
 		try {
-			schauContainer = new SQLContainer(q1);
+
+			wurfContainer = new SQLContainer(q1);
 			
 		} catch (SQLException e) {
-			
+			e.printStackTrace();
+
 		}
-		
 
 		return (mainLayout);
 

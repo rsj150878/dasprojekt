@@ -1,8 +1,8 @@
 package com.app.enumPackage;
 
 public enum ShowKlassen {
-	BABYKLASSE("BK", "Babyklasse", "N"), JUENGSTENKLASSE("JÜ",
-			"Jüngstenklasse", "N"), JUGENDKLASSE("JU", "Jugendklasse", "J"), ZWISCHENKLASSE(
+	BABYKLASSE("WE", "Babyklasse", "J"), JUENGSTENKLASSE("JÜ",
+			"Jüngstenklasse", "J"), JUGENDKLASSE("JU", "Jugendklasse", "J"), ZWISCHENKLASSE(
 			"ZK", "Zwischenklasse", "J"), OFFENEKLASSE("OF", "Offene Klasse",
 			"J"), GEBRAUCHSHUNDEKLASSE("GB", "Gebrauchshundeklasse", "J"), CHAMPIONKLASSE(
 			"CH", "Championklasse", "J"), VETERANENKLASSE("VE",

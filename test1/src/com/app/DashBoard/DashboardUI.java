@@ -29,7 +29,7 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 @Theme("dashboard")
-@Widgetset("com.app.DashBoard.DashboardWidgetSet")
+@Widgetset("com.app.DashBoard.DashboardWidgetSetNeu")
 @Title("Hundeschule")
 @SuppressWarnings("serial")
 public final class DashboardUI extends UI {

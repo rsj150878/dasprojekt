@@ -5,14 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.vaadin.data.Container.Filter;
-import com.vaadin.data.util.sqlcontainer.RowItem;
-import com.vaadin.data.util.sqlcontainer.SQLUtil;
-import com.vaadin.data.util.sqlcontainer.TemporaryRowId;
-import com.vaadin.data.util.sqlcontainer.query.FreeformStatementDelegate;
-import com.vaadin.data.util.sqlcontainer.query.OrderBy;
-import com.vaadin.data.util.sqlcontainer.query.generator.StatementHelper;
-import com.vaadin.data.util.sqlcontainer.query.generator.filter.QueryBuilder;
+import com.vaadin.v7.data.Container.Filter;
+import com.vaadin.v7.data.util.sqlcontainer.RowItem;
+import com.vaadin.v7.data.util.sqlcontainer.SQLUtil;
+import com.vaadin.v7.data.util.sqlcontainer.TemporaryRowId;
+import com.vaadin.v7.data.util.sqlcontainer.query.FreeformStatementDelegate;
+import com.vaadin.v7.data.util.sqlcontainer.query.OrderBy;
+import com.vaadin.v7.data.util.sqlcontainer.query.generator.StatementHelper;
+import com.vaadin.v7.data.util.sqlcontainer.query.generator.filter.QueryBuilder;
 
 public class OercMitgliedDelegate implements FreeformStatementDelegate {
 

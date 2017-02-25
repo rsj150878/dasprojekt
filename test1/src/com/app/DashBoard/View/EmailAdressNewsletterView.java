@@ -1,43 +1,21 @@
 package com.app.DashBoard.View;
 
-import java.sql.SQLException;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Locale;
 
-import com.app.Auth.DataProvider;
 import com.app.Auth.EmailForEmailVerteiler;
-import com.app.Auth.MitgliederListe;
 import com.app.DashBoard.Event.DashBoardEvent.BrowserResizeEvent;
 import com.app.DashBoard.Event.DashBoardEvent.UpdateUserEvent;
 import com.app.DashBoard.Event.DashBoardEvent.UserNewEvent;
-import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.DashBoardWindow.FilterableSortableListContainer;
 import com.google.common.eventbus.Subscribe;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitEvent;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitHandler;
-import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.data.util.converter.Converter;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.FontAwesome;
-import com.vaadin.server.Page;
-import com.vaadin.server.Responsive;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.renderers.HtmlRenderer;
-import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.ui.Grid;
+import com.vaadin.v7.ui.VerticalLayout;
+
 
 @SuppressWarnings({ "serial", "unchecked" })
 public class EmailAdressNewsletterView extends VerticalLayout implements View {

@@ -97,6 +97,7 @@ public final class DashboardUI extends UI {
     		user = new User(event.getUserName(), event.getPassword());
     	} catch (UsernameNotFoundException e) {
     		Notification.show("User und/oder passwort falsch", Notification.Type.ERROR_MESSAGE);
+    		e.printStackTrace();
     		
     	}
     	VaadinSession.getCurrent().setAttribute(User.class.getName(), user);

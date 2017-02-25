@@ -2,8 +2,6 @@ package com.app.DashBoardWindow;
 
 import com.app.DashBoard.Event.DashBoardEvent.CloseOpenWindowsEvent;
 import com.app.DashBoard.Event.DashBoardEventBus;
-import com.vaadin.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.server.Responsive;
 import com.vaadin.shared.ui.MarginInfo;
@@ -19,6 +17,8 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 
 
 public class InfoWindow extends Window {

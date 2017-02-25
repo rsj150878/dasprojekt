@@ -3,8 +3,6 @@ package com.app.Auth;
 import java.util.Collection;
 import java.util.Iterator;
 
-import com.vaadin.server.FontAwesome;
-
 public class MitgliederListe {
 	
 	private String familienName;

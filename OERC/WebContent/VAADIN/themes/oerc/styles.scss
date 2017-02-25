@@ -1,9 +1,9 @@
+// Import all the mixins for this theme
 @import "addons.scss";
-@import "oerc.scss";
+@import "dashboard";
 
-/* This file prefixes all rules with the theme name to avoid causing conflicts with other themes. */
-/* The actual styles should be defined in oerc.scss */
-.oerc {
+.dashboard {
+  // Output the actual theme selectors
   @include addons;
-  @include oerc;
+  @include dashboard;
 }

@@ -5,12 +5,6 @@ import java.sql.SQLException;
 import com.app.DashBoard.Event.DashBoardEvent.ReportsCountUpdatedEvent;
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.dbIO.DBConnectionMicrosoft;
-import com.vaadin.data.Item;
-import com.vaadin.data.util.GeneratedPropertyContainer;
-import com.vaadin.data.util.PropertyValueGenerator;
-import com.vaadin.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
-import com.vaadin.data.util.sqlcontainer.query.OrderBy;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Component;
@@ -22,6 +16,12 @@ import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.renderers.ClickableRenderer.RendererClickEvent;
 import com.vaadin.ui.renderers.ClickableRenderer.RendererClickListener;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.util.GeneratedPropertyContainer;
+import com.vaadin.v7.data.util.PropertyValueGenerator;
+import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.v7.data.util.sqlcontainer.query.FreeformQuery;
+import com.vaadin.v7.data.util.sqlcontainer.query.OrderBy;
 
 public class WurfUebersicht extends TabSheet implements View, // CloseHandler,
 		WurfDetail.WurfDetailListener {

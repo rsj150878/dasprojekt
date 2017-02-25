@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.Property;
 
 
 public class HundItemWrapper implements Item, HundTxAware {

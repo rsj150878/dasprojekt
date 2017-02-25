@@ -1,8 +1,9 @@
 package com.app.dbIO;
 
-import com.vaadin.data.Property;
-import com.vaadin.data.util.AbstractProperty;
 import com.vaadin.shared.util.SharedUtil;
+import com.vaadin.v7.data.Property;
+import com.vaadin.v7.data.Property.ReadOnlyException;
+import com.vaadin.v7.data.util.AbstractProperty;
 
 public class HundTxPropertyWrapper<T> extends AbstractProperty<T> implements
 		Property.ValueChangeNotifier, HundTxAware {

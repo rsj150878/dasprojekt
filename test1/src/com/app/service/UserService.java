@@ -14,9 +14,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.app.dbIO.DBConnection;
-import com.vaadin.data.util.filter.Compare.Equal;
-import com.vaadin.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.data.util.sqlcontainer.query.TableQuery;
+import com.vaadin.v7.data.util.filter.Compare.Equal;
+import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 
 /**
  * @author Ondrej Kvasnovsky

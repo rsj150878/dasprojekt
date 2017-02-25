@@ -5,13 +5,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 import com.app.dbIO.DBConnection;
-import com.vaadin.data.Item;
-import com.vaadin.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.data.util.sqlcontainer.query.TableQuery;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 
 public class DataProvider {
 

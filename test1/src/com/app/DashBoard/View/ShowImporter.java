@@ -12,12 +12,6 @@ import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.DatabaseBuilder;
 import com.healthmarketscience.jackcess.Row;
 import com.healthmarketscience.jackcess.Table;
-import com.vaadin.data.Item;
-import com.vaadin.data.util.filter.Compare.Equal;
-import com.vaadin.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.data.util.sqlcontainer.query.QueryDelegate.RowIdChangeEvent;
-import com.vaadin.data.util.sqlcontainer.query.QueryDelegate.RowIdChangeListener;
-import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Page;
@@ -26,7 +20,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.Upload.FailedEvent;
@@ -36,6 +29,13 @@ import com.vaadin.ui.Upload.SucceededEvent;
 import com.vaadin.ui.Upload.SucceededListener;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.util.filter.Compare.Equal;
+import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.v7.data.util.sqlcontainer.query.QueryDelegate.RowIdChangeEvent;
+import com.vaadin.v7.data.util.sqlcontainer.query.QueryDelegate.RowIdChangeListener;
+import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
+import com.vaadin.v7.ui.OptionGroup;
 
 public class ShowImporter extends VerticalLayout implements View {
 

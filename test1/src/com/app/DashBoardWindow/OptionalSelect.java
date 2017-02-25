@@ -2,17 +2,17 @@ package com.app.DashBoardWindow;
 
 import java.util.Iterator;
 
-import com.vaadin.data.util.MethodProperty;
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.CustomField;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.util.MethodProperty;
+import com.vaadin.v7.ui.CheckBox;
+import com.vaadin.v7.ui.ComboBox;
 
 @SuppressWarnings({ "serial", "unchecked" })
-public final class OptionalSelect<T> extends CustomField<T> {
+public final class OptionalSelect<T> extends com.vaadin.v7.ui.CustomField<T> {
 
     private final CheckBox checkBox;
     private final ComboBox comboBox;
@@ -35,10 +35,10 @@ public final class OptionalSelect<T> extends CustomField<T> {
         comboBox.addStyleName(ValoTheme.COMBOBOX_SMALL);
         comboBox.setWidth(10.0f, Unit.EM);
         comboBox.setEnabled(false);
-        comboBox.addValueChangeListener(new ValueChangeListener() {
+        comboBox.addValueChangeListener(new com.vaadin.v7.data.Property.ValueChangeListener() {
             @Override
             public void valueChange(
-                    final com.vaadin.data.Property.ValueChangeEvent event) {
+                    final com.vaadin.v7.data.Property.ValueChangeEvent event) {
                 setValue((T) event.getProperty().getValue());
             }
         });
@@ -47,10 +47,10 @@ public final class OptionalSelect<T> extends CustomField<T> {
         checkBox = new CheckBox("Subscribe to newsletter", false);
         checkBox.setPropertyDataSource(new MethodProperty<Boolean>(comboBox,
                 "enabled"));
-        checkBox.addValueChangeListener(new ValueChangeListener() {
+        checkBox.addValueChangeListener(new com.vaadin.v7.data.Property.ValueChangeListener() {
             @Override
             public void valueChange(
-                    final com.vaadin.data.Property.ValueChangeEvent event) {
+                    final com.vaadin.v7.data.Property.ValueChangeEvent event) {
                 if ((Boolean) event.getProperty().getValue()) {
                     if (comboBox.getValue() == null) {
                         Iterator<?> iterator = comboBox.getItemIds().iterator();

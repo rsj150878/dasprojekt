@@ -4,24 +4,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
-import jxl.DateCell;
-import jxl.LabelCell;
-import jxl.NumberCell;
-import jxl.Sheet;
-import jxl.Workbook;
-import jxl.biff.EmptyCell;
-import jxl.read.biff.BlankCell;
-
 import com.app.dbIO.DBConnection;
-import com.vaadin.data.Item;
-import com.vaadin.data.util.filter.Compare.Equal;
-import com.vaadin.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Page;
 import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.ProgressBar;
 import com.vaadin.ui.Upload;
@@ -31,6 +18,18 @@ import com.vaadin.ui.Upload.Receiver;
 import com.vaadin.ui.Upload.SucceededEvent;
 import com.vaadin.ui.Upload.SucceededListener;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.util.filter.Compare.Equal;
+import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
+
+import jxl.DateCell;
+import jxl.LabelCell;
+import jxl.NumberCell;
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.biff.EmptyCell;
+import jxl.read.biff.BlankCell;
 
 public class HundeImport extends CustomComponent implements View {
 

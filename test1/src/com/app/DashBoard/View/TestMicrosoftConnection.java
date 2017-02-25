@@ -4,12 +4,6 @@ import java.sql.SQLException;
 
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.dbIO.DBConnectionMicrosoft;
-import com.app.dbIO.OercMitgliedDelegate;
-import com.vaadin.data.Item;
-import com.vaadin.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
-import com.vaadin.data.util.sqlcontainer.query.TableQuery;
-import com.vaadin.data.util.sqlcontainer.query.generator.MSSQLGenerator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
@@ -18,6 +12,9 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
+import com.vaadin.v7.data.util.sqlcontainer.query.generator.MSSQLGenerator;
 
 public class TestMicrosoftConnection extends VerticalLayout implements View {
 

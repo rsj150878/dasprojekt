@@ -1,7 +1,7 @@
 package com.app.Components;
 
-import com.vaadin.data.Validator;
-import com.vaadin.data.Validator.InvalidValueException;
+import com.vaadin.v7.data.Validator;
+import com.vaadin.v7.data.Validator.InvalidValueException;
 
 public class ChipNummerValidator implements Validator {
 

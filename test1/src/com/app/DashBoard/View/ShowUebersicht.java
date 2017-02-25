@@ -6,28 +6,21 @@ import java.text.SimpleDateFormat;
 import com.app.DashBoard.Event.DashBoardEvent.ReportsCountUpdatedEvent;
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.dbIO.DBConnection;
-import com.app.enumPackage.VeranstaltungsTypen;
-import com.vaadin.data.Item;
-import com.vaadin.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.data.util.sqlcontainer.query.OrderBy;
-import com.vaadin.data.util.sqlcontainer.query.TableQuery;
-import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TabSheet.CloseHandler;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.v7.data.util.sqlcontainer.query.OrderBy;
+import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 
 public class ShowUebersicht extends TabSheet implements View, //CloseHandler,
 		ShowDetail.ShowDetailListener {

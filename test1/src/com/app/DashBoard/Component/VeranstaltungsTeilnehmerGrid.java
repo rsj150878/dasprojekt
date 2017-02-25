@@ -5,6 +5,8 @@ import java.util.Locale;
 
 import org.vaadin.data.tx.ItemGenerator;
 
+import com.app.DashBoard.Component.VeranstaltungsTeilnehmerGrid.ReadOnlyField;
+import com.app.DashBoard.Component.VeranstaltungsTeilnehmerGrid.StringToBoolean;
 import com.app.DashBoard.Event.DashBoardEvent.SearchEvent;
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.dbIO.DBConnection;
@@ -13,18 +15,6 @@ import com.app.dbIO.HundTxListener;
 import com.app.enumPackage.VeranstaltungsStation;
 import com.app.enumPackage.VeranstaltungsStufen;
 import com.google.common.eventbus.Subscribe;
-import com.vaadin.data.Container.Filter;
-import com.vaadin.data.Item;
-import com.vaadin.data.util.GeneratedPropertyContainer;
-import com.vaadin.data.util.PropertyValueGenerator;
-import com.vaadin.data.util.converter.Converter;
-import com.vaadin.data.util.converter.StringToBooleanConverter;
-import com.vaadin.data.util.filter.Compare.Equal;
-import com.vaadin.data.util.sqlcontainer.RowId;
-import com.vaadin.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.data.util.sqlcontainer.query.QueryDelegate;
-import com.vaadin.data.util.sqlcontainer.query.QueryDelegate.RowIdChangeEvent;
-import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 import com.vaadin.data.validator.IntegerRangeValidator;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Grid;
@@ -35,6 +25,17 @@ import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.renderers.ClickableRenderer.RendererClickEvent;
 import com.vaadin.ui.renderers.ClickableRenderer.RendererClickListener;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.Container.Filter;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.util.GeneratedPropertyContainer;
+import com.vaadin.v7.data.util.PropertyValueGenerator;
+import com.vaadin.v7.data.util.converter.Converter;
+import com.vaadin.v7.data.util.filter.Compare.Equal;
+import com.vaadin.v7.data.util.sqlcontainer.RowId;
+import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.v7.data.util.sqlcontainer.query.QueryDelegate;
+import com.vaadin.v7.data.util.sqlcontainer.query.QueryDelegate.RowIdChangeEvent;
+import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 
 public class VeranstaltungsTeilnehmerGrid extends Grid {
 

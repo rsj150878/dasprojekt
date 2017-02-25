@@ -2,8 +2,6 @@ package com.app.Components;
 
 import com.app.EmailSender.EwsReplClass;
 import com.app.dbIO.DBConnection;
-import com.vaadin.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -12,6 +10,8 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.ProgressBar;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 
 public class EmailDatenAbgleich extends CustomComponent implements
 		ClickListener {

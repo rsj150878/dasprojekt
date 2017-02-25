@@ -21,17 +21,18 @@
     -->
     <!-- <set-configuration-property name="devModeRedirectEnabled" value="true" /> -->
 
-
-
     <inherits name="org.vaadin.hene.popupbutton.widgetset.PopupbuttonWidgetset" />
-
-    <inherits name="org.vaadin.gridutil.WidgetSet" />
 
     <inherits name="com.vaadin.DefaultWidgetSet" />
 
-    <inherits name="com.example.testUIWithLogin.AppWidgetSet" />
+    <inherits name="com.app.DashBoard.com.app.DashBoard.com.app.DashBoard.com.app.DashBoard.DashboardWidgetSet" />
+
+    <inherits name="com.vaadin.v7.Vaadin7WidgetSet" />
 
     <inherits name="org.tepi.filtertable.gwt.FilterTableWidgetset" />
 
-    <inherits name="com.app.DashBoard.DashboardWidgetSet" />
+     <inherits name="com.app.DashBoard.DashboardWidgetSet" />
+
+
+    <inherits name="com.app.DashBoard.com.app.DashBoard.DashboardWidgetSet" />
 </module>

@@ -3,29 +3,25 @@ package com.app.printClasses;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import com.app.dbIO.DBConnection;
-import com.app.enumPackage.Rassen;
 import com.app.enumPackage.VeranstaltungsStufen;
 import com.app.service.TemporaryFileDownloadResource;
-import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfCopyFields;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
-import com.vaadin.data.Item;
-import com.vaadin.data.util.filter.Compare.Equal;
-import com.vaadin.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.CustomComponent;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.util.filter.Compare.Equal;
+import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 
 public class UrkundeTrainingsWorkingtest extends CustomComponent {
 	private PdfReader reader;
@@ -85,7 +81,6 @@ public class UrkundeTrainingsWorkingtest extends CustomComponent {
 									.getValue()));
 
 			mainLayout = new AbsoluteLayout();
-			mainLayout.setImmediate(false);
 			mainLayout.setWidth("100%");
 			mainLayout.setHeight("100%");
 			setCompositionRoot(mainLayout);

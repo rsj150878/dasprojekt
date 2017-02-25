@@ -1,37 +1,32 @@
 package com.app.DashBoard.View;
 
+import com.app.Components.ShowInfoForm;
 import com.app.dbIO.DBConnection;
-import com.vaadin.data.Container.Filter;
-import com.vaadin.data.Item;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.fieldgroup.PropertyId;
-import com.vaadin.data.util.filter.Compare.Equal;
-import com.vaadin.data.util.filter.Or;
-import com.vaadin.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.data.util.sqlcontainer.query.OrderBy;
-import com.vaadin.data.util.sqlcontainer.query.TableQuery;
-import com.vaadin.event.SelectionEvent;
-import com.vaadin.event.SelectionEvent.SelectionListener;
-import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Accordion;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.DateField;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.client.widget.grid.selection.SelectionEvent;
+import com.vaadin.v7.data.Container.Filter;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.Property.ValueChangeEvent;
+import com.vaadin.v7.data.Property.ValueChangeListener;
+import com.vaadin.v7.data.util.filter.Compare.Equal;
+import com.vaadin.v7.data.util.filter.Or;
+import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.v7.data.util.sqlcontainer.query.OrderBy;
+import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
+import com.vaadin.v7.event.SelectionEvent.SelectionListener;
+import com.vaadin.v7.ui.Grid;
+import com.vaadin.v7.ui.Grid.SelectionMode;
+import com.vaadin.v7.ui.OptionGroup;
+import com.vaadin.v7.ui.PopupDateField;
+import com.vaadin.v7.ui.TextField;
 
 public class ShowDetail extends CustomComponent {
 
@@ -66,12 +61,10 @@ public class ShowDetail extends CustomComponent {
 
 	private void buildMainLayout() {
 
-		q2 = new TableQuery("veranstaltungs_stufe",
-				DBConnection.INSTANCE.getConnectionPool());
+		q2 = new TableQuery("veranstaltungs_stufe", DBConnection.INSTANCE.getConnectionPool());
 		q2.setVersionColumn("version");
 
-		q3 = new TableQuery("veranstaltungs_teilnehmer",
-				DBConnection.INSTANCE.getConnectionPool());
+		q3 = new TableQuery("veranstaltungs_teilnehmer", DBConnection.INSTANCE.getConnectionPool());
 		q3.setVersionColumn("version");
 
 		// common part: create layout
@@ -106,9 +99,7 @@ public class ShowDetail extends CustomComponent {
 		nameVeranstaltung.setWidth("100%");
 		;
 		nameVeranstaltung.setMaxLength(90);
-		nameVeranstaltung.setImmediate(true);
-		nameVeranstaltung.setPropertyDataSource(currentShowItem
-				.getItemProperty("bezeichnung"));
+		nameVeranstaltung.setPropertyDataSource(currentShowItem.getItemProperty("bezeichnung"));
 
 		secondLineLayout.addComponent(nameVeranstaltung);
 
@@ -117,10 +108,8 @@ public class ShowDetail extends CustomComponent {
 		infoZeilenLayout.setResponsive(true);
 		infoZeilenLayout.setWidth("100%");
 
-		final PopupDateField datumVeranstaltung = new PopupDateField(
-				"Datum der Veranstaltung");
-		datumVeranstaltung.setPropertyDataSource(currentShowItem
-				.getItemProperty("datum"));
+		final PopupDateField datumVeranstaltung = new PopupDateField("Datum der Veranstaltung");
+		datumVeranstaltung.setPropertyDataSource(currentShowItem.getItemProperty("datum"));
 		datumVeranstaltung.setImmediate(true);
 
 		datumVeranstaltung.setDateFormat("dd.MM.yyyy");
@@ -131,8 +120,7 @@ public class ShowDetail extends CustomComponent {
 		showType.setItemCaption("C", "Clubschau");
 		showType.addItem("I");
 		showType.setItemCaption("I", "Internat. Ausstellung");
-		showType.setPropertyDataSource(currentShowItem
-				.getItemProperty("schautyp"));
+		showType.setPropertyDataSource(currentShowItem.getItemProperty("schautyp"));
 		showType.setStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
 		showType.setEnabled(false);
 
@@ -154,8 +142,7 @@ public class ShowDetail extends CustomComponent {
 		thirdLineAccordion.addStyleName(ValoTheme.ACCORDION_BORDERLESS);
 
 		thirdLineAccordion.addTab(createAllgemeinTab(), "Allgemein/Ehrenring");
-		thirdLineAccordion.addTab(buildBreedPanelForShow("GR"),
-				"Golden Retriever");
+		thirdLineAccordion.addTab(buildBreedPanelForShow("GR"), "Golden Retriever");
 
 		thirdLine.setContent(thirdLineAccordion);
 
@@ -170,34 +157,25 @@ public class ShowDetail extends CustomComponent {
 		thirdLineLayout.setResponsive(true);
 		thirdLineLayout.setSpacing(true);
 
-		thirdLineLayout.addComponent(createAllgemeinComponent("BIS", "B",
-				"BIS", null, null));
-		thirdLineLayout.addComponent(createAllgemeinComponent("Res.-BIS", "R",
-				"BIS", null, null));
-		thirdLineLayout.addComponent(createAllgemeinComponent("BOD", "B",
-				"BOD", null, null));
+		thirdLineLayout.addComponent(createAllgemeinComponent("BIS", "B", "BIS", null, null));
+		thirdLineLayout.addComponent(createAllgemeinComponent("Res.-BIS", "R", "BIS", null, null));
+		thirdLineLayout.addComponent(createAllgemeinComponent("BOD", "B", "BOD", null, null));
 
-		if (currentShowItem.getItemProperty("schautyp").getValue().toString()
-				.equals("I")) {
+		if (currentShowItem.getItemProperty("schautyp").getValue().toString().equals("I")) {
 			TabSheet ehrenRingPlatzierungen = new TabSheet();
 			ehrenRingPlatzierungen.addTab(createEhrenRingTab("JÜ"), "Jüngsten");
 			ehrenRingPlatzierungen.addTab(createEhrenRingTab("JU"), "Jugend");
-			ehrenRingPlatzierungen
-					.addTab(createEhrenRingTab("GRP"), "Gruppe 8");
+			ehrenRingPlatzierungen.addTab(createEhrenRingTab("GRP"), "Gruppe 8");
 			ehrenRingPlatzierungen.addTab(createEhrenRingTab("VE"), "Veteran");
 
 			thirdLineLayout.addComponent(ehrenRingPlatzierungen);
 		} else {
-			thirdLineLayout.addComponent(createAllgemeinComponent("Best Baby",
-					"A", "bestehrenring", null, null));
-			thirdLineLayout.addComponent(createAllgemeinComponent(
-					"Bester Jüngster", "J", "bestehrenring", "JÜ", null));
-			thirdLineLayout.addComponent(createAllgemeinComponent(
-					"Bester Junghund", "B", "bestehrenring", "JU", null));
-			thirdLineLayout.addComponent(createAllgemeinComponent(
-					"Bester Gebrauchshund", "G", "bestehrenring", "GK", null));
-			thirdLineLayout.addComponent(createAllgemeinComponent(
-					"Bester Veteran", "V", "bestehrenring", "VE", null));
+			thirdLineLayout.addComponent(createAllgemeinComponent("Best Baby", "A", "bestehrenring", null, null));
+			thirdLineLayout.addComponent(createAllgemeinComponent("Bester Jüngster", "J", "bestehrenring", "JÜ", null));
+			thirdLineLayout.addComponent(createAllgemeinComponent("Bester Junghund", "B", "bestehrenring", "JU", null));
+			thirdLineLayout
+					.addComponent(createAllgemeinComponent("Bester Gebrauchshund", "G", "bestehrenring", "GK", null));
+			thirdLineLayout.addComponent(createAllgemeinComponent("Bester Veteran", "V", "bestehrenring", "VE", null));
 
 		}
 
@@ -212,23 +190,17 @@ public class ShowDetail extends CustomComponent {
 		ehrenRingLayout.setSpacing(true);
 		;
 
-		ehrenRingLayout.addComponent(createAllgemeinComponent("1. Platz", "1",
-				"platzehrenring", klasse, null));
-		ehrenRingLayout.addComponent(createAllgemeinComponent("2. Platz", "2",
-				"platzehrenring", klasse, null));
-		ehrenRingLayout.addComponent(createAllgemeinComponent("3. Platz", "3",
-				"platzehrenring", klasse, null));
-		ehrenRingLayout.addComponent(createAllgemeinComponent("4. Platz", "4",
-				"platzehrenring", klasse, null));
-		ehrenRingLayout.addComponent(createAllgemeinComponent("5. Platz", "5",
-				"platzehrenring", klasse, null));
+		ehrenRingLayout.addComponent(createAllgemeinComponent("1. Platz", "1", "platzehrenring", klasse, null));
+		ehrenRingLayout.addComponent(createAllgemeinComponent("2. Platz", "2", "platzehrenring", klasse, null));
+		ehrenRingLayout.addComponent(createAllgemeinComponent("3. Platz", "3", "platzehrenring", klasse, null));
+		ehrenRingLayout.addComponent(createAllgemeinComponent("4. Platz", "4", "platzehrenring", klasse, null));
+		ehrenRingLayout.addComponent(createAllgemeinComponent("5. Platz", "5", "platzehrenring", klasse, null));
 
 		return ehrenRingLayout;
 	}
 
-	private Component createAllgemeinComponent(String fieldName,
-			final String dbValue, final String dbField, final String klasse,
-			final String breed) {
+	private Component createAllgemeinComponent(String fieldName, final String dbValue, final String dbField,
+			final String klasse, final String breed) {
 		HorizontalLayout layout = new HorizontalLayout();
 		layout.setWidth("100%");
 		layout.setHeight("100%");
@@ -257,14 +229,12 @@ public class ShowDetail extends CustomComponent {
 			@Override
 			public void valueChange(ValueChangeEvent event) {
 
-				TableQuery query = new TableQuery("schauhund",
-						DBConnection.INSTANCE.getConnectionPool());
+				TableQuery query = new TableQuery("schauhund", DBConnection.INSTANCE.getConnectionPool());
 
 				try {
 					SQLContainer resultContainer = new SQLContainer(query);
-					resultContainer.addContainerFilter(new Equal("idschau",
-							currentShowItem.getItemProperty("idschau")
-									.getValue().toString()));
+					resultContainer.addContainerFilter(
+							new Equal("idschau", currentShowItem.getItemProperty("idschau").getValue().toString()));
 
 					Filter q = new Equal(dbField, dbValue);
 					resultContainer.addContainerFilter(q);
@@ -273,10 +243,8 @@ public class ShowDetail extends CustomComponent {
 
 					if (!(klasse == null)) {
 						if (klasse.equals("GRP")) {
-							klassenFilter = new Or(new Equal("klasse", "ZK"),
-									new Equal("klasse", "OF"), new Equal(
-											"klasse", "GK"), new Equal(
-											"klasse", "CH"));
+							klassenFilter = new Or(new Equal("klasse", "ZK"), new Equal("klasse", "OF"),
+									new Equal("klasse", "GK"), new Equal("klasse", "CH"));
 						} else {
 							klassenFilter = new Equal("klasse", klasse);
 						}
@@ -285,8 +253,7 @@ public class ShowDetail extends CustomComponent {
 					}
 
 					if (resultContainer.size() > 0) {
-						resultContainer.getItem(resultContainer.firstItemId())
-								.getItemProperty(dbField).setValue(null);
+						resultContainer.getItem(resultContainer.firstItemId()).getItemProperty(dbField).setValue(null);
 
 					}
 
@@ -296,23 +263,19 @@ public class ShowDetail extends CustomComponent {
 						resultContainer.removeContainerFilter(klassenFilter);
 					}
 
-					resultContainer.addContainerFilter(new Equal(
-							"katalognummer", inputField.getValue()));
+					resultContainer.addContainerFilter(new Equal("katalognummer", inputField.getValue()));
 
 					String dogNameString = "";
 					if (resultContainer.size() > 0) {
 
-						dogNameString = resultContainer
-								.getItem(resultContainer.firstItemId())
-								.getItemProperty("name").getValue().toString()
-								+ " ("
-								+ resultContainer
-										.getItem(resultContainer.firstItemId())
-										.getItemProperty("zuchtbuchnummer")
-										.getValue().toString() + ")";
+						dogNameString = resultContainer.getItem(resultContainer.firstItemId()).getItemProperty("name")
+								.getValue().toString() + " ("
+								+ resultContainer.getItem(resultContainer.firstItemId())
+										.getItemProperty("zuchtbuchnummer").getValue().toString()
+								+ ")";
 
-						resultContainer.getItem(resultContainer.firstItemId())
-								.getItemProperty(dbField).setValue(dbValue);
+						resultContainer.getItem(resultContainer.firstItemId()).getItemProperty(dbField)
+								.setValue(dbValue);
 
 					}
 
@@ -326,23 +289,19 @@ public class ShowDetail extends CustomComponent {
 
 		});
 
-		TableQuery query = new TableQuery("schauhund",
-				DBConnection.INSTANCE.getConnectionPool());
+		TableQuery query = new TableQuery("schauhund", DBConnection.INSTANCE.getConnectionPool());
 
 		try {
 			SQLContainer resultContainer = new SQLContainer(query);
-			resultContainer.addContainerFilter(new Equal("idschau",
-					currentShowItem.getItemProperty("idschau").getValue()
-							.toString()));
+			resultContainer.addContainerFilter(
+					new Equal("idschau", currentShowItem.getItemProperty("idschau").getValue().toString()));
 			resultContainer.addContainerFilter(new Equal(dbField, dbValue));
 
 			Filter klassenFilter = null;
 			if (!(klasse == null)) {
 				if (klasse.equals("GRP")) {
-					klassenFilter = new Or(new Equal("klasse", "ZK"),
-							new Equal("klasse", "OF"),
-							new Equal("klasse", "GK"),
-							new Equal("klasse", "CH"));
+					klassenFilter = new Or(new Equal("klasse", "ZK"), new Equal("klasse", "OF"),
+							new Equal("klasse", "GK"), new Equal("klasse", "CH"));
 				} else {
 					klassenFilter = new Equal("klasse", klasse);
 				}
@@ -352,11 +311,8 @@ public class ShowDetail extends CustomComponent {
 
 			if (resultContainer.size() > 0) {
 
-				inputField
-						.setValue(resultContainer
-								.getItem(resultContainer.firstItemId())
-								.getItemProperty("katalognummer").getValue()
-								.toString());
+				inputField.setValue(resultContainer.getItem(resultContainer.firstItemId())
+						.getItemProperty("katalognummer").getValue().toString());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -371,8 +327,7 @@ public class ShowDetail extends CustomComponent {
 	private Component buildBreedPanelForShow(String breed) {
 
 		VerticalLayout mainBreedLayout = new VerticalLayout();
-		mainBreedLayout.setWidth("100%");
-		mainBreedLayout.setHeight("100%");
+		mainBreedLayout.setSizeFull();
 		mainBreedLayout.setResponsive(true);
 		mainBreedLayout.setSpacing(true);
 
@@ -387,21 +342,20 @@ public class ShowDetail extends CustomComponent {
 	public Component buildBreedClass(String breed, String sex, String showClass) {
 
 		HorizontalLayout mainBreedClassLayout = new HorizontalLayout();
-		
+
 		try {
 
-			mainBreedClassLayout.setWidth("100%");
-			mainBreedClassLayout.setHeight("100%");
+			// mainBreedClassLayout.setWidth("100%");
+			// mainBreedClassLayout.setHeight("100%");
+			mainBreedClassLayout.setSizeUndefined();
 			mainBreedClassLayout.setResponsive(true);
 			mainBreedClassLayout.setSpacing(true);
-			TableQuery query = new TableQuery("schauhund",
-					DBConnection.INSTANCE.getConnectionPool());
+			TableQuery query = new TableQuery("schauhund", DBConnection.INSTANCE.getConnectionPool());
 
 			final SQLContainer resultContainer = new SQLContainer(query);
-			
-			resultContainer.addContainerFilter(new Equal("idschau",
-					currentShowItem.getItemProperty("idschau").getValue()
-							.toString()));
+
+			resultContainer.addContainerFilter(
+					new Equal("idschau", currentShowItem.getItemProperty("idschau").getValue().toString()));
 			resultContainer.addContainerFilter(new Equal("rasse", breed));
 			resultContainer.addContainerFilter(new Equal("geschlecht", sex));
 			resultContainer.addContainerFilter(new Equal("klasse", showClass));
@@ -411,20 +365,22 @@ public class ShowDetail extends CustomComponent {
 			breedGrid.setContainerDataSource(resultContainer);
 			breedGrid.setColumns("katalognummer", "name");
 			breedGrid.setSelectionMode(SelectionMode.SINGLE);
+			breedGrid.getColumn("katalognummer").setHeaderCaption("katnr");
 
 			mainBreedClassLayout.addComponent(breedGrid);
+			//mainBreedClassLayout.setExpandRatio(breedGrid, 1);
 
-			final SchauHundInfo showForm = new SchauHundInfo(showClass);
+			final ShowInfoForm showForm = new ShowInfoForm(showClass);
 			mainBreedClassLayout.addComponent(showForm);
+			//mainBreedClassLayout.setExpandRatio(showForm, 2);
 
 			breedGrid.addSelectionListener(new SelectionListener() {
 
-				@Override
-				public void select(SelectionEvent event) {
-					// TODO Auto-generated method stub
-					showForm.setDataSource(resultContainer.getItem(breedGrid
-							.getSelectedRow()));
 
+				@Override
+				public void select(com.vaadin.v7.event.SelectionEvent event) {
+					showForm.setDataSource(resultContainer.getItem(breedGrid.getSelectedRow()));
+	
 				}
 
 			});
@@ -446,83 +402,5 @@ public class ShowDetail extends CustomComponent {
 		void titleChanged(String newTitle, ShowDetail detail);
 	}
 
-	private class SchauHundInfo extends CustomComponent {
-
-		private DateField wurfDatumField;
-		private TextField hundeName;
-		private TextField zbNr;
-		private TextField chipNr;
-		private TextArea bewertung;
-		private OptionGroup formWertGroup;
-		
-		public SchauHundInfo(String forKlasse) {
-			FormLayout mainLayout = new FormLayout();
-			mainLayout.setWidth("100%");
-			mainLayout.setHeight("100%");
-			mainLayout.setSpacing(true);
-
-			hundeName = new TextField("Hundename");
-			hundeName.setNullRepresentation("");
-			mainLayout.addComponent(hundeName);
-
-			zbNr = new TextField("Zuchtbuchnummer");
-			zbNr.setNullRepresentation("");
-			
-			mainLayout.addComponent(zbNr);
-
-			chipNr = new TextField("Chipnummer");
-			chipNr.setNullRepresentation("");
-			
-			mainLayout.addComponent(chipNr);
-
-			wurfDatumField = new PopupDateField("Wurfdatum");
-			wurfDatumField.setWidth("100%");
-			wurfDatumField.setResolution(Resolution.DAY);
-			wurfDatumField.setDateFormat("dd.MM.yyyy");
-			
-			mainLayout.addComponent(wurfDatumField);
-
-			bewertung = new TextArea("Bewertung");
-			bewertung.setNullRepresentation("");
-			
-			mainLayout.addComponent(bewertung);
-
-			formWertGroup = new OptionGroup("Formwert");
-
-			if (forKlasse.equals("JÜ")) {
-				formWertGroup.addItem("vv");
-				formWertGroup.setItemCaption("vv", "vielversprechend");
-				formWertGroup.addItem("v");
-				formWertGroup.setItemCaption("v", "versprechend");
-				formWertGroup.addItem("g");
-				formWertGroup.setItemCaption("g", "gut");
-
-			} else {
-				formWertGroup.addItem("v");
-				formWertGroup.setItemCaption("v", "vorzüglich");
-				formWertGroup.addItem("sg");
-				formWertGroup.setItemCaption("sg", "sehr gut");
-				formWertGroup.addItem("g");
-				formWertGroup.setItemCaption("g", "gut");
-			}
-			formWertGroup.setNullSelectionAllowed(true);
-			
-			mainLayout.addComponent(formWertGroup);
-
-			setCompositionRoot(mainLayout);
-
-		}
-
-		public void setDataSource(Item dataSource) {
-			formWertGroup.setPropertyDataSource(dataSource.getItemProperty("formwert"));
-			bewertung.setPropertyDataSource(dataSource.getItemProperty("bewertung"));
-			wurfDatumField.setPropertyDataSource(dataSource.getItemProperty("wurftag"));
-			chipNr.setPropertyDataSource(dataSource.getItemProperty("chipnummer"));
-			zbNr.setPropertyDataSource(dataSource.getItemProperty("zuchtbuchnummer"));
-			hundeName.setPropertyDataSource(dataSource.getItemProperty("name"));
-			
-		}
-
-	}
-
+	
 }

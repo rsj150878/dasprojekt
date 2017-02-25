@@ -10,21 +10,13 @@ import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.dbIO.DBConnection;
 import com.app.enumPackage.VeranstaltungsTypen;
 import com.google.common.eventbus.Subscribe;
-import com.vaadin.data.Item;
-import com.vaadin.data.util.filter.Compare.Equal;
-import com.vaadin.data.util.sqlcontainer.RowId;
-import com.vaadin.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.data.util.sqlcontainer.query.OrderBy;
-import com.vaadin.data.util.sqlcontainer.query.QueryDelegate;
-import com.vaadin.data.util.sqlcontainer.query.QueryDelegate.RowIdChangeEvent;
-import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.shared.MouseEventDetails.MouseButton;
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -41,6 +33,14 @@ import com.vaadin.ui.TabSheet.CloseHandler;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.util.filter.Compare.Equal;
+import com.vaadin.v7.data.util.sqlcontainer.RowId;
+import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.v7.data.util.sqlcontainer.query.OrderBy;
+import com.vaadin.v7.data.util.sqlcontainer.query.QueryDelegate;
+import com.vaadin.v7.data.util.sqlcontainer.query.QueryDelegate.RowIdChangeEvent;
+import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 
 @SuppressWarnings("serial")
 public class VeranstaltungsUebersicht extends TabSheet implements View,

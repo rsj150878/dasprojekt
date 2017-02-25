@@ -3,6 +3,13 @@ package com.app.EmailSender;
 import java.net.URI;
 import java.util.ArrayList;
 
+import com.app.dbIO.DBConnection;
+import com.vaadin.ui.ProgressBar;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.util.filter.Compare.Equal;
+import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
+
 import microsoft.exchange.webservices.data.autodiscover.IAutodiscoverRedirectionUrl;
 import microsoft.exchange.webservices.data.autodiscover.exception.AutodiscoverLocalException;
 import microsoft.exchange.webservices.data.core.ExchangeService;
@@ -24,13 +31,6 @@ import microsoft.exchange.webservices.data.property.complex.ItemId;
 import microsoft.exchange.webservices.data.property.complex.PhysicalAddressEntry;
 import microsoft.exchange.webservices.data.search.FindItemsResults;
 import microsoft.exchange.webservices.data.search.ItemView;
-
-import com.app.dbIO.DBConnection;
-import com.vaadin.data.Item;
-import com.vaadin.data.util.filter.Compare.Equal;
-import com.vaadin.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.data.util.sqlcontainer.query.TableQuery;
-import com.vaadin.ui.ProgressBar;
 
 public class EwsReplClass {
 

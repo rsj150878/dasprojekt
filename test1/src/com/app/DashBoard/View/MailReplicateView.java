@@ -3,8 +3,6 @@ package com.app.DashBoard.View;
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.EmailSender.EwsReplClass;
 import com.app.dbIO.DBConnection;
-import com.vaadin.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
@@ -19,6 +17,8 @@ import com.vaadin.ui.ProgressBar;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 
 public class MailReplicateView extends VerticalLayout implements View {
 

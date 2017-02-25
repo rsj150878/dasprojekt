@@ -16,10 +16,10 @@ import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
-import com.vaadin.data.Item;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.CustomComponent;
+import com.vaadin.v7.data.Item;
 
 public class Kursblatt extends CustomComponent {
 
@@ -55,7 +55,6 @@ public class Kursblatt extends CustomComponent {
 	public Kursblatt(Item besitzer, Item hund) {
 		try {
 			mainLayout = new AbsoluteLayout();
-			mainLayout.setImmediate(false);
 			mainLayout.setWidth("100%");
 			mainLayout.setHeight("100%");
 			setCompositionRoot(mainLayout);
@@ -207,7 +206,6 @@ public class Kursblatt extends CustomComponent {
 	public Kursblatt(Person besitzer, Hund hund) {
 		try {
 			mainLayout = new AbsoluteLayout();
-			mainLayout.setImmediate(false);
 			mainLayout.setWidth("100%");
 			mainLayout.setHeight("100%");
 			setCompositionRoot(mainLayout);

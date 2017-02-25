@@ -3,20 +3,9 @@ package com.app.DashBoardWindow;
 import java.sql.SQLException;
 
 import com.app.DashBoard.Event.DashBoardEvent.CloseOpenWindowsEvent;
-import com.app.DashBoard.Event.DashBoardEvent.DogUpdatedEvent;
 import com.app.DashBoard.Event.DashBoardEvent.SearchEvent;
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.dbIO.DBConnection;
-import com.vaadin.data.Container.Filter;
-import com.vaadin.data.Item;
-import com.vaadin.data.util.GeneratedPropertyContainer;
-import com.vaadin.data.util.PropertyValueGenerator;
-import com.vaadin.data.util.filter.Compare.Equal;
-import com.vaadin.data.util.filter.SimpleStringFilter;
-import com.vaadin.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.data.util.sqlcontainer.query.TableQuery;
-import com.vaadin.event.FieldEvents.TextChangeEvent;
-import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.server.Responsive;
 import com.vaadin.shared.ui.MarginInfo;
@@ -26,8 +15,6 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.HeaderCell;
-import com.vaadin.ui.Grid.HeaderRow;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
@@ -36,6 +23,18 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.Container.Filter;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.util.GeneratedPropertyContainer;
+import com.vaadin.v7.data.util.PropertyValueGenerator;
+import com.vaadin.v7.data.util.filter.Compare.Equal;
+import com.vaadin.v7.data.util.filter.SimpleStringFilter;
+import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
+import com.vaadin.v7.event.FieldEvents.TextChangeEvent;
+import com.vaadin.v7.event.FieldEvents.TextChangeListener;
+import com.vaadin.v7.ui.Grid.HeaderCell;
+import com.vaadin.v7.ui.Grid.HeaderRow;
 
 public class SearchWindow extends Window {
 

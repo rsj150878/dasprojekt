@@ -13,11 +13,11 @@ import org.apache.commons.collections.comparators.NullComparator;
 import org.apache.commons.collections.comparators.ReverseComparator;
 import org.vaadin.maddon.ListContainer;
 
-import com.vaadin.data.Container;
-import com.vaadin.data.Container.Filterable;
-import com.vaadin.data.Container.Sortable;
-import com.vaadin.data.Item;
-import com.vaadin.data.util.filter.UnsupportedFilterException;
+import com.vaadin.v7.data.Container;
+import com.vaadin.v7.data.Container.Filterable;
+import com.vaadin.v7.data.Container.Sortable;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.util.filter.UnsupportedFilterException;
 
 /**
  * A filterable ({@link Container.Filterable}) version of {@link ListContainer}.

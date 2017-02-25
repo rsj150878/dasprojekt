@@ -2,40 +2,39 @@ package com.app.DashBoard.View;
 
 import java.sql.SQLException;
 import java.sql.Time;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.dbIO.DBConnection;
-import com.vaadin.data.Item;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitEvent;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitHandler;
-import com.vaadin.data.util.converter.Converter;
-import com.vaadin.data.util.filter.Compare.Equal;
-import com.vaadin.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.data.util.sqlcontainer.query.TableQuery;
-import com.vaadin.event.SelectionEvent;
-import com.vaadin.event.SelectionEvent.SelectionListener;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
-import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.renderers.DateRenderer;
+import com.vaadin.v7.ui.renderers.DateRenderer;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.client.widget.grid.selection.SelectionEvent;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitEvent;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitHandler;
+import com.vaadin.v7.data.util.converter.Converter;
+import com.vaadin.v7.data.util.filter.Compare.Equal;
+import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
+import com.vaadin.v7.event.SelectionEvent.SelectionListener;
+import com.vaadin.v7.shared.ui.datefield.Resolution;
+import com.vaadin.v7.ui.Grid;
+import com.vaadin.v7.ui.Label;
+import com.vaadin.v7.ui.PopupDateField;
 
 @SuppressWarnings({ "serial", "unchecked" })
 public class KursDetails extends VerticalLayout implements View {
@@ -219,7 +218,7 @@ public class KursDetails extends VerticalLayout implements View {
 		kursGrid.addSelectionListener(new SelectionListener() {
 
 			@Override
-			public void select(SelectionEvent event) {
+			public void select(com.vaadin.v7.event.SelectionEvent event) {
 				kursTagContainer.removeAllContainerFilters();
 				if (!(kursGrid.getSelectedRow() == null)) {
 					kursTagContainer.addContainerFilter(new Equal("idkurs",
@@ -230,6 +229,7 @@ public class KursDetails extends VerticalLayout implements View {
 
 			}
 
+			
 		});
 
 		kursGrid.getEditorFieldGroup().addCommitHandler(new CommitHandler() {
@@ -339,7 +339,7 @@ public class KursDetails extends VerticalLayout implements View {
 		kursTagGrid.addSelectionListener(new SelectionListener() {
 
 			@Override
-			public void select(SelectionEvent event) {
+			public void select(com.vaadin.v7.event.SelectionEvent event) {
 				kursStundeContainer.removeAllContainerFilters();
 				if (!(kursTagGrid.getSelectedRow() == null)) {
 					kursStundeContainer.addContainerFilter(new Equal(

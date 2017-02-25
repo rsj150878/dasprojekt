@@ -1,37 +1,25 @@
 package com.app.DashBoard.View;
 
-import java.util.Iterator;
-
-import com.app.DashBoard.Component.HundeSchulStundeUebersichtGrid;
 import com.app.DashBoard.Event.DashBoardEventBus;
-import com.app.DashBoardWindow.SearchWindow;
 import com.app.dbIO.DBConnection;
-import com.vaadin.data.Item;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.data.util.filter.Compare.Equal;
-import com.vaadin.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Responsive;
-import com.vaadin.ui.Accordion;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.ComboBox;
+import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.MenuBar.Command;
-import com.vaadin.ui.MenuBar.MenuItem;
+import com.vaadin.v7.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TextArea;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.Property.ValueChangeEvent;
+import com.vaadin.v7.data.Property.ValueChangeListener;
+import com.vaadin.v7.data.util.filter.Compare.Equal;
+import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 
 @SuppressWarnings({ "serial", "unchecked" })
 public class KursUebersicht extends Panel implements View {

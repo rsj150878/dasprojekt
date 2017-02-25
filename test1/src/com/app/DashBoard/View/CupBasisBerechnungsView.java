@@ -11,15 +11,6 @@ import java.util.regex.Pattern;
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.dbIO.DBConnection;
 import com.app.enumPackage.ShowKlassen;
-import com.vaadin.data.Item;
-import com.vaadin.data.util.filter.Compare.Equal;
-import com.vaadin.data.util.filter.Compare.GreaterOrEqual;
-import com.vaadin.data.util.filter.Like;
-import com.vaadin.data.util.filter.Or;
-import com.vaadin.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
-import com.vaadin.data.util.sqlcontainer.query.OrderBy;
-import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
@@ -31,6 +22,14 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.util.filter.Compare.Equal;
+import com.vaadin.v7.data.util.filter.Compare.GreaterOrEqual;
+import com.vaadin.v7.data.util.filter.Like;
+import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.v7.data.util.sqlcontainer.query.FreeformQuery;
+import com.vaadin.v7.data.util.sqlcontainer.query.OrderBy;
+import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 
 public class CupBasisBerechnungsView extends VerticalLayout implements View,
 		Button.ClickListener {

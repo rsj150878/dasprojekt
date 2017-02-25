@@ -7,8 +7,8 @@ import javax.servlet.ServletContext;
 
 import com.app.DashBoard.DashboardServlet;
 import com.app.DashBoard.DashboardUI;
-import com.vaadin.data.util.sqlcontainer.connection.JDBCConnectionPool;
-import com.vaadin.data.util.sqlcontainer.connection.SimpleJDBCConnectionPool;
+import com.vaadin.v7.data.util.sqlcontainer.connection.JDBCConnectionPool;
+import com.vaadin.v7.data.util.sqlcontainer.connection.SimpleJDBCConnectionPool;
 
 public class DBConnectionMicrosoft {
 	private final static String DRIVER_NAME = "com.microsoft.sqlserver.jdbc.SQLServerDriver";

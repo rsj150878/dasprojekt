@@ -3,11 +3,20 @@ package com.app.printClasses;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+
+import com.app.dbIO.DBConnection;
+import com.app.enumPackage.VeranstaltungsStufen;
+import com.app.service.TemporaryFileDownloadResource;
+import com.vaadin.ui.AbsoluteLayout;
+import com.vaadin.ui.BrowserFrame;
+import com.vaadin.ui.CustomComponent;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.util.filter.Compare.Equal;
+import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 
 import jxl.Workbook;
 import jxl.write.DateFormat;
-import jxl.write.DateFormats;
 import jxl.write.DateTime;
 import jxl.write.Label;
 import jxl.write.Number;
@@ -15,17 +24,6 @@ import jxl.write.NumberFormat;
 import jxl.write.WritableCellFormat;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
-
-import com.app.dbIO.DBConnection;
-import com.app.enumPackage.VeranstaltungsStufen;
-import com.app.service.TemporaryFileDownloadResource;
-import com.vaadin.data.Item;
-import com.vaadin.data.util.filter.Compare.Equal;
-import com.vaadin.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.data.util.sqlcontainer.query.TableQuery;
-import com.vaadin.ui.AbsoluteLayout;
-import com.vaadin.ui.BrowserFrame;
-import com.vaadin.ui.CustomComponent;
 
 public class RBPBewertungsExcel extends CustomComponent {
 
@@ -67,7 +65,6 @@ public class RBPBewertungsExcel extends CustomComponent {
 									.getValue()));
 
 			mainLayout = new AbsoluteLayout();
-			mainLayout.setImmediate(false);
 			mainLayout.setWidth("100%");
 			mainLayout.setHeight("100%");
 			setCompositionRoot(mainLayout);

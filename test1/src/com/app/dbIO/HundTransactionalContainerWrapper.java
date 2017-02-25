@@ -10,12 +10,14 @@ import java.util.Map;
 import org.vaadin.data.tx.ItemGenerator;
 import org.vaadin.data.tx.TxListener;
 
-import com.vaadin.data.Container;
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
-import com.vaadin.data.util.AbstractInMemoryContainer;
-import com.vaadin.data.util.filter.SimpleStringFilter;
-import com.vaadin.data.util.filter.UnsupportedFilterException;
+import com.vaadin.v7.data.Container;
+import com.vaadin.v7.data.Container.Filter;
+import com.vaadin.v7.data.Container.Indexed;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.Property;
+import com.vaadin.v7.data.util.AbstractInMemoryContainer;
+import com.vaadin.v7.data.util.filter.SimpleStringFilter;
+import com.vaadin.v7.data.util.filter.UnsupportedFilterException;
 
 /**
  * TransactionalContainerWrapper is a Vaadin Container which wraps around

@@ -1,20 +1,38 @@
 package com.app.DashBoard.View;
 
-import java.util.Collection;
+import java.util.Locale;
 
+import com.app.Auth.DataProvider;
 import com.app.Auth.EmailForEmailVerteiler;
+import com.app.Auth.MitgliederListe;
 import com.app.DashBoard.Event.DashBoardEvent.BrowserResizeEvent;
 import com.app.DashBoard.Event.DashBoardEvent.UpdateUserEvent;
 import com.app.DashBoard.Event.DashBoardEvent.UserNewEvent;
-import com.app.DashBoardWindow.FilterableSortableListContainer;
+import com.app.DashBoard.Event.DashBoardEventBus;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
+import com.vaadin.server.Responsive;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitEvent;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitHandler;
+import com.vaadin.v7.data.util.BeanItem;
 import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.data.util.converter.Converter;
+import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.Grid;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.Label;
 import com.vaadin.v7.ui.VerticalLayout;
+import com.vaadin.v7.ui.renderers.HtmlRenderer;
 
 
 @SuppressWarnings({ "serial", "unchecked" })
@@ -226,56 +244,5 @@ public class EmailAdressNewsletterView extends VerticalLayout implements View {
 	public void enter(final ViewChangeEvent event) {
 	}
 
-	private class TempTransactionsContainer extends
-			FilterableSortableListContainer<EmailForEmailVerteiler> {
-
-		public TempTransactionsContainer(
-				final Collection<EmailForEmailVerteiler> collection) {
-			super(collection);
-		}
-
-		public void update() {
-			fireItemSetChange();
-		}
-
-		//
-		// // This is only temporarily overridden until issues with
-		// // BeanComparator get resolved.
-		@Override
-		public void sort(final Object[] propertyId, final boolean[] ascending) {
-			if (ascending.length != 0) {
-				final boolean sortAscending = ascending[0];
-				final Object sortContainerPropertyId = propertyId[0];
-
-				Collections.sort(getBackingList(),
-						new Comparator<EmailForEmailVerteiler>() {
-							@Override
-							public int compare(final EmailForEmailVerteiler o1,
-									final EmailForEmailVerteiler o2) {
-
-								int result = 0;
-								if ("emailadresse"
-										.equals(sortContainerPropertyId)) {
-									result = o1.getEmailAdresse().compareTo(
-											o2.getEmailAdresse());
-								} else if ("id".equals(sortContainerPropertyId)) {
-									result = o1.getId().compareTo(o2.getId());
-								}
-
-								if (!sortAscending) {
-									result *= -1;
-								}
-
-								return result;
-							}
-						}
-
-				);
-				fireItemSetChange();
-			}
-		}
-
-	}
-	
 	
 }

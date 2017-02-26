@@ -5,19 +5,17 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.UUID;
 
-import org.vaadin.data.tx.ItemGenerator;
-
-import com.app.DashBoard.View.WurfDetail.WurfDetailListener;
 import com.app.dbIO.DBConnectionMicrosoft;
+import com.app.dbIO.HundItemGenerator;
 import com.app.dbIO.HundTransactionalContainerWrapper;
 import com.app.dbIO.HundTxListener;
 import com.vaadin.server.Page;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.shared.Position;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.ComboBox;
+import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.Grid;
+import com.vaadin.v7.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
@@ -120,7 +118,7 @@ public class WurfDetail extends CustomComponent {
 		
 
 			txContainer = new HundTransactionalContainerWrapper(hundContainer,
-					new HundItemGenerator(hundContainer, idWurf));
+					new HundItemGeneratorForWurf(hundContainer, idWurf));
 			hundGrid.setContainerDataSource(txContainer);
 			hundGrid.setColumns("Name", "Zuchtbuchnummer", "IDHundGeschlecht", "Gesundheit", "InterneBemerkung");
 
@@ -227,12 +225,12 @@ public class WurfDetail extends CustomComponent {
 		void titleChanged(String newTitle, WurfDetail detail);
 	}
 
-	private class HundItemGenerator implements ItemGenerator
+	private class HundItemGeneratorForWurf implements HundItemGenerator
 		 {
 		private SQLContainer hundContainer;
 		private Object idWurf;
 
-		public HundItemGenerator(SQLContainer hundContainer, Object idWurf) {
+		public HundItemGeneratorForWurf(SQLContainer hundContainer, Object idWurf) {
 			this.hundContainer = hundContainer;
 			this.idWurf = idWurf;
 

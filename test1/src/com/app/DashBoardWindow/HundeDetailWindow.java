@@ -4,16 +4,46 @@ import java.util.Collection;
 
 import com.app.Auth.Hund;
 import com.app.Auth.Person;
+import com.app.DashBoard.Event.DashBoardEvent.CloseOpenWindowsEvent;
+import com.app.DashBoard.Event.DashBoardEvent.DogUpdatedEvent;
+import com.app.DashBoard.Event.DashBoardEventBus;
+import com.app.enumPackage.Rassen;
 import com.app.printClasses.Kursblatt;
 import com.vaadin.annotations.PropertyId;
-import com.vaadin.ui.ComboBox;
+import com.vaadin.event.ShortcutAction.KeyCode;
+import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
+import com.vaadin.server.Responsive;
+import com.vaadin.server.ThemeResource;
+import com.vaadin.shared.Position;
+import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.DateField;
-import com.vaadin.ui.TextField;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.Image;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.v7.event.ItemClickEvent;
+import com.vaadin.v7.event.ItemClickEvent.ItemClickListener;
+import com.vaadin.v7.shared.ui.datefield.Resolution;
+import com.vaadin.v7.ui.ComboBox;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.Label;
 import com.vaadin.v7.ui.OptionGroup;
-import com.vaadin.v7.ui.Table;
+import com.vaadin.v7.ui.PopupDateField;
+import com.vaadin.v7.ui.TextField;
+import com.vaadin.v7.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
 public class HundeDetailWindow extends Window {
@@ -23,7 +53,7 @@ public class HundeDetailWindow extends Window {
 	private BeanFieldGroup<Hund> fieldGroup;
 
 	@PropertyId("bhdatum")
-	private DateField bhDatumField;
+	private PopupDateField bhDatumField;
 	@PropertyId("chipnummer")
 	private TextField chipnummerField;
 	@PropertyId("farbe")
@@ -35,7 +65,7 @@ public class HundeDetailWindow extends Window {
 	@PropertyId("rufname")
 	private TextField rufnameField;
 	@PropertyId("wurfdatum")
-	private DateField wurfDatumField;
+	private PopupDateField wurfDatumField;
 	@PropertyId("zuchtbuchnummer")
 	private TextField zuchtbuchnummerField;
 	@PropertyId("zuechter")
@@ -47,8 +77,7 @@ public class HundeDetailWindow extends Window {
 	private Collection<Hund> hundeCollection;
 	private float height;
 	private Person person;
-	private Table dogTable;
-	private TempTransactionsContainer containerSource;
+	private Grid<Hund> dogTable;
 	private Kursblatt zw;
 
 	private HundeDetailWindow(Person person, Collection<Hund> hundeCollection) {
@@ -83,8 +112,7 @@ public class HundeDetailWindow extends Window {
 		addStyleName("profile-window");
 		setId(ID);
 		Responsive.makeResponsive(this);
-		//addStyleName("profile-form");
-
+		// addStyleName("profile-form");
 
 		setModal(true);
 		setCloseShortcut(KeyCode.ESCAPE, null);
@@ -147,13 +175,13 @@ public class HundeDetailWindow extends Window {
 		layout.setSizeFull();
 		layout.setSpacing(true);
 		layout.setMargin(true);
-		//layout.setWidth(100.0f, Unit.PERCENTAGE);
+		// layout.setWidth(100.0f, Unit.PERCENTAGE);
 
 		HorizontalLayout buttonLayout = new HorizontalLayout();
 		buttonLayout.setSizeUndefined();
 		buttonLayout.setSpacing(true);
 		buttonLayout.setMargin(true);
-		
+
 		Button newDog = new Button("neuer Hund", new ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
@@ -161,13 +189,12 @@ public class HundeDetailWindow extends Window {
 
 				hundeCollection.add(newHund);
 
-				containerSource = new TempTransactionsContainer(hundeCollection);
-				dogTable.setContainerDataSource(containerSource);
-				dogTable.setVisibleColumns("rufname", "zwingername");
-				dogTable.setColumnHeaders("Rufname", "Zwingername");
+				dogTable.setItems(hundeCollection);
 
-				containerSource.update();
-				dogTable.select(newHund.getIdhund());
+				dogTable.addColumn(Hund::getRufname);
+				dogTable.addColumn(Hund::getZwingername);
+
+				// dogTable.select(newHund.getIdhund());
 
 			}
 
@@ -178,63 +205,52 @@ public class HundeDetailWindow extends Window {
 		Button delDog = new Button("Hund löschen", new ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
-			
+
 			}
 
 		});
 		buttonLayout.addComponent(delDog);
 		delDog.addStyleName(ValoTheme.BUTTON_TINY);
-		
+
 		layout.addComponent(buttonLayout);
-		
-		dogTable = new Table();
+
+		dogTable = new Grid<>(Hund.class);
 		layout.addComponent(dogTable);
 		dogTable.setSizeFull();
 
 		dogTable.addStyleName(ValoTheme.TABLE_BORDERLESS);
 		dogTable.addStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
-		//dogTable.addStyleName(ValoTheme.TABLE_);
+		// dogTable.addStyleName(ValoTheme.TABLE_);
 
 		if (hundeCollection.size() > 0) {
-			containerSource = new TempTransactionsContainer(hundeCollection);
-			dogTable.setContainerDataSource(containerSource);
-			dogTable.setVisibleColumns("rufname", "zwingername");
-			dogTable.setColumnHeaders("Rufname", "Zwingername");
+			dogTable.setItems(hundeCollection);
+			dogTable.addColumn(Hund::getRufname);
+			dogTable.addColumn(Hund::getZwingername);
 
 		}
 
-		dogTable.setSelectable(true);
-
-		dogTable.addItemClickListener(new ItemClickListener() {
-
-			@Override
-			public void itemClick(ItemClickEvent event) {
-				// TODO Auto-generated method stub
-				try {
-					if (!(fieldGroup.getItemDataSource() == null)) {
-						fieldGroup.commit();
-					}
-					// Updated user should also be persisted to database. But
-					// not in this demo.
-
-					hund.commit();
-					Notification success = new Notification(
-							"Hundedaten erfolgreich gespeichert");
-					success.setDelayMsec(2000);
-					success.setStyleName("bar success small");
-					success.setPosition(Position.BOTTOM_CENTER);
-					success.show(Page.getCurrent());
-
-				} catch (Exception e) {
-					e.printStackTrace();
-					Notification.show(
-							"Es ist ein Fehler passiert\n" + e.getMessage(),
-							Type.ERROR_MESSAGE);
-
+		dogTable.addItemClickListener(event -> {
+			try {
+				if (!(fieldGroup.getItemDataSource() == null)) {
+					fieldGroup.commit();
 				}
-				hund = (Hund) event.getItemId();
-				fieldGroup.setItemDataSource(hund);
+				// Updated user should also be persisted to database. But
+				// not in this demo.
+
+				hund.commit();
+				Notification success = new Notification("Hundedaten erfolgreich gespeichert");
+				success.setDelayMsec(2000);
+				success.setStyleName("bar success small");
+				success.setPosition(Position.BOTTOM_CENTER);
+				success.show(Page.getCurrent());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				Notification.show("Es ist ein Fehler passiert\n" + e.getMessage(), Type.ERROR_MESSAGE);
+
 			}
+			//hund = (Hund) event.getItemId();
+			fieldGroup.setItemDataSource(hund);
 
 		});
 
@@ -260,8 +276,7 @@ public class HundeDetailWindow extends Window {
 		VerticalLayout pic = new VerticalLayout();
 		pic.setSizeUndefined();
 		pic.setSpacing(true);
-		Image profilePic = new Image(null, new ThemeResource(
-				"img/profile-pic-300px.jpg"));
+		Image profilePic = new Image(null, new ThemeResource("img/profile-pic-300px.jpg"));
 		profilePic.setWidth(100.0f, Unit.PIXELS);
 		pic.addComponent(profilePic);
 
@@ -308,8 +323,7 @@ public class HundeDetailWindow extends Window {
 
 		for (Rassen x : Rassen.values()) {
 			rasseGroup.addItem(x.getRassenKurzBezeichnung());
-			rasseGroup.setItemCaption(x.getRassenKurzBezeichnung(),
-					x.getRassenLangBezeichnung());
+			rasseGroup.setItemCaption(x.getRassenKurzBezeichnung(), x.getRassenLangBezeichnung());
 		}
 
 		rasseGroup.addStyleName("horizontal");
@@ -386,8 +400,7 @@ public class HundeDetailWindow extends Window {
 					// not in this demo.
 
 					hund.commit();
-					Notification success = new Notification(
-							"Hundedaten erfolgreich gespeichert");
+					Notification success = new Notification("Hundedaten erfolgreich gespeichert");
 					success.setDelayMsec(2000);
 					success.setStyleName("bar success small");
 					success.setPosition(Position.BOTTOM_CENTER);
@@ -397,8 +410,7 @@ public class HundeDetailWindow extends Window {
 					close();
 				} catch (Exception e) {
 					e.printStackTrace();
-					Notification.show("Es ist ein Fehler passiert",
-							Type.ERROR_MESSAGE);
+					Notification.show("Es ist ein Fehler passiert", Type.ERROR_MESSAGE);
 				}
 
 			}
@@ -422,56 +434,6 @@ public class HundeDetailWindow extends Window {
 		Window w = new HundeDetailWindow(person, hund);
 		UI.getCurrent().addWindow(w);
 		w.focus();
-	}
-
-	private class TempTransactionsContainer extends
-			FilterableSortableListContainer<Hund> {
-
-		public TempTransactionsContainer(final Collection<Hund> collection) {
-			super(collection);
-		}
-
-		public void update() {
-			fireItemSetChange();
-		}
-
-		//
-		// // This is only temporarily overridden until issues with
-		// // BeanComparator get resolved.
-		@Override
-		public void sort(final Object[] propertyId, final boolean[] ascending) {
-			System.out.println("in sort");
-			if (ascending.length != 0) {
-				final boolean sortAscending = ascending[0];
-				final Object sortContainerPropertyId = propertyId[0];
-
-				Collections.sort(getBackingList(), new Comparator<Hund>() {
-					@Override
-					public int compare(final Hund o1, final Hund o2) {
-
-						int result = 0;
-						// if ("vorName".equals(sortContainerPropertyId)) {
-						// result = o1.getVorName().compareTo(
-						// o2.getVorName());
-						// } else if ("familienName"
-						// .equals(sortContainerPropertyId)) {
-						// result = o1.getFamilienName().compareTo(
-						// o2.getFamilienName());
-						// }
-
-						if (!sortAscending) {
-							result *= -1;
-						}
-						return result;
-					}
-				}
-
-				);
-				fireItemSetChange();
-
-			}
-		}
-
 	}
 
 }

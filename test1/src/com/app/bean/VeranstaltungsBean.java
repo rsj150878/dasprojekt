@@ -1,6 +1,6 @@
 package com.app.bean;
 
-import com.vaadin.data.Item;
+import com.vaadin.v7.data.Item;
 
 public class VeranstaltungsBean {
 

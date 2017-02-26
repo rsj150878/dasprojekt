@@ -64,7 +64,7 @@ public class DataProvider {
 				MitgliederListe mitgliederListe = new MitgliederListe();
 
 				Person person = new Person(Integer.valueOf(personContainer
-						.getItem(id).getItemProperty("idperson").toString()));
+						.getItem(id).getItemProperty("idperson").getValue().toString()));
 				mitgliederListe.setPerson(person);
 
 				orderedList.add(mitgliederListe);

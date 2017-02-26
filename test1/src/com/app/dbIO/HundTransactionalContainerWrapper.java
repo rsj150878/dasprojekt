@@ -11,8 +11,6 @@ import org.vaadin.data.tx.ItemGenerator;
 import org.vaadin.data.tx.TxListener;
 
 import com.vaadin.v7.data.Container;
-import com.vaadin.v7.data.Container.Filter;
-import com.vaadin.v7.data.Container.Indexed;
 import com.vaadin.v7.data.Item;
 import com.vaadin.v7.data.Property;
 import com.vaadin.v7.data.util.AbstractInMemoryContainer;
@@ -56,7 +54,7 @@ public class HundTransactionalContainerWrapper extends AbstractInMemoryContainer
 	}
 
 	private final Indexed innerContainer;
-	private final ItemGenerator itemGenerator;
+	private final HundItemGenerator itemGenerator;
 
 	private final Map<Object, HundTxItemWrapper> allItems = new LinkedHashMap<Object, HundTxItemWrapper>();
 	private final Map<Object, HundTxItemWrapper> deletedById = new HashMap<Object, HundTxItemWrapper>();
@@ -94,7 +92,7 @@ public class HundTransactionalContainerWrapper extends AbstractInMemoryContainer
 	 * @param itemGenerator
 	 *            New Item generator implementation.
 	 */
-	public HundTransactionalContainerWrapper(Indexed innerContainer, ItemGenerator itemGenerator) {
+	public HundTransactionalContainerWrapper(Indexed innerContainer, HundItemGenerator itemGenerator) {
 		this.innerContainer = innerContainer;
 		this.itemGenerator = itemGenerator;
 

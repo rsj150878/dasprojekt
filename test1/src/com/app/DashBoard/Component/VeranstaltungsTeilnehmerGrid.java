@@ -3,27 +3,20 @@ package com.app.DashBoard.Component;
 import java.sql.SQLException;
 import java.util.Locale;
 
-import org.vaadin.data.tx.ItemGenerator;
-
-import com.app.DashBoard.Component.VeranstaltungsTeilnehmerGrid.ReadOnlyField;
-import com.app.DashBoard.Component.VeranstaltungsTeilnehmerGrid.StringToBoolean;
 import com.app.DashBoard.Event.DashBoardEvent.SearchEvent;
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.dbIO.DBConnection;
+import com.app.dbIO.HundItemGenerator;
 import com.app.dbIO.HundTransactionalContainerWrapper;
 import com.app.dbIO.HundTxListener;
 import com.app.enumPackage.VeranstaltungsStation;
 import com.app.enumPackage.VeranstaltungsStufen;
 import com.google.common.eventbus.Subscribe;
-import com.vaadin.data.validator.IntegerRangeValidator;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.Grid;
+import com.vaadin.v7.data.validator.IntegerRangeValidator;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.renderers.ButtonRenderer;
-import com.vaadin.ui.renderers.ClickableRenderer.RendererClickEvent;
-import com.vaadin.ui.renderers.ClickableRenderer.RendererClickListener;
+import com.vaadin.v7.ui.renderers.ButtonRenderer;
+import com.vaadin.v7.ui.renderers.ClickableRenderer.RendererClickEvent;
+import com.vaadin.v7.ui.renderers.ClickableRenderer.RendererClickListener;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.data.Container.Filter;
 import com.vaadin.v7.data.Item;
@@ -36,6 +29,10 @@ import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
 import com.vaadin.v7.data.util.sqlcontainer.query.QueryDelegate;
 import com.vaadin.v7.data.util.sqlcontainer.query.QueryDelegate.RowIdChangeEvent;
 import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
+import com.vaadin.v7.ui.CheckBox;
+import com.vaadin.v7.ui.Grid;
+import com.vaadin.v7.ui.TextArea;
+import com.vaadin.v7.ui.TextField;
 
 public class VeranstaltungsTeilnehmerGrid extends Grid {
 
@@ -322,7 +319,7 @@ public class VeranstaltungsTeilnehmerGrid extends Grid {
 
 	    @Override
 	    public String convertToModel(Boolean value, Class<? extends String> targetType, Locale locale)
-	            throws com.vaadin.data.util.converter.Converter.ConversionException {
+	            throws com.vaadin.v7.data.util.converter.Converter.ConversionException {
 	        if (value == true) {
 	            return "J";
 	        } else {
@@ -332,7 +329,7 @@ public class VeranstaltungsTeilnehmerGrid extends Grid {
 
 	    @Override
 	    public Boolean convertToPresentation(String value, Class<? extends Boolean> targetType, Locale locale)
-	            throws com.vaadin.data.util.converter.Converter.ConversionException {
+	            throws com.vaadin.v7.data.util.converter.Converter.ConversionException {
 	        if (value == null || value.equals("N")) {
 	            return false;
 	        } else {
@@ -368,7 +365,7 @@ public class VeranstaltungsTeilnehmerGrid extends Grid {
 	    }
 	}
 
-	private class TeilnehmerItemGenerator implements ItemGenerator, QueryDelegate.RowIdChangeListener {
+	private class TeilnehmerItemGenerator implements HundItemGenerator, QueryDelegate.RowIdChangeListener {
 		private SQLContainer veranstaltungsTeilnehmerContainer;
 		private RowId teilnehmerId;
 	

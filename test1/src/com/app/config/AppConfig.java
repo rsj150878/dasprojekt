@@ -7,8 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import com.app.Auth.AuthManager;
 import com.app.bean.MyBean;
 import com.app.service.UserService;
-import com.example.testUIWithLogin.LoginFormListener;
-import com.example.testUIWithLogin.RegisterPersonFormListener;
 
 /**
  * @author Ondrej Kvasnovsky
@@ -36,14 +34,5 @@ public class AppConfig {
 		return res;
 	}
 
-	@Bean
-	public LoginFormListener loginFormListener() {
-		return new LoginFormListener();
-	}
-	
-	@Bean
-	public RegisterPersonFormListener registerPersonFormListener() {
-		return new RegisterPersonFormListener();
-	}
 
 }

@@ -18,6 +18,7 @@ import com.itextpdf.text.pdf.PdfStamper;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.CustomComponent;
+import com.vaadin.ui.TreeGrid;
 import com.vaadin.v7.data.Item;
 import com.vaadin.v7.data.util.filter.Compare.Equal;
 import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
@@ -41,7 +42,7 @@ public class WesentestBericht extends CustomComponent {
 	private SQLContainer personContainer;
 	private SQLContainer hundContainer;
 	private SQLContainer teilnehmerContainer;
-
+	
 	public WesentestBericht(Item veranstaltung, Item veranstaltungsStufe) {
 
 		q3 = new TableQuery("veranstaltungs_teilnehmer",

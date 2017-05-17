@@ -345,7 +345,7 @@ function com_app_DashBoard_DashboardWidgetsetNeu(){
     }
     var strongName;
     try {
-      strongName = '29CCF257634E8B1AD735846B720EC90E';
+      strongName = '3D1616F8DFD6A0EF24A8877D4C8C00C4';
       var idx = strongName.indexOf(':');
       if (idx != -1) {
         softPermutationId = parseInt(strongName.substring(idx + 1), 10);

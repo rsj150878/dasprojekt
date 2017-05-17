@@ -2,7 +2,8 @@ package com.app.showData;
 
 import java.util.Date;
 
-public class ShowHund {
+public class ShowHund extends ShowKlasseEnde {
+	
 	
 	private String showHundName;
 	private Integer idschauhund;
@@ -30,6 +31,13 @@ public class ShowHund {
 	private String geschlecht;
 	private String zuechter;
 	private Integer sort_kat_nr;
+	
+	
+	
+//	public ShowHund() {
+//		super();
+//	}
+//	 
 	public String getShowHundName() {
 		return showHundName;
 	}
@@ -67,6 +75,7 @@ public class ShowHund {
 		this.chipnummer = chipnummer;
 	}
 	public String getKatalognumer() {
+		System.out.println("katnrget +" + katalognumer + "+");
 		return katalognumer;
 	}
 	public void setKatalognumer(String katalognumer) {
@@ -182,7 +191,10 @@ public class ShowHund {
 	}
 	
 	
-	
+	@Override
+	public String getKatalogNummer() {
+		return this.katalognumer + " - " + this.showHundName;
+	}
 	
 
 }

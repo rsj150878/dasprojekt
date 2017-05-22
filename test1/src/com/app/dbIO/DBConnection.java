@@ -23,18 +23,18 @@ public class DBConnection {
 		ServletContext sc = DashboardServlet.getCurrent().getServletContext();
 
 		String dbUrl = "";
-		if (DashboardUI.getUseLocalUrl()) {
-			dbUrl = sc.getInitParameter("DBURLLocal");
-		} else if (DashboardUI.getUseProdUrl()) {
-			dbUrl = sc.getInitParameter("DBURLProd");
 
-		} else {
-			dbUrl = sc.getInitParameter("DBURL");
+		if (DashboardUI.getUseLocalUrl()) {
+			dbUrl = "test";
+		} else if (DashboardUI.getUseProdUrl()) {
+			dbUrl = "prod";
+
 		}
+
 		
 		String dataBase = sc.getInitParameter("Database");
-		System.out.println("database: " + dataBase);
-		dataBase = "jdbc:mysql://localhost:3306" + dataBase;
+		System.out.println("database: " + dbUrl);
+		dataBase = "jdbc:mysql://localhost:3306/" + dbUrl;
 
 		try {
 

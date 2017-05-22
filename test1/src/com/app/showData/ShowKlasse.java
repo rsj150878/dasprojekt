@@ -71,4 +71,8 @@ public class ShowKlasse extends ShowRing  {
 	public List <ShowRing> getChilds() {
 		return this.hundeDerKlasse;
 	}
+	
+	 public String getClubsieger() {
+	    	return "";
+	    }
  }

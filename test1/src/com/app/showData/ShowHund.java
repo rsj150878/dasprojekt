@@ -142,6 +142,7 @@ public class ShowHund extends ShowKlasseEnde {
 		BOB = bOB;
 	}
 	public String getClubsieger() {
+		System.out.println("clubsieger " + this.idschauhund + "-" + clubsieger  + "-");
 		return clubsieger;
 	}
 	public void setClubsieger(String clubsieger) {

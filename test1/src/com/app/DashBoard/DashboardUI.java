@@ -132,7 +132,7 @@ public final class DashboardUI extends UI {
     }
     
     public static boolean getUseProdUrl() {
-    	return Page.getCurrent().getLocation().toString().contains("prod");
+    	return Page.getCurrent().getLocation().toString().contains("retrieverdata.at");
     }
     
     public static boolean getUseLocalUrl() {

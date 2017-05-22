@@ -3,6 +3,8 @@ package com.app.dbIO;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
+import com.app.DashBoard.DashboardUI;
+
 public class DBConnectionNeu {
 
 	public final static DBConnectionNeu INSTANCE = new DBConnectionNeu();;
@@ -15,14 +17,22 @@ public class DBConnectionNeu {
 
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			
-			connect = DriverManager
-					.getConnection("jdbc:mysql://localhost:3306/test?user=" + DB_USER + "&password=" + DB_PASSWORD);
+			String dbUrl = "";
+
+			if (DashboardUI.getUseLocalUrl()) {
+				dbUrl = "test";
+			} else if (DashboardUI.getUseProdUrl()) {
+				dbUrl = "prod";
+
+			}
+
+			connect = DriverManager.getConnection(
+					"jdbc:mysql://localhost:3306/" + dbUrl + "?user=" + DB_USER + "&password=" + DB_PASSWORD);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public Connection getConnection() {
 		return this.connect;
 	}

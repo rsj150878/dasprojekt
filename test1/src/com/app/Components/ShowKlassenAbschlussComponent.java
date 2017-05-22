@@ -13,17 +13,20 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.RadioButtonGroup;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-public class ShowKlassenAbschluss extends Panel {
+public class ShowKlassenAbschlussComponent extends Panel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1870614514839201421L;
 	private DBShowNeu db;
 	private ShowKlasseEnde ende;
 
-	public ShowKlassenAbschluss(DBShowNeu db, ShowKlasseEnde ende) {
+	public ShowKlassenAbschlussComponent(DBShowNeu db, ShowKlasseEnde ende) {
 		this.db = db;
 		this.ende = ende;
 

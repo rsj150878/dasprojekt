@@ -20,6 +20,9 @@ public class ShowKlasseEnde extends ShowKlasse {
 	public String getKatalognumer() {
 		return "notDefined";
 	}
+	 public String getClubsieger() {
+	    	return "";
+	    }
 	
 	public ShowKlasse getKlasseEndeFor() {
 		return klasseEndeFor;

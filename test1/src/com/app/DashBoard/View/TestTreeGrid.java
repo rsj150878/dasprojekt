@@ -3,10 +3,12 @@ package com.app.DashBoard.View;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.app.Components.ShowGeschlechtAbschlussComponent;
 import com.app.Components.ShowHundBewertungComponent;
-import com.app.Components.ShowKlassenAbschluss;
+import com.app.Components.ShowKlassenAbschlussComponent;
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.dbIO.DBShowNeu;
+import com.app.showData.ShowGeschlechtEnde;
 import com.app.showData.ShowHund;
 import com.app.showData.ShowKlasseEnde;
 import com.app.showData.ShowRing;
@@ -192,10 +194,16 @@ public class TestTreeGrid extends Panel implements View, Handler {
 				mainVerticalLayout.addComponent(bewertungPart);
 			} else if (boxTest.getSelectedItem().isPresent()
 					&& boxTest.getSelectedItem().get() instanceof ShowKlasseEnde) {
-				bewertungPart = new ShowKlassenAbschluss (db, (ShowKlasseEnde) boxTest.getSelectedItem().get());
+				bewertungPart = new ShowKlassenAbschlussComponent (db, (ShowKlasseEnde) boxTest.getSelectedItem().get());
+				mainVerticalLayout.addComponent(bewertungPart);
+
+			} else if (boxTest.getSelectedItem().isPresent()
+					&& boxTest.getSelectedItem().get() instanceof ShowGeschlechtEnde) {
+				bewertungPart = new ShowGeschlechtAbschlussComponent (db, (ShowGeschlechtEnde) boxTest.getSelectedItem().get());
 				mainVerticalLayout.addComponent(bewertungPart);
 
 			}
+
 		});
 
 		return (mainVerticalLayout);

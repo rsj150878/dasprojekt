@@ -11,7 +11,7 @@ public class DBConnection {
 
 	private final static String DRIVER_NAME = "com.mysql.jdbc.Driver";
 
-	private final static String DB_USER = "retrieverdata.at";
+	private final static String DB_USER = "_rdata";
 	private final static String DB_PASSWORD = "waterloo123";
 
 	private static JDBCConnectionPool connectionPool;
@@ -25,7 +25,7 @@ public class DBConnection {
 		String dbUrl = "";
 
 		if (DashboardUI.getUseLocalUrl()) {
-			dbUrl = "test";
+			dbUrl = "test1";
 		} else if (DashboardUI.getUseProdUrl()) {
 			dbUrl = "prod";
 
@@ -39,7 +39,7 @@ public class DBConnection {
 		try {
 
 			connectionPool = new SimpleJDBCConnectionPool(DRIVER_NAME, dataBase,
-					DB_USER, DB_PASSWORD, 2, 5);
+					dbUrl + DB_USER, DB_PASSWORD, 2, 5);
 
 		} catch (Exception e) {
 			System.out.println(e);

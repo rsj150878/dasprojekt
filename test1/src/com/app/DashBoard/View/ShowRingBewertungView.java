@@ -8,6 +8,7 @@ import com.app.Components.ShowHundBewertungComponent;
 import com.app.Components.ShowKlassenAbschlussComponent;
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.dbIO.DBShowNeu;
+import com.app.showData.Show;
 import com.app.showData.ShowGeschlechtEnde;
 import com.app.showData.ShowHund;
 import com.app.showData.ShowKlasseEnde;
@@ -33,7 +34,7 @@ import com.vaadin.ui.TreeGrid;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-public class TestTreeGrid extends Panel implements View, Handler {
+public class ShowRingBewertungView extends Panel implements View, Handler {
 
 	Component bewertungPart = null;
 
@@ -41,12 +42,22 @@ public class TestTreeGrid extends Panel implements View, Handler {
 	ComboBox<ShowRing> boxTest;
 	List<ShowRing> source;
 
+	Show show ;
+	ShowRing ring;
+	private final ShowRingBewertungListener listener;
+
+
 	Action action_vor = new ShortcutAction("Alt+PfeilRechts", ShortcutAction.KeyCode.ARROW_RIGHT,
 			new int[] { ShortcutAction.ModifierKey.ALT });
 	Action action_zurueck = new ShortcutAction("Alt+PfeilLinks", ShortcutAction.KeyCode.ARROW_LEFT,
 			new int[] { ShortcutAction.ModifierKey.ALT });
 
-	public TestTreeGrid() {
+	public ShowRingBewertungView(Show show, ShowRing ring, ShowRingBewertungListener listener) {
+		
+		this.show = show;
+		this.ring = ring;
+		this.listener = listener;
+		
 		DashBoardEventBus.register(this);
 
 		setSizeFull();
@@ -91,15 +102,12 @@ public class TestTreeGrid extends Panel implements View, Handler {
 		// alle datena ufbauen....
 		db = new DBShowNeu();
 
-		List<ShowRing> ringList = null;
-
 		try {
-			ringList = db.getRingeFuerShow(4);
+			ring.addShowKlassen(db.getKlassenForShow(ring, show.getIdSchau(), ring));
 		} catch (Exception e) {
 			Notification.show("fehler beim lesen der Daten);");
 			e.printStackTrace();
 		}
-		ShowRing ring = ringList.get(0);
 
 		HierarchyData<ShowRing> ringData = new HierarchyData<>();
 		ringData.addItem(null, ring);
@@ -190,16 +198,16 @@ public class TestTreeGrid extends Panel implements View, Handler {
 				mainVerticalLayout.removeComponent(bewertungPart);
 			}
 			if (boxTest.getSelectedItem().isPresent() && boxTest.getSelectedItem().get() instanceof ShowHund) {
-				bewertungPart = new ShowHundBewertungComponent(db, (ShowHund) boxTest.getSelectedItem().get());
+				bewertungPart = new ShowHundBewertungComponent(db, show, (ShowHund) boxTest.getSelectedItem().get());
 				mainVerticalLayout.addComponent(bewertungPart);
 			} else if (boxTest.getSelectedItem().isPresent()
 					&& boxTest.getSelectedItem().get() instanceof ShowKlasseEnde) {
-				bewertungPart = new ShowKlassenAbschlussComponent (db, (ShowKlasseEnde) boxTest.getSelectedItem().get());
+				bewertungPart = new ShowKlassenAbschlussComponent (db, show, (ShowKlasseEnde) boxTest.getSelectedItem().get());
 				mainVerticalLayout.addComponent(bewertungPart);
 
 			} else if (boxTest.getSelectedItem().isPresent()
 					&& boxTest.getSelectedItem().get() instanceof ShowGeschlechtEnde) {
-				bewertungPart = new ShowGeschlechtAbschlussComponent (db, (ShowGeschlechtEnde) boxTest.getSelectedItem().get());
+				bewertungPart = new ShowGeschlechtAbschlussComponent (db, show, (ShowGeschlechtEnde) boxTest.getSelectedItem().get());
 				mainVerticalLayout.addComponent(bewertungPart);
 
 			}
@@ -240,5 +248,18 @@ public class TestTreeGrid extends Panel implements View, Handler {
 
 		}
 	}
+	
+	public void setTitle(String title) {
+
+		listener.titleChanged(title, ShowRingBewertungView.this);
+	}
+
+	public interface ShowRingBewertungListener {
+		void titleChanged(String newTitle, ShowRingBewertungView detail);
+	}
+	
+	
+
+
 
 }

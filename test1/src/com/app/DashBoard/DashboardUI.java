@@ -78,7 +78,7 @@ public final class DashboardUI extends UI {
     private void updateContent() {
         User user = (User) VaadinSession.getCurrent().getAttribute(
                 User.class.getName());
-        if (user != null && "admin".equals(user.getRole())) {
+        if (user != null) {
             // Authenticated user
             setContent(new MainView());
             removeStyleName("loginview"); 
@@ -136,7 +136,8 @@ public final class DashboardUI extends UI {
     }
     
     public static boolean getUseLocalUrl() {
-    	return Page.getCurrent().getLocation().toString().contains("localhost");
+    	return Page.getCurrent().getLocation().toString().contains("test") ||
+    			Page.getCurrent().getLocation().toString().contains("localhost");
     }
     
     public static void copyTextToClipboard(String text) {

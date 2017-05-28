@@ -5,8 +5,9 @@ public enum FormWertErwachsen {
 	VORZUEGLICH ("v", "vorzüglich"),
 	SEHR_GUT("sg", "sehr gut"),
 	GUT("g", "gut"),
-	GENUEGEND("g", "genügend"),
-	NICHT_ENTSPRECHEND("n", "nicht ensprechend");
+	GENUEGEND("ge", "genügend"),
+	DISQUALIFIZIERT("d", "disqualifiziert"),
+	OHNE_BEWERTUNG("ob", "ohne Bewertung");
 	
 	private String formwert;
 	private String formWertBezeichnung;

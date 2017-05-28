@@ -5,8 +5,11 @@ import java.util.List;
 
 import com.app.dbIO.DBShowNeu;
 import com.app.enumPackage.ShowKlassen;
+import com.app.printClasses.ShowBewertungsBlatt;
+import com.app.showData.Show;
 import com.app.showData.ShowHund;
 import com.app.showData.ShowKlasseEnde;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBoxGroup;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
@@ -25,17 +28,22 @@ public class ShowKlassenAbschlussComponent extends Panel {
 	private static final long serialVersionUID = -1870614514839201421L;
 	private DBShowNeu db;
 	private ShowKlasseEnde ende;
+	private Show show;
 
-	public ShowKlassenAbschlussComponent(DBShowNeu db, ShowKlasseEnde ende) {
+	VerticalLayout panelContent;
+
+	public ShowKlassenAbschlussComponent(DBShowNeu db, Show show, ShowKlasseEnde ende) {
 		this.db = db;
 		this.ende = ende;
+		this.show = show;
 
 		setWidth("100%");
 		setCaption("Klassenabschluss " + ende.getKlasseEndeFor().getKlasse().getShowKlasseLangBezeichnung());
-		VerticalLayout panelContent = new VerticalLayout();
+		panelContent = new VerticalLayout();
 		panelContent.setWidth("100%");
 
 		panelContent.addComponent(buildTab());
+		panelContent.addComponent(buildPrintButton());
 
 		setContent(panelContent);
 	}
@@ -51,7 +59,7 @@ public class ShowKlassenAbschlussComponent extends Panel {
 		layout.addComponent(buildPlatzierungField("3"));
 
 		layout.addComponent(buildPlatzierungField("4"));
-		
+
 		if (ende.getKlasseEndeFor().getKlasse().equals(ShowKlassen.JUGENDKLASSE)) {
 			layout.addComponent(buildKlubSieger("Klubjugendsieger", "J"));
 		} else if (ende.getKlasseEndeFor().getKlasse().equals(ShowKlassen.VETERANENKLASSE)) {
@@ -61,7 +69,20 @@ public class ShowKlassenAbschlussComponent extends Panel {
 		return layout;
 
 	}
-	
+
+	private Component buildPrintButton() {
+		Button printButton = new Button("Klasse drucken");
+		printButton.addClickListener(event -> {
+			ShowHund[] arry = ende.getKlasseEndeFor().getKlassenAsStream().filter(p -> p instanceof ShowHund)
+					.toArray(ShowHund[]::new);
+			ShowBewertungsBlatt blatt = new ShowBewertungsBlatt(show, arry);
+			panelContent.addComponent(blatt);
+
+		});
+
+		return printButton;
+	}
+
 	private Component buildKlubSieger(String klubSiegerFor, String dataBaseValue) {
 		HorizontalLayout platzLayout = new HorizontalLayout();
 		Label platzLabel = new Label();
@@ -73,7 +94,7 @@ public class ShowKlassenAbschlussComponent extends Panel {
 
 		Label hundeName = new Label();
 		hundeName.setWidth(100.0f, Unit.PERCENTAGE);
-		
+
 		ShowHund[] hund = { (ShowHund) ende.getKlasseEndeFor().getKlassenAsStream()
 				.filter(x -> dataBaseValue.equals(x.getClubsieger())).findFirst().orElse(null) };
 
@@ -94,7 +115,6 @@ public class ShowKlassenAbschlussComponent extends Panel {
 					.filter(x -> event.getValue().trim().equals(x.getKatalognumer().trim())).findFirst().orElse(null);
 
 			if (!(hund[0] == null)) {
-				// textField.setValue(hund[0].getKatalognumer());
 				hundeName.setValue(hund[0].getShowHundName());
 				hund[0].setClubsieger(dataBaseValue);
 				saveHund(hund[0]);
@@ -107,10 +127,8 @@ public class ShowKlassenAbschlussComponent extends Panel {
 
 		platzLayout.addComponent(hundeName);
 
-
-
 		return platzLayout;
-		
+
 	}
 
 	private Component buildPlatzierungField(String platz) {
@@ -215,8 +233,8 @@ public class ShowKlassenAbschlussComponent extends Panel {
 
 				platzLayout.addComponent(groupResCACA);
 				groupResCACA.addSelectionListener(event -> {
-					System.out.println(" event " + (event.getFirstSelectedItem().isPresent()
-							? event.getFirstSelectedItem().get() : "leer"));
+					System.out.println(" event "
+							+ (event.getFirstSelectedItem().isPresent() ? event.getFirstSelectedItem().get() : "leer"));
 
 					hund[0].setCACA(
 							event.getFirstSelectedItem().isPresent() ? event.getFirstSelectedItem().get() : null);

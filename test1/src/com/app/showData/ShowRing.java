@@ -4,15 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.app.enumPackage.Rassen;
+
 public class ShowRing {
 	
 	protected String name;
 	
 	private String ringNummer;
 	private String richter;
+	private Integer ringId;
+	
 	
 	private final List <ShowRing> klassenDesRings;
 
+	
 	public ShowRing() {
 		
 		this.klassenDesRings = new ArrayList<ShowRing>();
@@ -82,6 +87,24 @@ public class ShowRing {
     	return "";
     }
     
+    public String getGeschlecht() {
+    	return "";
+    }
     
+    public Rassen getRasse() {
+    	return null;
+    }
+    
+    public String getBOB() {
+    	return "";
+    }
+
+	public Integer getRingId() {
+		return ringId;
+	}
+
+	public void setRingId(Integer ringId) {
+		this.ringId = ringId;
+	}
 
 }

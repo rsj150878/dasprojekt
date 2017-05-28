@@ -58,7 +58,6 @@ public final class User {
 			userContainer = new SQLContainer(q1);
 			userContainer.addContainerFilter(new Equal("email", userid));
 
-			System.out.println("userid: " + userid);
 			if (userContainer.size() == 0) {
 				throw new UsernameNotFoundException("User Unbekannt");
 			}
@@ -70,15 +69,13 @@ public final class User {
 
 			} else {
 			}
-			System.out.println("user");
-
+			
+			this.role = userItem.getItemProperty("rollen").getValue().toString();
 			personContainer = new SQLContainer(q2);
 			personContainer.addContainerFilter(new Equal("iduser", userItem
 					.getItemProperty("iduser").getValue()));
 
 			personItem = personContainer.getItem(personContainer.firstItemId());
-
-			this.role = "admin";
 			
 			this.idPerson = Integer.valueOf(personItem.getItemProperty("idperson").getValue().toString());
 
@@ -431,5 +428,6 @@ public final class User {
 	public Integer getIdperson() {
 		return this.idPerson;
 	}
+
 
 }

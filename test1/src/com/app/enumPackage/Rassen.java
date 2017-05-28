@@ -9,7 +9,9 @@ public enum Rassen {
 	CURLY_COATED_RETRIEVER("CCR","Curly Coated Retriever", "Curly Coated Retriever"),
 	BORDER_COLLIE_TRICOLOR_LANGHAAR("BCTL", "Border Collie, Tricolor, Langhaar", "Border Collie, Tricolor, Langhaar"),
 	MISCHLING("MI","Mischling",""),
-	BERGER_BLANC_SUISSE ("BBS", "Weisser Schäfer", "Berger Blance Suisse");
+	BERGER_BLANC_SUISSE ("BBS", "Weisser Schäfer", "Berger Blance Suisse"),
+	BORDER_COLLIE ("BC", "Border Collie", "Border Collie"),
+	COLLIE_LANGHAAR("CLH", "Langhaar Collie", "Langhaar Collie");
 	
 	private final String RassenLangBezeichnung;
 	private final String RassenKurzBezeichnung;

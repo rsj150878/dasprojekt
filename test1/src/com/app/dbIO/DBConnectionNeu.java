@@ -3,19 +3,24 @@ package com.app.dbIO;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
+import javax.servlet.ServletContext;
+
+import com.app.DashBoard.DashboardServlet;
 import com.app.DashBoard.DashboardUI;
 
 public class DBConnectionNeu {
 
 	public final static DBConnectionNeu INSTANCE = new DBConnectionNeu();;
 	private final static String DB_USER = "_rdata";
-	private final static String DB_PASSWORD = "waterloo123";
 	private static Connection connect;
 
 	protected DBConnectionNeu() {
 		// Setup the connection with the DB
 
 		try {
+			ServletContext sc = DashboardServlet.getCurrent().getServletContext();
+			String dbPasswort = sc.getInitParameter("passwort");
+			
 			Class.forName("com.mysql.jdbc.Driver");
 			String dbUrl = "";
 
@@ -27,7 +32,7 @@ public class DBConnectionNeu {
 			}
 
 			connect = DriverManager.getConnection(
-					"jdbc:mysql://localhost:3306/" + dbUrl + "?user=" + dbUrl + DB_USER + "&password=" + DB_PASSWORD);
+					"jdbc:mysql://localhost:3306/" + dbUrl + "?user=" + dbUrl + DB_USER + "&password=" + dbPasswort);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

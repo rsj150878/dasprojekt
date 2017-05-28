@@ -1,6 +1,7 @@
 package com.app.DashBoardWindow;
 
 import java.util.Collection;
+import java.util.Set;
 
 import com.app.Auth.Hund;
 import com.app.Auth.Person;
@@ -22,7 +23,6 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.DateField;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.GridLayout;
@@ -34,8 +34,6 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.v7.event.ItemClickEvent;
-import com.vaadin.v7.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.v7.shared.ui.datefield.Resolution;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.HorizontalLayout;
@@ -119,6 +117,7 @@ public class HundeDetailWindow extends Window {
 		setResizable(false);
 		setClosable(false);
 		setHeight(height, Unit.PERCENTAGE);
+		setWidth(100.0f, Unit.PERCENTAGE);
 
 		VerticalLayout content = new VerticalLayout();
 		// content.setSizeFull();
@@ -190,6 +189,7 @@ public class HundeDetailWindow extends Window {
 				hundeCollection.add(newHund);
 
 				dogTable.setItems(hundeCollection);
+				dogTable.removeAllColumns();
 
 				dogTable.addColumn(Hund::getRufname);
 				dogTable.addColumn(Hund::getZwingername);
@@ -223,13 +223,15 @@ public class HundeDetailWindow extends Window {
 		// dogTable.addStyleName(ValoTheme.TABLE_);
 
 		if (hundeCollection.size() > 0) {
+			
 			dogTable.setItems(hundeCollection);
+			dogTable.removeAllColumns();
 			dogTable.addColumn(Hund::getRufname);
 			dogTable.addColumn(Hund::getZwingername);
 
 		}
 
-		dogTable.addItemClickListener(event -> {
+		dogTable.addSelectionListener(event -> {
 			try {
 				if (!(fieldGroup.getItemDataSource() == null)) {
 					fieldGroup.commit();
@@ -237,7 +239,9 @@ public class HundeDetailWindow extends Window {
 				// Updated user should also be persisted to database. But
 				// not in this demo.
 
-				hund.commit();
+				if (!(hund == null)) {
+					hund.commit();
+				}
 				Notification success = new Notification("Hundedaten erfolgreich gespeichert");
 				success.setDelayMsec(2000);
 				success.setStyleName("bar success small");
@@ -249,8 +253,12 @@ public class HundeDetailWindow extends Window {
 				Notification.show("Es ist ein Fehler passiert\n" + e.getMessage(), Type.ERROR_MESSAGE);
 
 			}
-			//hund = (Hund) event.getItemId();
-			fieldGroup.setItemDataSource(hund);
+			 Set<Hund> selected = dogTable.getSelectedItems();
+			 
+			 if (selected.size() > 0) {
+				 hund = (Hund) selected.toArray()[0];
+				 fieldGroup.setItemDataSource(hund);
+			 }
 
 		});
 

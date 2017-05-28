@@ -2,6 +2,8 @@ package com.app.showData;
 
 import java.util.Date;
 
+import com.app.enumPackage.Rassen;
+
 public class ShowHund extends ShowKlasseEnde {
 	
 	
@@ -31,6 +33,7 @@ public class ShowHund extends ShowKlasseEnde {
 	private String geschlecht;
 	private String zuechter;
 	private Integer sort_kat_nr;
+	private Rassen rasse;
 	
 	
 	
@@ -195,6 +198,13 @@ public class ShowHund extends ShowKlasseEnde {
 	@Override
 	public String getKatalogNummer() {
 		return this.katalognumer + " - " + this.showHundName;
+	}
+	public Rassen getRasse() {
+		System.out.println("rasse des hundes " + rasse);
+		return rasse;
+	}
+	public void setRasse(Rassen rasse) {
+		this.rasse = rasse;
 	}
 	
 

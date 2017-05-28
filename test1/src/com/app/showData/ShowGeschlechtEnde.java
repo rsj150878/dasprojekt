@@ -21,7 +21,7 @@ public class ShowGeschlechtEnde extends ShowKlasse {
 
 	// @Override
 	public String getKatalogNummer() {
-		return ("R".equals(geschlechtEnde) ? "Rüden" : "Hündinnen") + "-Ende";
+		return rasse.getRassenKurzBezeichnung() + " - " + ("R".equals(geschlechtEnde) ? "Rüden" : "Hündinnen") + "-Ende";
 	}
 
 //	public Stream<ShowRing> getKlassenAsStream() {
@@ -54,6 +54,7 @@ public class ShowGeschlechtEnde extends ShowKlasse {
 	}
 
 	public Rassen getRasse() {
+		System.out.println("rasse in abschluss-klasse " + rasse);
 		return rasse;
 	}
 

@@ -10,7 +10,10 @@ import com.app.dbIO.DBShowNeu;
 import com.app.enumPackage.FormWertErwachsen;
 import com.app.enumPackage.FormWertJuengsten;
 import com.app.enumPackage.ShowKlassen;
+import com.app.printClasses.ShowBewertungsBlatt;
+import com.app.showData.Show;
 import com.app.showData.ShowHund;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.DateField;
@@ -44,18 +47,21 @@ public class ShowHundBewertungComponent extends Panel {
 	private DBShowNeu db;
 
 	private ShowHund hund;
+	private Show show;
+	VerticalLayout panelContent;
 
-	public ShowHundBewertungComponent(DBShowNeu db, ShowHund hund) {
+	public ShowHundBewertungComponent(DBShowNeu db, Show show, ShowHund hund) {
 		this.hund = hund;
+		this.show = show;
 		this.db = db;
 		// setHeight("100%");
 		setWidth("100%");
 		setCaption("Hundebewertung");
-		VerticalLayout panelContent = new VerticalLayout();
+		panelContent = new VerticalLayout();
 		panelContent.setWidth("100%");
 
 		panelContent.addComponentsAndExpand(buildAllgemeinInfo(), buildAllgemeinInfo3(), buildBewertung(),
-				buildFormwertInfo());
+				buildFormwertInfo(), buildPrintButton());
 
 		setContent(panelContent);
 
@@ -132,6 +138,17 @@ public class ShowHundBewertungComponent extends Panel {
 		});
 
 		return bewertung;
+	}
+	
+	private Component buildPrintButton() {
+		Button printButton = new Button ("Bewertung");
+		printButton.addClickListener( event -> {
+			ShowBewertungsBlatt blatt = new ShowBewertungsBlatt(show, hund);
+			panelContent.addComponent(blatt);
+			
+		});
+		
+		return printButton;
 	}
 
 	private Component buildFormwertInfo() {

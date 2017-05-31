@@ -81,8 +81,10 @@ public class DBShowNeu {
 
 	public List<ShowKlasse> getKlassenForShow(ShowRing show, Integer idSchau, ShowRing ring) throws Exception {
 		Connection conn = DBConnectionNeu.INSTANCE.getConnection();
-		PreparedStatement st = conn.prepareStatement(
-				"select distinct rasse, geschlecht, klasse from schauhund where idschau = ? and idschauring = ?");
+		String state = "select rasse, geschlecht, klasse, min(sort_kat_nr) as sort"
+				+ " from schauhund where idschau = ? and idschauring = ?" +
+				" group by rasse, geschlecht, klasse order by sort";
+		PreparedStatement st = conn.prepareStatement(state);
 		st.setInt(1, idSchau.intValue());
 		st.setInt(2, ring.getRingId().intValue());
 
@@ -145,7 +147,8 @@ public class DBShowNeu {
 			Rassen rasse, String geschlecht) throws Exception {
 		Connection conn = DBConnectionNeu.INSTANCE.getConnection();
 		PreparedStatement st = conn.prepareStatement(
-				"select * from schauhund where idschau = ? and idschauring = ? and klasse = ? and rasse = ? and geschlecht = ?");
+				"select * from schauhund where idschau = ? and idschauring = ? and klasse = ? and rasse = ? and geschlecht = ? "+
+		" order by sort_kat_nr");
 		st.setInt(1, idSchau.intValue());
 		st.setInt(2, ring.getRingId().intValue());
 		st.setString(3, klasse);

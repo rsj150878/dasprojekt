@@ -158,7 +158,17 @@ public class VeranstaltungsTeilnehmerGrid extends Grid {
 		bezahlt.addValueChangeListener(e -> txContainer.commit());
 
 		bezahlt.setConverter(new StringToBoolean() );
+
+		CheckBox bestanden = new CheckBox();
+		//bezahlt.setConvertedValue("J");
+		getColumn("bestanden").setEditorField(bestanden);
+		bestanden.addValueChangeListener(e -> txContainer.commit());
+
+		bestanden.setConverter(new StringToBoolean() );
 		
+		TextField hundeFuehrer = new TextField();
+		getColumn("hundefuehrer").setEditorField(hundeFuehrer);
+		hundeFuehrer.addValueChangeListener (e-> txContainer.commit());
 		
 		if (!(defStufe.getStationen() == null)) {
 
@@ -229,8 +239,7 @@ public class VeranstaltungsTeilnehmerGrid extends Grid {
 		txContainer.addTxListener(new HundTxListener() {
 			@Override
 			public void transactionStarted(boolean implicit) {
-				// commit.setEnabled(true);
-				// reset.setEnabled(true);
+				
 			}
 
 			@Override

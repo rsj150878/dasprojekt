@@ -54,6 +54,11 @@ public class MitgliederListe {
 	public Collection<Hund> getHunde() {
 		return hunde;
 	}
+	
+	public String getSearchString () {
+		return person.getLastName() + " " + person.getFirstName() + " " + hundeNamen;
+	}
+	
 	public void setHunde(Collection<Hund> hunde) {
 		this.hunde = hunde;
 		Iterator i = this.hunde.iterator();

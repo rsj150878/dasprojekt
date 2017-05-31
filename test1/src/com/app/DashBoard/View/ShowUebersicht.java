@@ -99,10 +99,6 @@ public class ShowUebersicht extends TabSheet implements View, //CloseHandler,
 		drafts.setSpacing(true);
 		drafts.setSizeUndefined();
 
-		System.out.println("veranstaltungsdatum "
-				+ schauContainer.getItem(schauContainer.getIdByIndex(0))
-						.getItemProperty("datum").getValue().toString());
-
 		String year = schauContainer.getItem(schauContainer.getIdByIndex(0))
 				.getItemProperty("datum").getValue().toString().substring(0, 4);
 

@@ -10,8 +10,8 @@ import com.app.DashBoard.Event.DashBoardEvent.UserNewEvent;
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.DashBoardWindow.HundeDetailWindow;
 import com.app.DashBoardWindow.ProfilePreferencesWindow;
-import com.google.common.base.Objects;
 import com.google.common.eventbus.Subscribe;
+import com.vaadin.data.HasValue;
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.event.ShortcutAction.KeyCode;
@@ -29,6 +29,7 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.HorizontalLayout;
@@ -102,24 +103,26 @@ public class MitgliederView extends VerticalLayout implements View {
 	}
 
 	private Component buildFilter() {
-		final TextField filter = new TextField();
-		filter.setIcon(FontAwesome.SEARCH);
-		filter.addStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
-		filter.addValueChangeListener(event -> {
-			String value = event.getValue();
-			System.out.println("filter " + value);
-			//listDataProvider.addFilter(F);
-			// listDataProvider.addFilter(value);
-			// listDataProvider.filter
-
-		});
-		filter.addShortcutListener(new ShortcutListener("Clear", KeyCode.ESCAPE, null) {
+		final TextField filterField = new TextField();
+		filterField.setIcon(FontAwesome.SEARCH);
+		filterField.addStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
+		filterField.addValueChangeListener(this::onNameFilterTextChange);
+		filterField.addShortcutListener(new ShortcutListener("Clear", KeyCode.ESCAPE, null) {
 			@Override
 			public void handleAction(final Object sender, final Object target) {
 				listDataProvider.clearFilters();
 			}
 		});
-		return filter;
+		return filterField;
+	}
+
+	private void onNameFilterTextChange(HasValue.ValueChangeEvent<String> event) {
+		//listDataProvider.filteringBySubstring(MitgliederListe::getSearchString,  event.getValue());
+		 listDataProvider.setFilter(MitgliederListe::getSearchString, s -> caseInsensitiveContains(s, event.getValue()));
+    }
+
+	private Boolean caseInsensitiveContains(String where, String what) {
+		return where.toLowerCase().contains(what.toLowerCase());
 	}
 
 	private Grid<MitgliederListe> buildTable() {
@@ -140,6 +143,7 @@ public class MitgliederView extends VerticalLayout implements View {
 		gridTable.getColumn("hunde").setHidden(true);
 		gridTable.getColumn("person").setHidden(true);
 		gridTable.getColumn("hundeNamen").setHidden(true);
+		gridTable.getColumn("searchString").setHidden(true);
 
 		gridTable.setFrozenColumnCount(2);
 

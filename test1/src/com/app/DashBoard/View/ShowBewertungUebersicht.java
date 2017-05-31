@@ -136,7 +136,7 @@ public class ShowBewertungUebersicht extends TabSheet implements View, // CloseH
 
 		final ComboBox<ShowRing> boxTest = new ComboBox();
 		boxTest.setItems(workShow.getRinge());
-		boxTest.setItemCaptionGenerator(ShowRing::getKatalogNummer);
+		boxTest.setItemCaptionGenerator(ShowRing::getTextForAuswahl);
 
 		layout.addComponent(boxTest);
 

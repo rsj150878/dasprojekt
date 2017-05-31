@@ -35,6 +35,10 @@ public class ShowRing {
 		return ringNummer;
 		
 	}
+	
+	public String getTextForAuswahl() {
+		return this.name + " - " + this.richter;
+	}
 
 	public void setRingNummer(String ringNummer) {
 		this.ringNummer = ringNummer;
@@ -58,7 +62,6 @@ public class ShowRing {
     }
     
     public Stream<ShowRing> flattened() {
-    	System.out.println("flattened ring");
     	return Stream.concat(Stream.of(this),
                 getKlassenAsStream().flatMap(ShowRing::flattened));
     }

@@ -7,7 +7,10 @@ import java.util.ArrayList;
 
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.dbIO.DBConnection;
+import com.app.enumPackage.FormWertErwachsen;
+import com.app.enumPackage.FormWertJuengsten;
 import com.app.enumPackage.Rassen;
+import com.app.enumPackage.ShowKlassen;
 import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.DatabaseBuilder;
 import com.healthmarketscience.jackcess.Row;
@@ -111,8 +114,7 @@ public class ShowImporter extends VerticalLayout implements View {
 
 	// Implement both receiver that saves upload in a file and
 	// listener for successful upload
-	private class FileUploader implements Receiver, SucceededListener,
-			FailedListener {
+	private class FileUploader implements Receiver, SucceededListener, FailedListener {
 		public File file;
 		public String filename;
 
@@ -131,8 +133,7 @@ public class ShowImporter extends VerticalLayout implements View {
 				file = new File(filename);
 				fos = new FileOutputStream(file);
 			} catch (final java.io.FileNotFoundException e) {
-				new Notification("Could not open file<br/>", e.getMessage(),
-						Notification.Type.ERROR_MESSAGE)
+				new Notification("Could not open file<br/>", e.getMessage(), Notification.Type.ERROR_MESSAGE)
 						.show(Page.getCurrent());
 				return null;
 			}
@@ -141,16 +142,13 @@ public class ShowImporter extends VerticalLayout implements View {
 
 		public void uploadSucceeded(SucceededEvent event) {
 			// Show the uploaded file in the image viewer
-			q1 = new TableQuery("schau",
-					DBConnection.INSTANCE.getConnectionPool());
+			q1 = new TableQuery("schau", DBConnection.INSTANCE.getConnectionPool());
 			q1.setVersionColumn("version");
 
-			q2 = new TableQuery("schauring",
-					DBConnection.INSTANCE.getConnectionPool());
+			q2 = new TableQuery("schauring", DBConnection.INSTANCE.getConnectionPool());
 			q2.setVersionColumn("version");
 
-			q3 = new TableQuery("schauhund",
-					DBConnection.INSTANCE.getConnectionPool());
+			q3 = new TableQuery("schauhund", DBConnection.INSTANCE.getConnectionPool());
 			q3.setVersionColumn("version");
 
 			try {
@@ -170,37 +168,29 @@ public class ShowImporter extends VerticalLayout implements View {
 					}
 					switch (row.getString("Rassename")) {
 					case "Golden Retriever":
-						rasse = Rassen.GOLDEN_RETRIEVER
-								.getRassenKurzBezeichnung();
+						rasse = Rassen.GOLDEN_RETRIEVER.getRassenKurzBezeichnung();
 						break;
 					case "Labrador Retriever":
-						rasse = Rassen.LABRADOR_RETRIEVER
-								.getRassenKurzBezeichnung();
+						rasse = Rassen.LABRADOR_RETRIEVER.getRassenKurzBezeichnung();
 						break;
 					case "Flat-Coated Retriever":
-						rasse = Rassen.FLAT_COATED_RETRIEVER
-								.getRassenKurzBezeichnung();
+						rasse = Rassen.FLAT_COATED_RETRIEVER.getRassenKurzBezeichnung();
 						break;
 					case "Flat Coated Retriever":
-						rasse = Rassen.FLAT_COATED_RETRIEVER
-								.getRassenKurzBezeichnung();
+						rasse = Rassen.FLAT_COATED_RETRIEVER.getRassenKurzBezeichnung();
 						break;
 
 					case "Nova Scotia Duck Tolling Retriever":
-						rasse = Rassen.NOVA_SCOTIA_DUCK_TOLLING_RETRIEVER
-								.getRassenKurzBezeichnung();
+						rasse = Rassen.NOVA_SCOTIA_DUCK_TOLLING_RETRIEVER.getRassenKurzBezeichnung();
 						break;
 					case "Chesapeake Bay Retriever":
-						rasse = Rassen.CHESAPEAKE_BAY_RETRIEVER
-								.getRassenKurzBezeichnung();
+						rasse = Rassen.CHESAPEAKE_BAY_RETRIEVER.getRassenKurzBezeichnung();
 						break;
 					case "Curly-Coated Retriever":
-						rasse = Rassen.CURLY_COATED_RETRIEVER
-								.getRassenKurzBezeichnung();
+						rasse = Rassen.CURLY_COATED_RETRIEVER.getRassenKurzBezeichnung();
 						break;
 					case "Curly Coated Retriever":
-						rasse = Rassen.CURLY_COATED_RETRIEVER
-								.getRassenKurzBezeichnung();
+						rasse = Rassen.CURLY_COATED_RETRIEVER.getRassenKurzBezeichnung();
 						break;
 
 					default:
@@ -214,8 +204,7 @@ public class ShowImporter extends VerticalLayout implements View {
 						String show = row.getString("AusstellungsCode");
 
 						schauContainer = new SQLContainer(q1);
-						schauContainer.addContainerFilter(new Equal(
-								"schaukuerzel", show));
+						schauContainer.addContainerFilter(new Equal("schaukuerzel", show));
 
 						IdClass schauId = new IdClass();
 						schauContainer.addRowIdChangeListener(schauId);
@@ -230,14 +219,10 @@ public class ShowImporter extends VerticalLayout implements View {
 							id = schauContainer.getIdByIndex(0);
 							newItem = schauContainer.getItem(id);
 						}
-						newItem.getItemProperty("schaukuerzel").setValue(
-								row.getString("AusstellungsCode"));
-						newItem.getItemProperty("bezeichnung").setValue(
-								row.getString("Ausstellung"));
-						newItem.getItemProperty("datum").setValue(
-								row.getDate("Datum"));
-						newItem.getItemProperty("schautyp").setValue(
-								showType.getValue());
+						newItem.getItemProperty("schaukuerzel").setValue(row.getString("AusstellungsCode"));
+						newItem.getItemProperty("bezeichnung").setValue(row.getString("Ausstellung"));
+						newItem.getItemProperty("datum").setValue(row.getDate("Datum"));
+						newItem.getItemProperty("schautyp").setValue(showType.getValue());
 
 						schauContainer.commit();
 						schauContainer.refresh();
@@ -245,36 +230,26 @@ public class ShowImporter extends VerticalLayout implements View {
 						id = schauContainer.getIdByIndex(0);
 						newItem = schauContainer.getItem(id);
 
-						System.out.println("id: "
-								+ newItem.getItemProperty("idschau").getValue()
-										.toString());
+						System.out.println("id: " + newItem.getItemProperty("idschau").getValue().toString());
 
 						schauRingContainer = new SQLContainer(q2);
-						schauRingContainer.addContainerFilter(new Equal(
-								"idschau", newItem.getItemProperty("idschau")
-										.getValue()));
-						schauRingContainer.addContainerFilter(new Equal(
-								"ringnummer", row.getInt("Ring").toString()));
+						schauRingContainer.addContainerFilter(
+								new Equal("idschau", newItem.getItemProperty("idschau").getValue()));
+						schauRingContainer.addContainerFilter(new Equal("ringnummer", row.getInt("Ring").toString()));
 
 						Item schauRingContainerItem;
 						if (schauRingContainer.size() == 0) {
 							id = schauRingContainer.addItem();
-							schauRingContainerItem = schauRingContainer
-									.getItemUnfiltered(id);
+							schauRingContainerItem = schauRingContainer.getItemUnfiltered(id);
 						} else {
 							id = schauRingContainer.getIdByIndex(0);
-							schauRingContainerItem = schauRingContainer
-									.getItem(id);
+							schauRingContainerItem = schauRingContainer.getItem(id);
 						}
 
-						schauRingContainerItem.getItemProperty("ringnummer")
-								.setValue(row.getInt("Ring").toString());
-						schauRingContainerItem.getItemProperty("richter")
-								.setValue(row.getString("Richtername"));
+						schauRingContainerItem.getItemProperty("ringnummer").setValue(row.getInt("Ring").toString());
+						schauRingContainerItem.getItemProperty("richter").setValue(row.getString("Richtername"));
 						schauRingContainerItem.getItemProperty("idschau")
-								.setValue(
-										newItem.getItemProperty("idschau")
-												.getValue());
+								.setValue(newItem.getItemProperty("idschau").getValue());
 
 						schauRingContainer.commit();
 						schauRingContainer.refresh();
@@ -282,124 +257,102 @@ public class ShowImporter extends VerticalLayout implements View {
 						schauRingContainerItem = schauRingContainer.getItem(id);
 
 						schauHundContainer = new SQLContainer(q3);
-						schauHundContainer.addContainerFilter(new Equal(
-								"idschauring", schauRingContainerItem
-										.getItemProperty("idschauring")
-										.getValue()));
-						schauHundContainer.addContainerFilter(new Equal(
-								"katalognummer", row.getInt("Katalognummer")
-										.toString().trim()
-										+ row.getString("aNummer").trim()));
+						schauHundContainer.addContainerFilter(new Equal("idschauring",
+								schauRingContainerItem.getItemProperty("idschauring").getValue()));
+						schauHundContainer.addContainerFilter(new Equal("katalognummer",
+								row.getInt("Katalognummer").toString().trim() + row.getString("aNummer").trim()));
 
 						Item schauHundItem;
 
 						if (schauHundContainer.size() == 0) {
 							id = schauHundContainer.addItem();
-							schauHundItem = schauHundContainer
-									.getItemUnfiltered(id);
+							schauHundItem = schauHundContainer.getItemUnfiltered(id);
 						} else {
 							id = schauHundContainer.getIdByIndex(0);
 							schauHundItem = schauHundContainer.getItem(id);
 						}
 
-						schauHundItem.getItemProperty("idschauring").setValue(
-								schauRingContainerItem.getItemProperty(
-										"idschauring").getValue());
+						schauHundItem.getItemProperty("idschauring")
+								.setValue(schauRingContainerItem.getItemProperty("idschauring").getValue());
 
-						schauHundItem.getItemProperty("name").setValue(
-								row.getString("Hundename"));
-						schauHundItem.getItemProperty("wurftag").setValue(
-								row.getDate("Wurfdatum"));
-						schauHundItem.getItemProperty("zuchtbuchnummer")
-								.setValue(row.getString("Zuchtbuchnummer"));
-						schauHundItem.getItemProperty("chipnummer").setValue(
-								"000");
+						schauHundItem.getItemProperty("name").setValue(row.getString("Hundename"));
+						schauHundItem.getItemProperty("wurftag").setValue(row.getDate("Wurfdatum"));
+						schauHundItem.getItemProperty("zuchtbuchnummer").setValue(row.getString("Zuchtbuchnummer"));
+						schauHundItem.getItemProperty("chipnummer").setValue("000");
 
-						schauHundItem.getItemProperty("klasse").setValue(
-								row.getString("Klasse"));
+						schauHundItem.getItemProperty("klasse").setValue(row.getString("Klasse"));
 
 						if (!(row.getString("Vater") == null)) {
-						
-							schauHundItem.getItemProperty("vater").setValue(
-									row.getString("Vater"));
+
+							schauHundItem.getItemProperty("vater").setValue(row.getString("Vater"));
 						} else
-							schauHundItem.getItemProperty("vater").setValue(
-									"--");
+							schauHundItem.getItemProperty("vater").setValue("--");
 
 						if (!(row.getString("Mutter") == null)) {
-							schauHundItem.getItemProperty("mutter").setValue(
-									row.getString("Mutter"));
+							schauHundItem.getItemProperty("mutter").setValue(row.getString("Mutter"));
 						} else
-							schauHundItem.getItemProperty("mutter").setValue(
-									"--");
+							schauHundItem.getItemProperty("mutter").setValue("--");
 
-						schauHundItem.getItemProperty("besitzershow").setValue(
-								row.getString("Besitzername"));
+						schauHundItem.getItemProperty("besitzershow").setValue(row.getString("Besitzername"));
 
-						schauHundItem.getItemProperty("katalognummer")
-								.setValue(
-										row.getInt("Katalognummer").toString()
-												.trim()
-												+ row.getString("aNummer")
-														.trim());
+						schauHundItem.getItemProperty("katalognummer").setValue(
+								row.getInt("Katalognummer").toString().trim() + row.getString("aNummer").trim());
 
-						schauHundItem.getItemProperty("sort_kat_nr").setValue(
-								row.getInt("Katalognummer"));
+						schauHundItem.getItemProperty("sort_kat_nr").setValue(row.getInt("Katalognummer"));
 
 						if (!(row.getString("Beschreibung") == null)) {
-							schauHundItem.getItemProperty("bewertung")
-									.setValue(row.getString("Beschreibung"));
+							schauHundItem.getItemProperty("bewertung").setValue(row.getString("Beschreibung"));
 
 						}
 
-						schauHundItem.getItemProperty("hundfehlt").setValue(
-								row.getBoolean("fehlt") ? "J" : "N");
+						schauHundItem.getItemProperty("hundfehlt").setValue(row.getBoolean("fehlt") ? "J" : "N");
 
 						if (row.getBoolean("Klubsieger")) {
-							schauHundItem.getItemProperty("clubsieger").setValue("C");
+							if (schauHundItem.getItemProperty("klasse").getValue().toString()
+									.equals(ShowKlassen.JUGENDKLASSE.getShowKlassenKurzBezeichnung())) {
+								schauHundItem.getItemProperty("clubsieger").setValue("J");
+							} else if (schauHundItem.getItemProperty("klasse").getValue().toString()
+									.equals(ShowKlassen.VETERANENKLASSE.getShowKlassenKurzBezeichnung())) {
+								schauHundItem.getItemProperty("clubsieger").setValue("V");
+							} else {
+								schauHundItem.getItemProperty("clubsieger").setValue("C");
+							}
 						}
 						schauHundItem.getItemProperty("rasse").setValue(rasse);
-						schauHundItem.getItemProperty("idschau").setValue(
-								newItem.getItemProperty("idschau").getValue());
+						schauHundItem.getItemProperty("idschau")
+								.setValue(newItem.getItemProperty("idschau").getValue());
 
-						schauHundItem.getItemProperty("geschlecht").setValue(
-								row.getString("Geschlecht"));
-						schauHundItem.getItemProperty("zuechter").setValue(
-								row.getString("Zuechter"));
+						schauHundItem.getItemProperty("geschlecht").setValue(row.getString("Geschlecht"));
+						schauHundItem.getItemProperty("zuechter").setValue(row.getString("Zuechter"));
 
 						if (!(row.getInt("Numerierung") == null)) {
-							schauHundItem.getItemProperty("platzierung")
-									.setValue(
-											row.getInt("Numerierung")
-													.toString());
+							schauHundItem.getItemProperty("platzierung").setValue(row.getInt("Numerierung").toString());
 						}
 
 						if (!(row.getInt("Bewertung") == null)) {
 							switch (row.getInt("Bewertung")) {
 							case 1:
 								schauHundItem.getItemProperty("formwert")
-										.setValue("v");
+										.setValue(FormWertErwachsen.VORZUEGLICH.getFormwert());
 								break;
 							case 2:
 								schauHundItem.getItemProperty("formwert")
-										.setValue("sg");
+										.setValue(FormWertErwachsen.SEHR_GUT.getFormwert());
 								break;
 							case 3:
-								schauHundItem.getItemProperty("formwert")
-										.setValue("g");
+								schauHundItem.getItemProperty("formwert").setValue(FormWertErwachsen.GUT.getFormwert());
 								break;
 							case 4:
 								schauHundItem.getItemProperty("formwert")
-										.setValue("gen");
+										.setValue(FormWertErwachsen.GENUEGEND.getFormwert());
 								break;
 							case 5:
 								schauHundItem.getItemProperty("formwert")
-										.setValue("ob");
+										.setValue(FormWertErwachsen.OHNE_BEWERTUNG.getFormwert());
 								break;
 							default:
-								System.out
-										.println("unbekannter wert für formwert erwachsene: "
-												+ row.getInt("Bewertung"));
+								System.out.println(
+										"unbekannter wert für formwert erwachsene: " + row.getInt("Bewertung"));
 								break;
 							}
 						}
@@ -408,20 +361,19 @@ public class ShowImporter extends VerticalLayout implements View {
 							switch (row.getInt("Juengstenklasse")) {
 							case 1:
 								schauHundItem.getItemProperty("formwert")
-										.setValue("vv");
+										.setValue(FormWertJuengsten.VIELVERSPRECHEND.getFormwert());
 								break;
 							case 2:
 								schauHundItem.getItemProperty("formwert")
-										.setValue("v");
+										.setValue(FormWertJuengsten.VERSPRECHEND.getFormwert());
 								break;
 							case 3:
 								schauHundItem.getItemProperty("formwert")
-										.setValue("g");
+										.setValue(FormWertJuengsten.NICHT_VERSPRECHEND.getFormwert());
 								break;
 							default:
 								System.out
-										.println("unbekannter wert für formwert jüngsten: "
-												+ row.getInt("Bewertung"));
+										.println("unbekannter wert für formwert jüngsten: " + row.getInt("Bewertung"));
 								break;
 							}
 						}
@@ -429,16 +381,13 @@ public class ShowImporter extends VerticalLayout implements View {
 						if (!(row.getInt("CACA_JB") == null)) {
 							switch (row.getInt("CACA_JB")) {
 							case 1:
-								schauHundItem.getItemProperty("CACA").setValue(
-										"J");
+								schauHundItem.getItemProperty("CACA").setValue("J");
 								break;
 							case 2:
-								schauHundItem.getItemProperty("CACA").setValue(
-										"C");
+								schauHundItem.getItemProperty("CACA").setValue("C");
 								break;
 							case 3:
-								schauHundItem.getItemProperty("CACA").setValue(
-										"R");
+								schauHundItem.getItemProperty("CACA").setValue("R");
 								break;
 							}
 						}
@@ -446,12 +395,10 @@ public class ShowImporter extends VerticalLayout implements View {
 						if (!(row.getInt("CACIB") == null)) {
 							switch (row.getInt("CACIB")) {
 							case 1:
-								schauHundItem.getItemProperty("CACIB")
-										.setValue("C");
+								schauHundItem.getItemProperty("CACIB").setValue("C");
 								break;
 							case 2:
-								schauHundItem.getItemProperty("CACIB")
-										.setValue("R");
+								schauHundItem.getItemProperty("CACIB").setValue("R");
 								break;
 							}
 						}
@@ -459,12 +406,10 @@ public class ShowImporter extends VerticalLayout implements View {
 						if (!(row.getInt("BobBos") == null)) {
 							switch (row.getInt("BobBos")) {
 							case 1:
-								schauHundItem.getItemProperty("BOB").setValue(
-										"B");
+								schauHundItem.getItemProperty("BOB").setValue("B");
 								break;
 							case 2:
-								schauHundItem.getItemProperty("BOB").setValue(
-										"O");
+								schauHundItem.getItemProperty("BOB").setValue("O");
 								break;
 							}
 						}
@@ -498,8 +443,7 @@ public class ShowImporter extends VerticalLayout implements View {
 		@Override
 		public void rowIdChange(RowIdChangeEvent arg0) {
 			// TODO Auto-generated method stub
-			this.rowId = Integer.valueOf(arg0.getNewRowId().getId()[0]
-					.toString());
+			this.rowId = Integer.valueOf(arg0.getNewRowId().getId()[0].toString());
 			;
 		}
 

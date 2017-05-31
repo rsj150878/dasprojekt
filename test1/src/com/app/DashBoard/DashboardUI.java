@@ -136,6 +136,7 @@ public final class DashboardUI extends UI {
     }
     
     public static boolean getUseLocalUrl() {
+    	System.out.println("sldfkj" + Page.getCurrent().getLocation().toString());
     	return Page.getCurrent().getLocation().toString().contains("test") ||
     			Page.getCurrent().getLocation().toString().contains("localhost");
     }

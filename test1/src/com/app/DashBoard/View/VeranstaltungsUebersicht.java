@@ -436,8 +436,7 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 		private final VerticalLayout layout = new VerticalLayout();
 		private final Label titel = new Label("Veranstaltungstypauswahl");
 
-		private Button newRbpmWasser = new Button("RBP mit Wasser");
-		private Button newRbpoWasser = new Button("RBP ohne Wasser");
+		private Button newRbpmWasser = new Button("RBP");
 		private Button newGap = new Button("GAP");
 		private Button newBgh = new Button("BH/BGH");
 		private Button newWt = new Button("Train-Wt");
@@ -464,13 +463,13 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 			layout.setComponentAlignment(titel, Alignment.MIDDLE_CENTER);
 			layout.addComponent(newRbpmWasser);
 			layout.setComponentAlignment(newRbpmWasser, Alignment.MIDDLE_CENTER);
-			newRbpmWasser.setData(VeranstaltungsTypen.RBP_M_WASSER);
+			newRbpmWasser.setData(VeranstaltungsTypen.RBP_2017_WASSER);
 			newRbpmWasser.addClickListener(listener);
 
-			layout.addComponent(newRbpoWasser);
-			layout.setComponentAlignment(newRbpoWasser, Alignment.MIDDLE_CENTER);
-			newRbpoWasser.setData(VeranstaltungsTypen.RBP_O_WASSER);
-			newRbpoWasser.addClickListener(listener);
+//			layout.addComponent(newRbpoWasser);
+//			layout.setComponentAlignment(newRbpoWasser, Alignment.MIDDLE_CENTER);
+//			newRbpoWasser.setData(VeranstaltungsTypen.RBP_O_WASSER);
+//			newRbpoWasser.addClickListener(listener);
 
 			layout.addComponent(newGap);
 			layout.setComponentAlignment(newGap, Alignment.MIDDLE_CENTER);

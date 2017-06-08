@@ -25,6 +25,7 @@ public class ShowBewertungsBlatt extends CustomComponent {
 	private FileOutputStream fos;
 	/** The original PDF file. */
 	public static final String DATASHEET = "files/BEWERTUNGSBLATT_FORM.pdf";
+	public static final String DATASHEET_IHA = "files/BEWERTUNGSBLATT_IHA.pdf";
 	public static final String FONT = "files/arialuni.ttf";
 
 	public static final String RESULT = "Urkunde.pdf";
@@ -73,7 +74,14 @@ public class ShowBewertungsBlatt extends CustomComponent {
 	//
 
 	private byte[] bauPdf(Show show, ShowHund hund) throws Exception {
-		PdfReader reader = new PdfReader(DATASHEET);
+
+		String vorlage = "";
+		if (show.getSchauTyp().equals("C")) {
+			vorlage = DATASHEET;
+		} else {
+			vorlage = DATASHEET_IHA;
+		}
+		PdfReader reader = new PdfReader(vorlage);
 		// fos = new FileOutputStream(RESULT);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		PdfStamper stamper = new PdfStamper(reader, baos);
@@ -187,11 +195,23 @@ public class ShowBewertungsBlatt extends CustomComponent {
 			}
 
 		}
-		
+
+		if (!(hund.getCACIB() == null)) {
+			switch (hund.getCACIB()) {
+			case "C":
+				fields.setField("CACIB", "On");
+				break;
+			case "R":
+				fields.setField("RESERVE CACIB", "On");
+				break;
+			default:
+			}
+		}
+
 		fields.setField("NAME DES RICHTERS", hund.getRichter());
-		
+
 		fields.setField("TITEL", show.getSchaubezeichnung());
-		
+
 		stamper.close();
 		reader.close();
 		return baos.toByteArray();

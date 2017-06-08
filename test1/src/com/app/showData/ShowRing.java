@@ -109,5 +109,9 @@ public class ShowRing {
 	public void setRingId(Integer ringId) {
 		this.ringId = ringId;
 	}
+	
+	public String getCACIB() {
+		return "";
+	}
 
 }

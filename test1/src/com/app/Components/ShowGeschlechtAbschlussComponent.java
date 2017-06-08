@@ -52,10 +52,17 @@ public class ShowGeschlechtAbschlussComponent extends Panel {
 		VerticalLayout layout = new VerticalLayout();
 		layout.setWidth(100.0f, Unit.PERCENTAGE);
 
-		layout.addComponent(buildKlubSieger("Klubsieger", "C"));
+		if (show.getSchauTyp().equals("C")) {
+			layout.addComponent(buildKlubSieger("Klubsieger", "C"));
+		}
+		
+		if (show.getSchauTyp().equals("I")) {
+			layout.addComponent(buildCacib("CACIB","C"));
+			layout.addComponent(buildCacib("Res. Cacib", "R"));
+		}
 		
 		layout.addComponent(buildBesterHund());
-
+		
 		return layout;
 
 	}
@@ -199,6 +206,58 @@ public class ShowGeschlechtAbschlussComponent extends Panel {
 		return platzLayout;
 
 	}
+	
+	private Component buildCacib(String cacibFor, String dataBaseValue) {
+		HorizontalLayout platzLayout = new HorizontalLayout();
+		Label platzLabel = new Label();
+		platzLabel.setValue(cacibFor);
+		platzLayout.addComponent(platzLabel);
+
+		TextField textField = new TextField();
+		textField.setWidth(100.0f, Unit.PERCENTAGE);
+
+		Label hundeName = new Label();
+		hundeName.setWidth(100.0f, Unit.PERCENTAGE);
+
+		ShowHund[] hund = { (ShowHund) ende.getRingGeschlechtEndeFor().flattened()
+				.filter(x -> (dataBaseValue.equals(x.getCACIB()) && x.getRasse()
+						.equals(ende.getRasse()) && x.getGeschlecht().equals(ende.getGeschlechtEnde())))
+				.findFirst().orElse(null) };
+
+		if (!(hund[0] == null)) {
+			// hund = (ShowHund) zwData.get();
+			textField.setValue(hund[0].getKatalognumer());
+			hundeName.setValue(hund[0].getShowHundName());
+		}
+
+		textField.addValueChangeListener(event -> {
+
+			if (!(hund[0] == null)) {
+				hund[0].setCACIB("");
+				saveHund(hund[0]);
+
+			}
+			hund[0] = (ShowHund) ende.getRingGeschlechtEndeFor().flattened()
+					.filter(x -> event.getValue().trim().equals(x.getKatalognumer().trim())).findFirst().orElse(null);
+
+			if (!(hund[0] == null)) {
+				// textField.setValue(hund[0].getKatalognumer());
+				hundeName.setValue(hund[0].getShowHundName());
+				hund[0].setCACIB(dataBaseValue);
+				saveHund(hund[0]);
+			} else {
+				hundeName.setValue("");
+			}
+
+		});
+		platzLayout.addComponent(textField);
+
+		platzLayout.addComponent(hundeName);
+
+		return platzLayout;
+
+	}
+
 
 	private void saveHund(ShowHund hund) {
 		try {

@@ -48,7 +48,12 @@ public enum VeranstaltungsStation {
 	BGH1_UE4 (44, "uebung4", 0, 15),
 	BGH1_UE5 (45, "uebung5", 0, 10),
 	WESENSTEST(46, "uebung1", 0, 100),
-	WESENSTEST_BEMERKUNG(47,"bemerkung",null,null)
+	WESENSTEST_BEMERKUNG(47,"bemerkung",null,null),
+	RBP2_UE1_2017 (7, "uebung1", 0, 25),
+	RBP2_UE4_2017 (10, "uebung4", 0, 20),
+	RBP3_UE1_2017 (14, "uebung1", 0, 20),
+	RBP3_UE3_2017 (16, "uebung3", 0, 20),
+
 	;
 	
 	private Integer idStation;

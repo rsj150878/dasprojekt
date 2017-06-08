@@ -285,6 +285,9 @@ public class Urkunde extends CustomComponent {
 					|| defStufe == VeranstaltungsStufen.STUFE_GAP2
 					|| defStufe == VeranstaltungsStufen.STUFE_GAP3
 
+					|| defStufe == VeranstaltungsStufen.STUFE_RBP2_2017
+					|| defStufe == VeranstaltungsStufen.STUFE_RBP3_2017
+			
 			) {
 				fields.setField(
 						"ZEILE 2",

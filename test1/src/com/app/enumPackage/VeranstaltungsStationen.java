@@ -28,7 +28,14 @@ public enum VeranstaltungsStationen {
 	BGH1(8, VeranstaltungsStation.BGH1_UE1, VeranstaltungsStation.BGH1_UE2,
 			VeranstaltungsStation.BGH1_UE3, VeranstaltungsStation.BGH1_UE4,
 			VeranstaltungsStation.BGH1_UE5),
-	WESENSTEST(9, VeranstaltungsStation.WESENSTEST, VeranstaltungsStation.WESENSTEST_BEMERKUNG);
+	WESENSTEST(9, VeranstaltungsStation.WESENSTEST, VeranstaltungsStation.WESENSTEST_BEMERKUNG),
+	RBP2_2017(10, VeranstaltungsStation.RBP2_UE1_2017, VeranstaltungsStation.RBP2_UE2,
+			VeranstaltungsStation.RBP2_UE3, VeranstaltungsStation.RBP2_UE4_2017,
+			VeranstaltungsStation.RBP2_UE5, VeranstaltungsStation.RBP2_UE6),
+	RBP3_2017(11, VeranstaltungsStation.RBP3_UE1_2017, VeranstaltungsStation.RBP3_UE2,
+			VeranstaltungsStation.RBP3_UE3_2017, VeranstaltungsStation.RBP3_UE4,
+			VeranstaltungsStation.RBP3_UE5, VeranstaltungsStation.RBP3_UE6) 
+;
 
 	public Integer id;
 	private VeranstaltungsStation[] station;

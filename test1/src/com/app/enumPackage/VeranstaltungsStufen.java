@@ -6,7 +6,9 @@ import com.app.printClasses.GAP1RichterBlatt;
 import com.app.printClasses.GAP2RichterBlatt;
 import com.app.printClasses.GAP3RichterBlatt;
 import com.app.printClasses.RBP1RichterBlatt;
+import com.app.printClasses.RBP22017RichterBlatt;
 import com.app.printClasses.RBP2RichterBlatt;
+import com.app.printClasses.RBP32017RichterBlatt;
 import com.app.printClasses.RBP3RichterBlatt;
 import com.app.printClasses.RBP4RichterBlatt;
 import com.vaadin.ui.CustomComponent;
@@ -34,7 +36,10 @@ public enum VeranstaltungsStufen {
 	WESENSTEST_GRUPPE_3(18, "Wesenstest Gruppe 3", "Wesenstest Gruppe 3", null, VeranstaltungsStationen.WESENSTEST, 17, 18),
 	WESENSTEST_GRUPPE_4(19, "Wesenstest Gruppe 4", "Wesenstest Gruppe 4", null, VeranstaltungsStationen.WESENSTEST, 17, 18),
 	WESENSTEST_GRUPPE_5(20, "Wesenstest Gruppe 5", "Wesenstest Gruppe 5", null, VeranstaltungsStationen.WESENSTEST, 17, 18),
-	WESENSTEST_GRUPPE_6(21, "Wesenstest Gruppe 6", "Wesenstest Gruppe 6", null, VeranstaltungsStationen.WESENSTEST, 17, 18);
+	WESENSTEST_GRUPPE_6(21, "Wesenstest Gruppe 6", "Wesenstest Gruppe 6", null, VeranstaltungsStationen.WESENSTEST, 17, 18),
+	STUFE_RBP2_2017(22,"RBP2","Retrieverbasisprüfung 2", RBP22017RichterBlatt.class, VeranstaltungsStationen.RBP2_2017, 6,7,8,9,10),
+	STUFE_RBP3_2017(23,"RBP3","Retrieverbasisprüfung 3", RBP32017RichterBlatt.class, VeranstaltungsStationen.RBP3_2017, 6,7,8,9,10),
+;
 	;
 	
 	private Integer veranstaltungsStufeId;

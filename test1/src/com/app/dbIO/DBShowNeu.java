@@ -28,7 +28,7 @@ public class DBShowNeu {
 		if (user.getRole().equals("admin")) {
 			st = conn.prepareStatement("select * from schau order by datum desc");
 		} else  {
-			st = conn.prepareStatement("select * from schau where schautyp = 'C' order by datum desc");
+			st = conn.prepareStatement("select * from schau where schautyp in ('I','C') order by datum desc");
 		}
 		
 		List<Show> resultList = new ArrayList<Show>();

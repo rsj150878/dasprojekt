@@ -60,10 +60,12 @@ public class ShowKlassenAbschlussComponent extends Panel {
 
 		layout.addComponent(buildPlatzierungField("4"));
 
-		if (ende.getKlasseEndeFor().getKlasse().equals(ShowKlassen.JUGENDKLASSE)) {
-			layout.addComponent(buildKlubSieger("Klubjugendsieger", "J"));
-		} else if (ende.getKlasseEndeFor().getKlasse().equals(ShowKlassen.VETERANENKLASSE)) {
-			layout.addComponent(buildKlubSieger("Klubveteranensieger", "V"));
+		if (show.getSchauTyp().equals("C")) {
+			if (ende.getKlasseEndeFor().getKlasse().equals(ShowKlassen.JUGENDKLASSE)) {
+				layout.addComponent(buildKlubSieger("Klubjugendsieger", "J"));
+			} else if (ende.getKlasseEndeFor().getKlasse().equals(ShowKlassen.VETERANENKLASSE)) {
+				layout.addComponent(buildKlubSieger("Klubveteranensieger", "V"));
+			}
 		}
 
 		return layout;

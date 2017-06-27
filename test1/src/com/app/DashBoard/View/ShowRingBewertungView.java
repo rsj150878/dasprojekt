@@ -103,7 +103,7 @@ public class ShowRingBewertungView extends Panel implements View, Handler {
 		db = new DBShowNeu();
 
 		try {
-			ring.addShowKlassen(db.getKlassenForShow(ring, show.getIdSchau(), ring));
+			ring.addShowKlassen(db.getKlassenForShow(show, ring));
 		} catch (Exception e) {
 			Notification.show("fehler beim lesen der Daten);");
 			e.printStackTrace();

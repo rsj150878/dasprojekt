@@ -21,7 +21,8 @@ public enum DashBoardViewType {
     SCHAUUEBERSICHT("Schauübersicht", ShowUebersicht.class,  VaadinIcons.SHARE, false, null),
     WUERFE("Würfe", WurfUebersicht.class, VaadinIcons.MICROPHONE, false, null),
     TREE("Der Baum", ShowRingBewertungView.class, VaadinIcons.FILE_TREE, false, null),
-    SHOWBEWERTUNG("Schaubewertung", ShowBewertungUebersicht.class, VaadinIcons.FILE_TREE, false, "show");
+    SHOWBEWERTUNG("Schaubewertung", ShowBewertungUebersicht.class, VaadinIcons.FILE_TREE, false, "show"),
+    BEZAHLTUNGTEST("TestPaymen", TestPayment.class, VaadinIcons.MONEY, false, null);
     ;
  
     private final String viewName;

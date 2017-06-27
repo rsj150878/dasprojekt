@@ -11,7 +11,8 @@ public enum Rassen {
 	MISCHLING("MI","Mischling",""),
 	BERGER_BLANC_SUISSE ("BBS", "Weisser Schäfer", "Berger Blance Suisse"),
 	BORDER_COLLIE ("BC", "Border Collie", "Border Collie"),
-	COLLIE_LANGHAAR("CLH", "Langhaar Collie", "Langhaar Collie");
+	COLLIE_LANGHAAR("CLH", "Langhaar Collie", "Langhaar Collie"),
+	ALLGEMEIN("ALG", "Allgemein", "Allgemein");
 	
 	private final String RassenLangBezeichnung;
 	private final String RassenKurzBezeichnung;

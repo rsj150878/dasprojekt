@@ -2,13 +2,13 @@ package com.app.enumPackage;
 
 public enum VeranstaltungsTypen {
 
-	BH_BGH_PRÜFUNG(1, "BH-BGH-Prüfung", Boolean.TRUE, 1, 2, 3, 4),
-	RBP_O_WASSER(2,"RBP ohne Wasser" ,Boolean.FALSE,5,6,7,8),
-	RBP_M_WASSER(3,"RBP mit Wasser", Boolean.FALSE,5,6,7,9),
-	GAP_PRÜFUNG(4,"GAP", Boolean.TRUE,10,11,12),
-	TRAIN_WT(5, "Trainings-Working-Test", Boolean.TRUE, 13,14),
-	WESENSTEST(6, "Wesentest", Boolean.TRUE, 15,16,17,18,19,20,21),
-	RBP_2017_WASSER(7,"RBP" ,Boolean.TRUE,5,22,23,8),
+	BH_BGH_PRÜFUNG(1, "BH-BGH-Prüfung", Boolean.TRUE, null,1, 2, 3, 4),
+	RBP_O_WASSER(2,"RBP ohne Wasser" ,Boolean.FALSE,null,5,6,7,8),
+	RBP_M_WASSER(3,"RBP mit Wasser", Boolean.FALSE,null,5,6,7,9),
+	GAP_PRÜFUNG(4,"GAP", Boolean.TRUE,null,10,11,12),
+	TRAIN_WT(5, "Trainings-Working-Test", Boolean.TRUE,null, 13,14),
+	WESENSTEST(6, "Wesentest", Boolean.TRUE, "W", 15,16,17,18,19,20,21),
+	RBP_2017_WASSER(7,"RBP" ,Boolean.TRUE,null, 5,22,23,8),
 ;
 
 	private Integer veranstaltungsTypID;
@@ -16,13 +16,15 @@ public enum VeranstaltungsTypen {
 	private Integer[] veranstaltungsStufen;
 	private Boolean isAktiv;
 
+	private String showTyp;
 
 	private VeranstaltungsTypen(Integer veranstaltungsTypId,
-			String veranstaltungsTypBezeichnung, Boolean isAktiv, Integer... veranstaltungsStufen) {
+			String veranstaltungsTypBezeichnung, Boolean isAktiv, String showTyp, Integer... veranstaltungsStufen) {
 		this.veranstaltungsTypID = veranstaltungsTypId;
 		this.veranstaltungsTypBezeichnung = veranstaltungsTypBezeichnung;
 		this.veranstaltungsStufen = veranstaltungsStufen;
 		this.isAktiv = isAktiv;
+		this.showTyp = showTyp;
 
 	}
 
@@ -69,6 +71,14 @@ public enum VeranstaltungsTypen {
 
 	public void setIsAktiv(Boolean isAktiv) {
 		this.isAktiv = isAktiv;
+	}
+
+	public String getShowTyp() {
+		return showTyp;
+	}
+
+	public void setShowTyp(String showTyp) {
+		this.showTyp = showTyp;
 	}
 
 }

@@ -52,6 +52,8 @@ public class ShowKlassenAbschlussComponent extends Panel {
 		VerticalLayout layout = new VerticalLayout();
 		layout.setWidth(100.0f, Unit.PERCENTAGE);
 
+		if (!show.getSchauTyp().equals("W")) {
+		
 		layout.addComponent(buildPlatzierungField("1"));
 
 		layout.addComponent(buildPlatzierungField("2"));
@@ -66,6 +68,7 @@ public class ShowKlassenAbschlussComponent extends Panel {
 			} else if (ende.getKlasseEndeFor().getKlasse().equals(ShowKlassen.VETERANENKLASSE)) {
 				layout.addComponent(buildKlubSieger("Klubveteranensieger", "V"));
 			}
+		}
 		}
 
 		return layout;

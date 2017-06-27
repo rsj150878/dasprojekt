@@ -6,7 +6,8 @@ public enum ShowKlassen {
 			"ZK", "Zwischenklasse", "J"), OFFENEKLASSE("OF", "Offene Klasse",
 			"J"), GEBRAUCHSHUNDEKLASSE("GB", "Gebrauchshundeklasse", "J"), CHAMPIONKLASSE(
 			"CH", "Championklasse", "J"), VETERANENKLASSE("VE",
-			"Veteranenklasse", "J");
+			"Veteranenklasse", "J"),
+	WESENSTEST("WT","Wesenstest","N");
 
 	private final String showKlasseKurzBezeichnung;
 	private final String showKlasseLangBezeichnung;

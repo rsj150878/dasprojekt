@@ -47,62 +47,6 @@ public class Urkunde extends CustomComponent {
 	private SQLContainer teilnehmerContainer;
 
 	public Urkunde(Item veranstaltung, Item veranstaltungsStufe) {
-		try {
-			reader = new PdfReader(DATASHEET);
-			// Get the fields from the reader (read-only!!!)
-			AcroFields form = reader.getAcroFields();
-			// Loop over the fields and get info about them
-			Set<String> fields = form.getFields().keySet();
-			for (String key : fields) {
-				System.out.println("#" + key + "#");
-				System.out.println(form.getFieldType(key));
-			}
-
-			String[] states = form.getAppearanceStates("RÜDE");
-
-			AcroFields fields1 = reader.getAcroFields();
-
-			List<AcroFields.FieldPosition> positions = fields1
-					.getFieldPositions("RÜDE");
-			Rectangle rect = positions.get(0).position; // In points:
-			float left = rect.getLeft();
-			float bTop = rect.getTop();
-			float width = rect.getWidth();
-			float height = rect.getHeight();
-
-			int page = positions.get(0).page;
-			Rectangle pageSize = reader.getPageSize(page);
-			float pageHeight = pageSize.getTop();
-			float top = pageHeight - bTop;
-
-			System.out.print("Rüde" + "::" + page + "::" + left + "::" + top
-					+ "::" + width + "::" + height + "\n");
-
-			positions = fields1.getFieldPositions("HÜNDIN");
-			rect = positions.get(0).position; // In points:
-			left = rect.getLeft();
-			bTop = rect.getTop();
-			width = rect.getWidth();
-			height = rect.getHeight();
-
-			page = positions.get(0).page;
-			pageSize = reader.getPageSize(page);
-			pageHeight = pageSize.getTop();
-			top = pageHeight - bTop;
-
-			System.out.print("Hündin" + "::" + page + "::" + left + "::" + top
-					+ "::" + width + "::" + height + "\n");
-
-			for (int i = 0; i < states.length; i++) {
-				System.out.println(states[i]);
-			}
-			states = form.getAppearanceStates("HÜNDIN");
-			for (int i = 0; i < states.length; i++) {
-				System.out.println(states[i]);
-			}
-		} catch (Exception ee) {
-
-		}
 		q3 = new TableQuery("veranstaltungs_teilnehmer",
 				DBConnection.INSTANCE.getConnectionPool());
 		q3.setVersionColumn("version");

@@ -34,13 +34,8 @@ public class ShowHund extends ShowKlasseEnde {
 	private String zuechter;
 	private Integer sort_kat_nr;
 	private Rassen rasse;
-	
-	
-	
-//	public ShowHund() {
-//		super();
-//	}
-//	 
+	private Integer id_teilnehmer;
+	 
 	public String getShowHundName() {
 		return showHundName;
 	}
@@ -205,6 +200,12 @@ public class ShowHund extends ShowKlasseEnde {
 	}
 	public void setRasse(Rassen rasse) {
 		this.rasse = rasse;
+	}
+	public Integer getId_teilnehmer() {
+		return id_teilnehmer;
+	}
+	public void setId_teilnehmer(Integer id_teilnehmer) {
+		this.id_teilnehmer = id_teilnehmer;
 	}
 	
 

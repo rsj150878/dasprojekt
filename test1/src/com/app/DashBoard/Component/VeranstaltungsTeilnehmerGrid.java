@@ -52,6 +52,8 @@ public class VeranstaltungsTeilnehmerGrid extends Grid {
 	private Item stufe;
 	private final VeranstaltungsStufen defStufe;
 	private Integer idHund;
+	private Integer gruppe;
+	private String formWert;
 
 	private HundTransactionalContainerWrapper txContainer;
 
@@ -184,8 +186,6 @@ public class VeranstaltungsTeilnehmerGrid extends Grid {
 
 				addColumn(x.getUebung());
 
-				System.out.println("x: " + x);
-
 				if (x.equals(VeranstaltungsStation.WESENSTEST_BEMERKUNG)) {
 
 					final TextArea ue = new TextArea();
@@ -208,6 +208,11 @@ public class VeranstaltungsTeilnehmerGrid extends Grid {
 					});
 				}
 			}
+		} else {
+			TextField gesPunkte = new TextField();
+			getColumn("ges_punkte").setEditorField(gesPunkte);
+			gesPunkte.addValueChangeListener(e -> txContainer.specialCommit() );
+
 		}
 
 		// getColumn("").getEditorField().setp
@@ -220,9 +225,12 @@ public class VeranstaltungsTeilnehmerGrid extends Grid {
 
 			@Override
 			public void click(RendererClickEvent event) {
-				cpContainer.removeItem(event.getItemId());
+				//cpContainer.removeItem(event.getItemId());
+				System.out.println("item-id " + event.getItemId());
 				try {
-					veranstaltungsTeilnehmerContainer.commit();
+					txContainer.removeItem(event.getItemId());
+					txContainer.specialCommit();
+					//veranstaltungsTeilnehmerContainer.commit();
 				} catch (Exception e) {
 					Notification.show("fehler beim speichern");
 					e.printStackTrace();
@@ -282,6 +290,7 @@ public class VeranstaltungsTeilnehmerGrid extends Grid {
 	}
 
 	private void rechneGesPunkte() {
+		System.out.println("getEditedItemId " + getEditedItemId());
 		Item forCalcItem = txContainer.getItem(getEditedItemId());
 		Integer result = 0;
 		
@@ -317,8 +326,10 @@ public class VeranstaltungsTeilnehmerGrid extends Grid {
 		}
 	}
 
-	public void meldeHundId(Integer hundId) {
+	public void meldeHundId(Integer hundId, Integer gruppe, String formWert) {
 		idHund = hundId;
+		this.gruppe = gruppe;
+		this.formWert = formWert;
 		txContainer.addItem();
 
 	}
@@ -413,6 +424,8 @@ public class VeranstaltungsTeilnehmerGrid extends Grid {
 			newItem.getItemProperty("id_person").setValue(dogItem.getItemProperty("idperson").getValue());
 			newItem.getItemProperty("bezahlt").setValue("N");
 			newItem.getItemProperty("bestanden").setValue("N");
+			newItem.getItemProperty("formwert").setValue(formWert);
+			newItem.getItemProperty("gruppe").setValue(gruppe);
 
 			try {
 				veranstaltungsTeilnehmerContainer.commit();

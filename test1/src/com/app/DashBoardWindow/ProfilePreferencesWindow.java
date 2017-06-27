@@ -362,9 +362,7 @@ public class ProfilePreferencesWindow extends Window {
 			public void buttonClick(ClickEvent event) {
 				try {
 
-					// Updated user should also be persisted to database. But
-					// not in this demo.
-
+				
 					if (user == null) {
 						fieldGroupPerson.commit();
 						person.commit();

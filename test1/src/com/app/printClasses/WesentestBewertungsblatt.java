@@ -92,10 +92,12 @@ public class WesentestBewertungsblatt extends CustomComponent {
 			copy.open();
 
 			for (Object id : teilnehmerContainer.getItemIds()) {
-				PdfReader zwReader = new PdfReader(
-						bauPdf(veranstaltung, veranstaltungsStufe, teilnehmerContainer.getItem(id)));
-				copy.addDocument(zwReader);
-				zwReader.close();
+					PdfReader zwReader = new PdfReader(
+							bauPdf(veranstaltung, veranstaltungsStufe, teilnehmerContainer.getItem(id)));
+					copy.addDocument(zwReader);
+
+					zwReader.close();
+			
 			}
 
 			copy.close();
@@ -122,7 +124,7 @@ public class WesentestBewertungsblatt extends CustomComponent {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		stamper = new PdfStamper(reader, baos);
 		stamper.setFormFlattening(true);
-		
+
 		AcroFields fields = stamper.getAcroFields();
 
 		BaseFont unicode = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
@@ -158,10 +160,12 @@ public class WesentestBewertungsblatt extends CustomComponent {
 		fields.setField("geschlecht",
 				hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("geschlecht").getValue().toString());
 
-		fields.setField("zb-nr",
-				hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("zuchtbuchnummer").getValue().toString());
+		fields.setField("zb-nr", hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("zuchtbuchnummer")
+				.getValue().toString());
 
 		
+		fields.setField("gruppe",  teilnehmerItem.getItemProperty("gruppe").getValue().toString());
+
 		if (!(hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("farbe").getValue() == null)) {
 			fields.setField("farbe",
 					hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("farbe").getValue().toString());
@@ -180,22 +184,5 @@ public class WesentestBewertungsblatt extends CustomComponent {
 		reader.close();
 		return baos.toByteArray();
 	}
-
-	// HF
-	// Chip- oder Tätonr.:
-	// Geschlecht
-	// Ort
-	// Hund
-	// Datum
-	// Wurftag
-
-	// PdfReader reader = new PdfReader(DATASHEET);
-	// // Get the fields from the reader (read-only!!!)
-	// AcroFields form = reader.getAcroFields();
-	// // Loop over the fields and get info about them
-	// Set<String> fields = form.getFields().keySet();
-	// for (String key : fields) {
-	// System.out.println(key);
-	// }
 
 }

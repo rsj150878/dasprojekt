@@ -29,7 +29,7 @@ public class DBShowNeu {
 		if (user.getRole().equals("admin")) {
 			st = conn.prepareStatement("select * from schau order by datum desc");
 		} else {
-			st = conn.prepareStatement("select * from schau where schautyp in ('I','C') order by datum desc");
+			st = conn.prepareStatement("select * from schau where schautyp in ('I','C', 'W') order by datum desc");
 		}
 
 		List<Show> resultList = new ArrayList<Show>();
@@ -88,8 +88,7 @@ public class DBShowNeu {
 		if (show.getSchauTyp().equals("W")) {
 
 			ShowKlasse zw = new ShowKlasse(Rassen.ALLGEMEIN, ShowKlassen.WESENSTEST);
-			zw.setHundeDerKlasse(
-					getHundeForKlasse(zw, show, ring, null, null, null));
+			zw.setHundeDerKlasse(getHundeForKlasse(zw, show, ring, null, null, null));
 			resultList.add(zw);
 
 		} else {
@@ -200,6 +199,8 @@ public class DBShowNeu {
 			zw.setBOB(resultSet.getString("BOB"));
 			zw.setGeschlecht(resultSet.getString("geschlecht"));
 			zw.setClubsieger(resultSet.getString("clubsieger"));
+			zw.setSort_kat_nr(new Integer(resultSet.getInt("sort_kat_nr")));
+			zw.setRingId(ring.getRingId());
 			ShowKlassen zwklasse = ShowKlassen.getKlasseForKurzBezeichnung(resultSet.getString("klasse"));
 			zw.setKlasse(zwklasse);
 			zw.setRasse(Rassen.getRasseForKurzBezeichnung(resultSet.getString("rasse")));
@@ -215,6 +216,75 @@ public class DBShowNeu {
 		return resultList;
 	}
 
+	public List<ShowHund> getHundeForKlasse(Show show, ShowKlassen klasse, Rassen rasse, String geschlecht)
+			throws Exception {
+		Connection conn = DBConnectionNeu.INSTANCE.getConnection();
+		PreparedStatement st;
+
+		st = conn.prepareStatement(
+				"select * from schauhund where idschau = ?  and klasse = ? and rasse = ? and geschlecht = ? "
+						+ " order by sort_kat_nr");
+		st.setInt(1, show.getIdSchau().intValue());
+		st.setString(2, klasse.getShowKlassenKurzBezeichnung());
+		st.setString(3, rasse.getRassenKurzBezeichnung());
+		st.setString(4, geschlecht);
+
+		List<ShowHund> resultList = new ArrayList<>();
+		ResultSet resultSet = st.executeQuery();
+		while (resultSet.next()) {
+
+			ShowHund zw = new ShowHund();
+			zw.setKatalognumer(resultSet.getString("katalognummer"));
+			zw.setShowHundName(resultSet.getString("name"));
+			zw.setIdschauhund(Integer.valueOf(resultSet.getInt("idschauhund")));
+			zw.setWurftag(resultSet.getDate("wurftag"));
+			zw.setZuchtbuchnummer(resultSet.getString("zuchtbuchnummer"));
+			zw.setChipnummer(resultSet.getString("chipnummer"));
+			zw.setVater(resultSet.getString("vater"));
+			zw.setMutter(resultSet.getString("mutter"));
+			zw.setBesitzershow(resultSet.getString("besitzershow"));
+			zw.setBewertung(resultSet.getString("bewertung"));
+			zw.setHundfehlt(resultSet.getString("hundfehlt"));
+			zw.setFormwert(resultSet.getString("formwert"));
+			zw.setPlatzierung(resultSet.getString("platzierung"));
+			zw.setCACA(resultSet.getString("CACA"));
+			zw.setCACIB(resultSet.getString("CACIB"));
+			zw.setBOB(resultSet.getString("BOB"));
+			zw.setGeschlecht(resultSet.getString("geschlecht"));
+			zw.setClubsieger(resultSet.getString("clubsieger"));
+			zw.setSort_kat_nr(new Integer(resultSet.getInt("sort_kat_nr")));
+			ShowKlassen zwklasse = ShowKlassen.getKlasseForKurzBezeichnung(resultSet.getString("klasse"));
+			zw.setKlasse(zwklasse);
+			zw.setRasse(Rassen.getRasseForKurzBezeichnung(resultSet.getString("rasse")));
+			resultList.add(zw);
+
+		}
+
+		return resultList;
+	}
+
+	public List<String> getRichterForRasse(Show show, Rassen rasse) throws Exception {
+		Connection conn = DBConnectionNeu.INSTANCE.getConnection();
+		PreparedStatement st;
+
+		st = conn.prepareStatement("select distinct richter from schauring where idschau = ? "
+				+ "and idschauring in (select idschauring from schauhund where idschau = ? and rasse = ?)");
+		st.setInt(1, show.getIdSchau().intValue());
+		st.setInt(2, show.getIdSchau().intValue());
+		st.setString(3, rasse.getRassenKurzBezeichnung());
+		
+		
+		List<String> resultList = new ArrayList<>();
+		ResultSet resultSet = st.executeQuery();
+		while (resultSet.next()) {
+			resultList.add(resultSet.getString("richter"));
+
+		}
+
+		return resultList;
+
+	}
+
 	public void updateShowHund(ShowHund updateHund) throws Exception {
 
 		Connection conn = DBConnectionNeu.INSTANCE.getConnection();
@@ -224,7 +294,7 @@ public class DBShowNeu {
 		sb.append("CACA = ?, CACIB = ?, BOB = ?, clubsieger = ?");
 		sb.append(", name = ?, wurftag = ?, zuchtbuchnummer = ?, katalognummer =?");
 		sb.append(",  rasse = ?, vater = ?, mutter = ?, ");
-		sb.append("besitzershow = ?, geschlecht = ?, sort_kat_nr = ?, idschauring = ?");
+		sb.append("besitzershow = ?, geschlecht = ?, sort_kat_nr = ?, idschauring = ?, chipnummer = ?");
 		sb.append(" where idschauhund = ?");
 		PreparedStatement st = conn.prepareStatement(sb.toString());
 		st.setString(1, updateHund.getBewertung());
@@ -244,9 +314,10 @@ public class DBShowNeu {
 		st.setString(15, updateHund.getMutter());
 		st.setString(16, updateHund.getBesitzershow());
 		st.setString(17, updateHund.getGeschlecht());
-		st.setInt(18, updateHund.getSort_kat_nr());
-		st.setInt(19, updateHund.getRingId());
-		st.setInt(20, updateHund.getIdschauhund().intValue());
+		st.setInt(18, updateHund.getSort_kat_nr().intValue());
+		st.setInt(19, updateHund.getRingId().intValue());
+		st.setString(20,updateHund.getChipnummer());
+		st.setInt(21, updateHund.getIdschauhund().intValue());
 
 		System.out.println("update showhund " + updateHund.getIdschauhund());
 
@@ -371,6 +442,7 @@ public class DBShowNeu {
 			result.setBOB(resultSet.getString("BOB"));
 			result.setGeschlecht(resultSet.getString("geschlecht"));
 			result.setClubsieger(resultSet.getString("clubsieger"));
+			result.setSort_kat_nr(new Integer(resultSet.getInt("sort_kat_nr")));
 			ShowKlassen zwklasse = ShowKlassen.getKlasseForKurzBezeichnung(resultSet.getString("klasse"));
 			result.setKlasse(zwklasse);
 			result.setRasse(Rassen.getRasseForKurzBezeichnung(resultSet.getString("rasse")));

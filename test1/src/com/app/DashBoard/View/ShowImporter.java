@@ -357,6 +357,7 @@ public class ShowImporter extends VerticalLayout implements View {
 							}
 						}
 
+					
 						if (!(row.getInt("Juengstenklasse") == null)) {
 							switch (row.getInt("Juengstenklasse")) {
 							case 1:
@@ -391,6 +392,22 @@ public class ShowImporter extends VerticalLayout implements View {
 								break;
 							}
 						}
+						if (row.getBoolean("VeteranenSieger")) {
+							schauHundItem.getItemProperty("CACA").setValue("V");
+
+						}
+						
+						if (schauHundItem.getItemProperty("klasse").getValue().toString()
+								.equals(ShowKlassen.VETERANENKLASSE.getShowKlassenKurzBezeichnung())
+								&& !(schauHundItem.getItemProperty("platzierung").getValue() == null)
+								&& schauHundItem.getItemProperty("platzierung").getValue().equals("2")
+								&& !(schauHundItem.getItemProperty("formwert").getValue() == null)
+								&& schauHundItem.getItemProperty("formwert").getValue()
+										.equals(FormWertErwachsen.VORZUEGLICH.getFormwert())) {
+							schauHundItem.getItemProperty("CACA").setValue("W");
+
+						}
+
 
 						if (!(row.getInt("CACIB") == null)) {
 							switch (row.getInt("CACIB")) {

@@ -20,6 +20,7 @@ public class ShowHund extends ShowKlasseEnde {
 	private String besitzershow;
 	private String bewertung;
 	private String hundfehlt;
+	private String mitglied;
 	private String formwert;
 	private String platzierung;
 	private String CACA;
@@ -109,6 +110,13 @@ public class ShowHund extends ShowKlasseEnde {
 	public void setHundfehlt(String hundfehlt) {
 		this.hundfehlt = hundfehlt;
 	}
+	public String getMitglied() {
+		return mitglied;
+	}
+	public void setMitglied(String mitglied) {
+		this.mitglied = mitglied;
+	}
+
 	public String getFormwert() {
 		return formwert;
 	}

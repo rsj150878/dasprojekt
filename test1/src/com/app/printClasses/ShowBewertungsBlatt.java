@@ -26,6 +26,7 @@ public class ShowBewertungsBlatt extends CustomComponent {
 	/** The original PDF file. */
 	public static final String DATASHEET = "files/BEWERTUNGSBLATT_FORM.pdf";
 	public static final String DATASHEET_IHA = "files/BEWERTUNGSBLATT_IHA.pdf";
+	public static final String DATASHEET_WESENSTEST = "files/BEWERTUNGSBLATT_WT.pdf";
 	public static final String FONT = "files/arialuni.ttf";
 
 	public static final String RESULT = "Urkunde.pdf";
@@ -78,6 +79,8 @@ public class ShowBewertungsBlatt extends CustomComponent {
 		String vorlage = "";
 		if (show.getSchauTyp().equals("C")) {
 			vorlage = DATASHEET;
+		} else if (show.getSchauTyp().equals("W")) {
+			vorlage = DATASHEET_WESENSTEST;
 		} else {
 			vorlage = DATASHEET_IHA;
 		}
@@ -92,9 +95,14 @@ public class ShowBewertungsBlatt extends CustomComponent {
 		fields.addSubstitutionFont(unicode);
 
 		fields.setField("RASSE", hund.getRasse().getRassenLangBezeichnung());
-
-		fields.setField("KATALOG NR", hund.getKatalognumer());
-		fields.setField("RING NR", hund.getRingNummer());
+		
+		if (show.getSchauTyp().equals("W")) {
+			fields.setField("CHIP NR", hund.getChipnummer());
+		} else {
+			fields.setField("KATALOG NR", hund.getKatalognumer());
+			fields.setField("RING NR", hund.getRingNummer());
+		}
+		
 		fields.setField("NAME DES HUNDES", hund.getShowHundName());
 		fields.setField("GESCHLECHT", hund.getGeschlecht());
 		fields.setField("ZUCHTBUCHNUMMER", hund.getZuchtbuchnummer());

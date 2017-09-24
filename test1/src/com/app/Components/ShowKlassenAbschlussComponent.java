@@ -238,9 +238,7 @@ public class ShowKlassenAbschlussComponent extends Panel {
 
 				platzLayout.addComponent(groupResCACA);
 				groupResCACA.addSelectionListener(event -> {
-					System.out.println(" event "
-							+ (event.getFirstSelectedItem().isPresent() ? event.getFirstSelectedItem().get() : "leer"));
-
+			
 					hund[0].setCACA(
 							event.getFirstSelectedItem().isPresent() ? event.getFirstSelectedItem().get() : null);
 					saveHund(hund[0]);

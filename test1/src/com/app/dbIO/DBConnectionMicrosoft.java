@@ -13,8 +13,8 @@ import com.vaadin.v7.data.util.sqlcontainer.connection.SimpleJDBCConnectionPool;
 public class DBConnectionMicrosoft {
 	private final static String DRIVER_NAME = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 
-	private final static String DB_USER = "dbuser";
-	private final static String DB_PASSWORD = "dbuser";
+	private final static String DB_USER = "OERC";
+	private final static String DB_PASSWORD = "1q2w3e4r";
 
 	private static JDBCConnectionPool connectionPool;
 
@@ -36,7 +36,7 @@ public class DBConnectionMicrosoft {
 		
 		String dataBase = sc.getInitParameter("Database");
 		System.out.println("database: " + dataBase);
-		dataBase = "jdbc:sqlserver://192.168.178.25:1433;database=OERCTest";
+		dataBase = "jdbc:sqlserver://192.168.178.25:1433;database=OERCNeu";
 
 		try {
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");

@@ -8,6 +8,7 @@ import java.util.Random;
 import java.util.stream.Stream;
 
 import com.app.DashBoard.Event.DashBoardEventBus;
+import com.app.dbIO.DBShowPrintKatalog;
 import com.vaadin.data.HierarchyData;
 import com.vaadin.data.provider.InMemoryHierarchicalDataProvider;
 import com.vaadin.navigator.View;
@@ -33,8 +34,10 @@ public class TestTreeGrid2 extends VerticalLayout implements View {
 		addStyleName("myhundeview");
 
 		addComponent(buildToolbar());
-		addComponent(buildWorkingArea());
+		//addComponent(buildWorkingArea());
+		DBShowPrintKatalog dbs = new DBShowPrintKatalog();
 
+		dbs.uebertrageHunde();
 	}
 
 	@Override

@@ -20,8 +20,9 @@ public enum DashBoardViewType {
     HUNDEIMPORT("Hunde importieren", HundeImport.class, VaadinIcons.TICKET, false, null),
     SCHAUUEBERSICHT("Schauübersicht", ShowUebersicht.class,  VaadinIcons.SHARE, false, null),
     WUERFE("Würfe", WurfUebersicht.class, VaadinIcons.MICROPHONE, false, null),
-    TREE("Der Baum", ShowRingBewertungView.class, VaadinIcons.FILE_TREE, false, null),
+    TREE("Der Baum", TestTreeGrid2.class, VaadinIcons.FILE_TREE, false, null),
     SHOWBEWERTUNG("Schaubewertung", ShowBewertungUebersicht.class, VaadinIcons.FILE_TREE, false, "show"),
+    SHOWBEWERTUNGKOKMPLETT("PDF Ergebnisse", ShowBewertungDruckUebersicht.class, VaadinIcons.PAPERCLIP, false, "show"),
     BEZAHLTUNGTEST("TestPaymen", TestPayment.class, VaadinIcons.MONEY, false, null);
     ;
  

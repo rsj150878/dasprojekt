@@ -1,23 +1,26 @@
 package com.app.enumPackage;
 
 public enum ShowKlassen {
-	BABYKLASSE("WE", "Babyklasse", "J"), JUENGSTENKLASSE("JÜ",
-			"Jüngstenklasse", "J"), JUGENDKLASSE("JU", "Jugendklasse", "J"), ZWISCHENKLASSE(
-			"ZK", "Zwischenklasse", "J"), OFFENEKLASSE("OF", "Offene Klasse",
-			"J"), GEBRAUCHSHUNDEKLASSE("GB", "Gebrauchshundeklasse", "J"), CHAMPIONKLASSE(
-			"CH", "Championklasse", "J"), VETERANENKLASSE("VE",
-			"Veteranenklasse", "J"),
-	WESENSTEST("WT","Wesenstest","N");
+	BABYKLASSE("WE", "Babyklasse", "J", "J"), 
+	JUENGSTENKLASSE("JÜ", "Jüngstenklasse", "J", "J"), 
+	JUGENDKLASSE("JU","Jugendklasse", "J", "J"), 
+	ZWISCHENKLASSE("ZK", "Zwischenklasse", "J", "J"), 
+	OFFENEKLASSE("OF", "Offene Klasse","J", "J"), 
+	GEBRAUCHSHUNDEKLASSE("GB", "Gebrauchshundeklasse", "J", "J"), 
+	CHAMPIONKLASSE("CH","Championklasse","J", "J"), 
+	VETERANENKLASSE("VE", "Veteranenklasse", "J", "J"), 
+	WESENSTEST("WT", "Wesenstest", "N", "N");
 
 	private final String showKlasseKurzBezeichnung;
 	private final String showKlasseLangBezeichnung;
 	private final String platzierungWirdBerechnet;
+	private final String printBewertungSummenBlatt;
 
-	private ShowKlassen(String kurzBezeichnung, String langBezeichnung,
-			String platzierungWirdBerechnet) {
+	private ShowKlassen(String kurzBezeichnung, String langBezeichnung, String platzierungWirdBerechnet, String printBewertungSummenBlatt) {
 		this.showKlasseKurzBezeichnung = kurzBezeichnung;
 		this.showKlasseLangBezeichnung = langBezeichnung;
 		this.platzierungWirdBerechnet = platzierungWirdBerechnet;
+		this.printBewertungSummenBlatt = printBewertungSummenBlatt;
 	}
 
 	public String getShowKlasseLangBezeichnung() {
@@ -28,8 +31,7 @@ public enum ShowKlassen {
 		return this.showKlasseKurzBezeichnung;
 	}
 
-	public static String getLangBezeichnungFuerKurzBezeichnung(
-			String kurzbezeichnung) {
+	public static String getLangBezeichnungFuerKurzBezeichnung(String kurzbezeichnung) {
 
 		for (ShowKlassen o : ShowKlassen.values()) {
 			if (o.showKlasseKurzBezeichnung.equals(kurzbezeichnung)) {

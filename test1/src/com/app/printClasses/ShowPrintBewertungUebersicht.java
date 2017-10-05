@@ -6,8 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.StringJoiner;
 
-import org.apache.commons.io.output.ByteArrayOutputStream;
-
 import com.app.dbIO.DBShowNeu;
 import com.app.enumPackage.Rassen;
 import com.app.enumPackage.ShowKlassen;
@@ -22,21 +20,22 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.AcroFields;
-import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.CustomComponent;
 
 public class ShowPrintBewertungUebersicht extends CustomComponent {
-	private PdfReader reader;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6116930051112975615L;
 
-	private FileOutputStream fos;
+	//private PdfReader reader;
+
+	//private FileOutputStream fos;
 	/** The original PDF file. */
 	public static final String FONT = "files/arialuni.ttf";
 
@@ -134,8 +133,11 @@ public class ShowPrintBewertungUebersicht extends CustomComponent {
 			paragraph1 = new Paragraph(c);
 			paragraph1.setAlignment(Element.ALIGN_LEFT);
 			document.add(paragraph1);
+			
+			
 
 			for (ShowHund hund : hundDerKlassen) {
+				
 				f = new Font(FontFamily.HELVETICA, 16.0f, Font.BOLD);
 				c = new Chunk(hund.getKatalognumer() + " - " + hund.getShowHundName(), f);
 

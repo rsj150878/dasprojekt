@@ -160,7 +160,7 @@ public class ShowBewertungsBlatt extends CustomComponent {
 				fields.setField("VETERANENSIEGER", "On");
 				break;
 			case "K":
-				fields.setField("KEIN TITEL", "On");
+				fields.setField("OHNE TITEL", "On");
 				break;
 			case "R":
 				fields.setField("RESERVE CACA", "On");

@@ -9,6 +9,7 @@ import java.util.Arrays;
 import com.app.dbIO.DBShowNeu;
 import com.app.enumPackage.BobDataType;
 import com.app.enumPackage.CacaDataType;
+import com.app.enumPackage.CacibDataType;
 import com.app.enumPackage.FormWertErwachsen;
 import com.app.enumPackage.FormWertJuengsten;
 import com.app.enumPackage.ShowKlassen;
@@ -51,6 +52,7 @@ public class ShowHundBewertungComponent extends Panel {
 	private RadioButtonGroup<String> platzierung;
 	private RadioButtonGroup<CacaDataType> cacaButtonGroup;
 	private RadioButtonGroup<BobDataType> bobButtonGroup;
+	private RadioButtonGroup<CacibDataType> cacibButtonGroup;
 
 	private DBShowNeu db;
 
@@ -243,7 +245,7 @@ public class ShowHundBewertungComponent extends Panel {
 					saveHund();
 				});
 
-				layout.addComponent(cacaButtonGroup);
+				layout.addComponent(bobButtonGroup);
 			}
 
 			if (show.getSchauTyp().equals("C")) {
@@ -253,7 +255,7 @@ public class ShowHundBewertungComponent extends Panel {
 						|| hund.getKlasse().equals(ShowKlassen.CHAMPIONKLASSE)) {
 
 					klubSieger = new CheckBox("KlubSieger");
-					klubSieger.setValue(hund.getClubsieger() != null && hund.getHundfehlt().equals("C") ? true : false);
+					klubSieger.setValue(hund.getClubsieger() != null && hund.getClubsieger().equals("C") ? true : false);
 					layout.addComponent(klubSieger);
 
 					klubSieger.addValueChangeListener(event -> {
@@ -262,7 +264,7 @@ public class ShowHundBewertungComponent extends Panel {
 					});
 				} else if (hund.getKlasse().equals(ShowKlassen.JUGENDKLASSE)) {
 					klubSieger = new CheckBox("KlubJugendSieger");
-					klubSieger.setValue(hund.getClubsieger() != null && hund.getHundfehlt().equals("J") ? true : false);
+					klubSieger.setValue(hund.getClubsieger() != null && hund.getClubsieger().equals("J") ? true : false);
 					layout.addComponent(klubSieger);
 
 					klubSieger.addValueChangeListener(event -> {
@@ -272,13 +274,35 @@ public class ShowHundBewertungComponent extends Panel {
 
 				} else if (hund.getKlasse().equals(ShowKlassen.JUGENDKLASSE)) {
 					klubSieger = new CheckBox("KlubVeteranenSieger");
-					klubSieger.setValue(hund.getClubsieger() != null && hund.getHundfehlt().equals("V") ? true : false);
+					klubSieger.setValue(hund.getClubsieger() != null && hund.getClubsieger().equals("V") ? true : false);
 					layout.addComponent(klubSieger);
 
 					klubSieger.addValueChangeListener(event -> {
 						hund.setClubsieger(klubSieger.getValue() == true ? "V" : "");
 						saveHund();
 					});
+
+				}
+			} else if (show.getSchauTyp().equals("I")) {
+				if (hund.getKlasse().equals(ShowKlassen.ZWISCHENKLASSE)
+						|| hund.getKlasse().equals(ShowKlassen.OFFENEKLASSE)
+						|| hund.getKlasse().equals(ShowKlassen.GEBRAUCHSHUNDEKLASSE)
+						|| hund.getKlasse().equals(ShowKlassen.CHAMPIONKLASSE)) {
+					
+					cacibButtonGroup = new RadioButtonGroup<>("CACIB");
+					cacibButtonGroup.setItems(Arrays.asList(CacibDataType.values()));
+					cacibButtonGroup.setItemCaptionGenerator(CacibDataType::getLangText);
+					cacibButtonGroup.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
+
+					cacibButtonGroup.setSelectedItem(CacibDataType.getTextForDataBaseValue(hund.getCACIB()));
+
+					cacibButtonGroup.addValueChangeListener(event -> {
+						hund.setCACIB(cacibButtonGroup.getValue().getDataBaseValue());
+						saveHund();
+					});
+
+					layout.addComponent(cacibButtonGroup);
+
 
 				}
 			}

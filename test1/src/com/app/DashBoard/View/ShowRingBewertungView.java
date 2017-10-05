@@ -42,10 +42,9 @@ public class ShowRingBewertungView extends Panel implements View, Handler {
 	ComboBox<ShowRing> boxTest;
 	List<ShowRing> source;
 
-	Show show ;
+	Show show;
 	ShowRing ring;
 	private final ShowRingBewertungListener listener;
-
 
 	Action action_vor = new ShortcutAction("Alt+PfeilRechts", ShortcutAction.KeyCode.ARROW_RIGHT,
 			new int[] { ShortcutAction.ModifierKey.ALT });
@@ -53,11 +52,11 @@ public class ShowRingBewertungView extends Panel implements View, Handler {
 			new int[] { ShortcutAction.ModifierKey.ALT });
 
 	public ShowRingBewertungView(Show show, ShowRing ring, ShowRingBewertungListener listener) {
-		
+
 		this.show = show;
 		this.ring = ring;
 		this.listener = listener;
-		
+
 		DashBoardEventBus.register(this);
 
 		setSizeFull();
@@ -158,6 +157,7 @@ public class ShowRingBewertungView extends Panel implements View, Handler {
 
 		boxTest = new ComboBox<>();
 		boxTest.setItems(source);
+
 		boxTest.setItemCaptionGenerator(ShowRing::getKatalogNummer);
 		// boxTest.addStyleName(ValoTheme.COMBOBOX_LARGE);
 		boxTest.setWidth(100.0f, Unit.PERCENTAGE);
@@ -184,9 +184,7 @@ public class ShowRingBewertungView extends Panel implements View, Handler {
 		vor.addClickListener(event -> {
 			if (boxTest.getSelectedItem().isPresent()) {
 				int index = source.indexOf(boxTest.getSelectedItem().get());
-				if (index < source.size()) {
-					boxTest.setSelectedItem(source.get(index + 1));
-				}
+				boxTest.setSelectedItem(source.get(Math.min(index+1, source.size()-1)));
 			} else
 				boxTest.setSelectedItem(source.get(0));
 			;
@@ -202,12 +200,14 @@ public class ShowRingBewertungView extends Panel implements View, Handler {
 				mainVerticalLayout.addComponent(bewertungPart);
 			} else if (boxTest.getSelectedItem().isPresent()
 					&& boxTest.getSelectedItem().get() instanceof ShowKlasseEnde) {
-				bewertungPart = new ShowKlassenAbschlussComponent (db, show, (ShowKlasseEnde) boxTest.getSelectedItem().get());
+				bewertungPart = new ShowKlassenAbschlussComponent(db, show,
+						(ShowKlasseEnde) boxTest.getSelectedItem().get());
 				mainVerticalLayout.addComponent(bewertungPart);
 
 			} else if (boxTest.getSelectedItem().isPresent()
 					&& boxTest.getSelectedItem().get() instanceof ShowGeschlechtEnde) {
-				bewertungPart = new ShowGeschlechtAbschlussComponent (db, show, (ShowGeschlechtEnde) boxTest.getSelectedItem().get());
+				bewertungPart = new ShowGeschlechtAbschlussComponent(db, show,
+						(ShowGeschlechtEnde) boxTest.getSelectedItem().get());
 				mainVerticalLayout.addComponent(bewertungPart);
 
 			}
@@ -248,7 +248,7 @@ public class ShowRingBewertungView extends Panel implements View, Handler {
 
 		}
 	}
-	
+
 	public void setTitle(String title) {
 
 		listener.titleChanged(title, ShowRingBewertungView.this);
@@ -257,9 +257,5 @@ public class ShowRingBewertungView extends Panel implements View, Handler {
 	public interface ShowRingBewertungListener {
 		void titleChanged(String newTitle, ShowRingBewertungView detail);
 	}
-	
-	
-
-
 
 }

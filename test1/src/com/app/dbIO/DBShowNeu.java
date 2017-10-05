@@ -206,6 +206,7 @@ public class DBShowNeu {
 			zw.setRasse(Rassen.getRasseForKurzBezeichnung(resultSet.getString("rasse")));
 			zw.setRingNummer(ring.getRingNummer());
 			zw.setRichter(ring.getRichter());
+			zw.setMitglied(resultSet.getString("mitglied"));
 			resultList.add(zw);
 
 		}
@@ -256,6 +257,8 @@ public class DBShowNeu {
 			ShowKlassen zwklasse = ShowKlassen.getKlasseForKurzBezeichnung(resultSet.getString("klasse"));
 			zw.setKlasse(zwklasse);
 			zw.setRasse(Rassen.getRasseForKurzBezeichnung(resultSet.getString("rasse")));
+			zw.setMitglied(resultSet.getString("mitglied"));
+			
 			resultList.add(zw);
 
 		}

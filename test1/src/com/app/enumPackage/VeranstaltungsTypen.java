@@ -6,9 +6,13 @@ public enum VeranstaltungsTypen {
 	RBP_O_WASSER(2,"RBP ohne Wasser" ,Boolean.FALSE,null,5,6,7,8),
 	RBP_M_WASSER(3,"RBP mit Wasser", Boolean.FALSE,null,5,6,7,9),
 	GAP_PRÜFUNG(4,"GAP", Boolean.TRUE,null,10,11,12),
-	TRAIN_WT(5, "Trainings-Working-Test", Boolean.TRUE,null, 13,14),
+	TRAIN_WT(5, "Trainings-Working-Test", Boolean.FALSE,null, 13,14),
 	WESENSTEST(6, "Wesenstest", Boolean.TRUE, "W", 15,16,17,18,19,20,21),
 	RBP_2017_WASSER(7,"RBP" ,Boolean.TRUE,null, 5,22,23,8),
+	TRAIN_WT_2017(8, "Trainings-Working-Test", Boolean.TRUE,null, 24,25,26),
+	JUNGHUNDEPRUEFUNG(9, "Junghundepruefung", Boolean.TRUE, null, 27),
+
+	
 ;
 
 	private Integer veranstaltungsTypID;

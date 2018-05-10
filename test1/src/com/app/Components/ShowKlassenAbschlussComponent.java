@@ -53,22 +53,22 @@ public class ShowKlassenAbschlussComponent extends Panel {
 		layout.setWidth(100.0f, Unit.PERCENTAGE);
 
 		if (!show.getSchauTyp().equals("W")) {
-		
-		layout.addComponent(buildPlatzierungField("1"));
 
-		layout.addComponent(buildPlatzierungField("2"));
+			layout.addComponent(buildPlatzierungField("1"));
 
-		layout.addComponent(buildPlatzierungField("3"));
+			layout.addComponent(buildPlatzierungField("2"));
 
-		layout.addComponent(buildPlatzierungField("4"));
+			layout.addComponent(buildPlatzierungField("3"));
 
-		if (show.getSchauTyp().equals("C")) {
-			if (ende.getKlasseEndeFor().getKlasse().equals(ShowKlassen.JUGENDKLASSE)) {
-				layout.addComponent(buildKlubSieger("Klubjugendsieger", "J"));
-			} else if (ende.getKlasseEndeFor().getKlasse().equals(ShowKlassen.VETERANENKLASSE)) {
-				layout.addComponent(buildKlubSieger("Klubveteranensieger", "V"));
+			layout.addComponent(buildPlatzierungField("4"));
+
+			if (show.getSchauTyp().equals("C")) {
+				if (ende.getKlasseEndeFor().getKlasse().equals(ShowKlassen.JUGENDKLASSE)) {
+					layout.addComponent(buildKlubSieger("Klubjugendsieger", "J"));
+				} else if (ende.getKlasseEndeFor().getKlasse().equals(ShowKlassen.VETERANENKLASSE)) {
+					layout.addComponent(buildKlubSieger("Klubveteranensieger", "V"));
+				}
 			}
-		}
 		}
 
 		return layout;
@@ -112,7 +112,7 @@ public class ShowKlassenAbschlussComponent extends Panel {
 		textField.addValueChangeListener(event -> {
 
 			if (!(hund[0] == null)) {
-				hund[0].setClubsieger("");
+				hund[0].setClubsieger(null);
 				saveHund(hund[0]);
 
 			}
@@ -164,7 +164,7 @@ public class ShowKlassenAbschlussComponent extends Panel {
 		textField.addValueChangeListener(event -> {
 
 			if (!(hund[0] == null)) {
-				hund[0].setPlatzierung("");
+				hund[0].setPlatzierung(null);
 				saveHund(hund[0]);
 
 			}
@@ -211,9 +211,12 @@ public class ShowKlassenAbschlussComponent extends Panel {
 				platzLayout.addComponent(groupCACA);
 
 				groupCACA.addSelectionListener(event -> {
-					hund[0].setCACA(
-							event.getFirstSelectedItem().isPresent() ? event.getFirstSelectedItem().get() : null);
-					saveHund(hund[0]);
+					if (!(hund[0] == null)) {
+
+						hund[0].setCACA(
+								event.getFirstSelectedItem().isPresent() ? event.getFirstSelectedItem().get() : null);
+						saveHund(hund[0]);
+					}
 				});
 			}
 		}
@@ -238,10 +241,12 @@ public class ShowKlassenAbschlussComponent extends Panel {
 
 				platzLayout.addComponent(groupResCACA);
 				groupResCACA.addSelectionListener(event -> {
-			
-					hund[0].setCACA(
-							event.getFirstSelectedItem().isPresent() ? event.getFirstSelectedItem().get() : null);
-					saveHund(hund[0]);
+					if (!(hund[0] == null)) {
+
+						hund[0].setCACA(
+								event.getFirstSelectedItem().isPresent() ? event.getFirstSelectedItem().get() : null);
+						saveHund(hund[0]);
+					}
 				});
 
 			}

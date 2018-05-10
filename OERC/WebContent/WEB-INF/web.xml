@@ -42,10 +42,24 @@
 			<param-value>OERC.Dashboard.OERCUI</param-value>
 		</init-param>
 	</servlet>
+	<servlet>
+		<servlet-name>rbs</servlet-name>
+		<servlet-class>OERC.Dashboard.DashboardServlet</servlet-class>
+		<init-param>
+			<param-name>UI</param-name>
+			<param-value>OERC.Dashboard.RoentgenBegleitSchein</param-value>
+		</init-param>
+	</servlet>
+	
 	
 	<servlet-mapping>
 		<servlet-name>OERC</servlet-name>
 		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>rbs</servlet-name>
+		<url-pattern>/rbs/*</url-pattern>
 	</servlet-mapping>
 	
 	<welcome-file-list>

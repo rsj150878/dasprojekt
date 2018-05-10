@@ -13,8 +13,6 @@ import com.app.showData.ShowGeschlechtEnde;
 import com.app.showData.ShowHund;
 import com.app.showData.ShowKlasseEnde;
 import com.app.showData.ShowRing;
-import com.vaadin.data.HierarchyData;
-import com.vaadin.data.provider.InMemoryHierarchicalDataProvider;
 import com.vaadin.event.Action;
 import com.vaadin.event.Action.Handler;
 import com.vaadin.event.ShortcutAction;
@@ -24,13 +22,11 @@ import com.vaadin.server.Responsive;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.TreeGrid;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -102,41 +98,45 @@ public class ShowRingBewertungView extends Panel implements View, Handler {
 		db = new DBShowNeu();
 
 		try {
+			ring.resetKlassen();
 			ring.addShowKlassen(db.getKlassenForShow(show, ring));
 		} catch (Exception e) {
 			Notification.show("fehler beim lesen der Daten);");
 			e.printStackTrace();
 		}
 
-		HierarchyData<ShowRing> ringData = new HierarchyData<>();
-		ringData.addItem(null, ring);
-
-		ring.flattened().forEach(zwring -> ringData.addItems(zwring, zwring.getChilds()));
-
-		TreeGrid<ShowRing> showRingTreeGrid = new TreeGrid<>();
-		showRingTreeGrid.setDataProvider(new InMemoryHierarchicalDataProvider<ShowRing>(ringData));
-		showRingTreeGrid.expand(ring);
-		ring.flattened().forEach(zwring -> showRingTreeGrid.expand(zwring));
-
-		showRingTreeGrid.addColumn(ShowRing::getKatalogNummer).setCaption("KatalogNummer");
-
-		showRingTreeGrid.setSelectionMode(SelectionMode.SINGLE);
-		showRingTreeGrid.addSelectionListener(event -> {
-
-			if (event.getFirstSelectedItem().isPresent()) {
-				Object o = event.getFirstSelectedItem().get();
-				System.out.println("in event" + o.toString());
-				if (o instanceof ShowHund) {
-					ShowHund currentHund = (ShowHund) o;
-					System.out.println("bin ein showhund");
-					// ShowHundBewertungComponent bewertungPart = new
-					// ShowHundBewertungComponent(currentHund);
-					// panelLayout.addComponent(bewertungPart);
-				}
-			}
-		});
-		showRingTreeGrid.setSizeUndefined();
-		showRingTreeGrid.addStyleName(ValoTheme.TREETABLE_COMPACT);
+		// hierarchy-data gibts nicht wirklich - wo auch immer ich das her hatte
+		
+		
+//		HierarchyData<ShowRing> ringData = new HierarchyData<>();
+//		ringData.addItem(null, ring);
+//
+//		ring.flattened().forEach(zwring -> ringData.addItems(zwring, zwring.getChilds()));
+//
+//		TreeGrid<ShowRing> showRingTreeGrid = new TreeGrid<>();
+//		showRingTreeGrid.setDataProvider(new InMemoryHierarchicalDataProvider<ShowRing>(ringData));
+//		showRingTreeGrid.expand(ring);
+//		ring.flattened().forEach(zwring -> showRingTreeGrid.expand(zwring));
+//
+//		showRingTreeGrid.addColumn(ShowRing::getKatalogNummer).setCaption("KatalogNummer");
+//
+//		showRingTreeGrid.setSelectionMode(SelectionMode.SINGLE);
+//		showRingTreeGrid.addSelectionListener(event -> {
+//
+//			if (event.getFirstSelectedItem().isPresent()) {
+//				Object o = event.getFirstSelectedItem().get();
+//				System.out.println("in event" + o.toString());
+//				if (o instanceof ShowHund) {
+//					ShowHund currentHund = (ShowHund) o;
+//					System.out.println("bin ein showhund");
+//					 ShowHundBewertungComponent bewertungPart = new
+//					 ShowHundBewertungComponent(currentHund);
+//					 panelLayout.addComponent(bewertungPart);
+//				}
+//			}
+//		});
+//		showRingTreeGrid.setSizeUndefined();
+//		showRingTreeGrid.addStyleName(ValoTheme.TREETABLE_COMPACT);
 		// showRingTreeGrid.s
 
 		// mainLayout.addComponent(showRingTreeGrid);
@@ -157,6 +157,7 @@ public class ShowRingBewertungView extends Panel implements View, Handler {
 
 		boxTest = new ComboBox<>();
 		boxTest.setItems(source);
+		boxTest.setScrollToSelectedItem(true);
 
 		boxTest.setItemCaptionGenerator(ShowRing::getKatalogNummer);
 		// boxTest.addStyleName(ValoTheme.COMBOBOX_LARGE);
@@ -196,7 +197,7 @@ public class ShowRingBewertungView extends Panel implements View, Handler {
 				mainVerticalLayout.removeComponent(bewertungPart);
 			}
 			if (boxTest.getSelectedItem().isPresent() && boxTest.getSelectedItem().get() instanceof ShowHund) {
-				bewertungPart = new ShowHundBewertungComponent(db, show, (ShowHund) boxTest.getSelectedItem().get());
+				bewertungPart = new ShowHundBewertungComponent(db, show, ring, (ShowHund) boxTest.getSelectedItem().get());
 				mainVerticalLayout.addComponent(bewertungPart);
 			} else if (boxTest.getSelectedItem().isPresent()
 					&& boxTest.getSelectedItem().get() instanceof ShowKlasseEnde) {

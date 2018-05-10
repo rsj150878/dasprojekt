@@ -4,7 +4,7 @@ public enum FormWertJuengsten {
 	
 	VIELVERSPRECHEND ("VV", "vielversprechend"),
 	VERSPRECHEND("V", "versprechend"),
-	NICHT_VERSPRECHEND("NV", "nicht verspreichend");
+	NICHT_VERSPRECHEND("NV", "nicht versprechend");
 	
 	private String formwert;
 	private String formWertBezeichnung;

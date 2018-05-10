@@ -15,9 +15,7 @@ import com.vaadin.annotations.Widgetset;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Alignment;
-import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.v7.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.UI;
@@ -29,14 +27,17 @@ import com.vaadin.v7.data.Property.ValueChangeEvent;
 import com.vaadin.v7.data.Property.ValueChangeListener;
 import com.vaadin.v7.data.util.filter.Between;
 import com.vaadin.v7.data.util.filter.Compare.Equal;
+import com.vaadin.v7.data.util.filter.Or;
 import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
 import com.vaadin.v7.data.util.sqlcontainer.query.OrderBy;
 import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 import com.vaadin.v7.shared.ui.label.ContentMode;
+import com.vaadin.v7.ui.ComboBox;
+import com.vaadin.v7.ui.Label;
 
 @Theme("dashboard")
-@Widgetset("com.app.DashBoard.DashboardWidgetSet")
-@Title("Showinfo")
+@Widgetset("com.app.DashBoard.DashboardWidgetsetNeu")
+@Title("ShowInfo")
 @SuppressWarnings("serial")
 public final class ShowInfoUI extends UI {
 
@@ -74,12 +75,10 @@ public final class ShowInfoUI extends UI {
 		q1 = new TableQuery("schau", DBConnection.INSTANCE.getConnectionPool());
 		q1.setVersionColumn("version");
 
-		q2 = new TableQuery("schauring",
-				DBConnection.INSTANCE.getConnectionPool());
+		q2 = new TableQuery("schauring", DBConnection.INSTANCE.getConnectionPool());
 		q2.setVersionColumn("version");
 
-		q3 = new TableQuery("schauhund",
-				DBConnection.INSTANCE.getConnectionPool());
+		q3 = new TableQuery("schauhund", DBConnection.INSTANCE.getConnectionPool());
 		q3.setVersionColumn("version");
 
 		try {
@@ -118,10 +117,13 @@ public final class ShowInfoUI extends UI {
 		final ComboBox yearSelect = new ComboBox("Ausstellungsjahr");
 		yearSelect.addItem(2016);
 		yearSelect.setItemCaption(2016, "2016");
+		yearSelect.addItem(2017);
+		yearSelect.setItemCaption(2017, "2017");
+		yearSelect.addItem(2018);
+		yearSelect.setItemCaption(2018, "2018");
 
 		infoFormLayout.addComponent(yearSelect);
-		infoFormLayout.setComponentAlignment(yearSelect,
-				Alignment.MIDDLE_CENTER);
+		infoFormLayout.setComponentAlignment(yearSelect, Alignment.MIDDLE_CENTER);
 
 		showSelect = new ComboBox("Schau");
 		showSelect.setEnabled(false);
@@ -133,50 +135,36 @@ public final class ShowInfoUI extends UI {
 		rassenSelect = new ComboBox("Rasse");
 		rassenSelect.setEnabled(false);
 
-		rassenSelect
-				.addItem(Rassen.GOLDEN_RETRIEVER.getRassenKurzBezeichnung());
-		rassenSelect.setItemCaption(
-				Rassen.GOLDEN_RETRIEVER.getRassenKurzBezeichnung(),
+		rassenSelect.addItem(Rassen.GOLDEN_RETRIEVER.getRassenKurzBezeichnung());
+		rassenSelect.setItemCaption(Rassen.GOLDEN_RETRIEVER.getRassenKurzBezeichnung(),
 				Rassen.GOLDEN_RETRIEVER.getRassenLangBezeichnung());
 
-		rassenSelect.addItem(Rassen.LABRADOR_RETRIEVER
-				.getRassenKurzBezeichnung());
-		rassenSelect.setItemCaption(
-				Rassen.LABRADOR_RETRIEVER.getRassenKurzBezeichnung(),
+		rassenSelect.addItem(Rassen.LABRADOR_RETRIEVER.getRassenKurzBezeichnung());
+		rassenSelect.setItemCaption(Rassen.LABRADOR_RETRIEVER.getRassenKurzBezeichnung(),
 				Rassen.LABRADOR_RETRIEVER.getRassenLangBezeichnung());
 
-		rassenSelect.addItem(Rassen.CHESAPEAKE_BAY_RETRIEVER
-				.getRassenKurzBezeichnung());
-		rassenSelect.setItemCaption(
-				Rassen.CHESAPEAKE_BAY_RETRIEVER.getRassenKurzBezeichnung(),
+		rassenSelect.addItem(Rassen.CHESAPEAKE_BAY_RETRIEVER.getRassenKurzBezeichnung());
+		rassenSelect.setItemCaption(Rassen.CHESAPEAKE_BAY_RETRIEVER.getRassenKurzBezeichnung(),
 				Rassen.CHESAPEAKE_BAY_RETRIEVER.getRassenLangBezeichnung());
 
-		rassenSelect.addItem(Rassen.FLAT_COATED_RETRIEVER
-				.getRassenKurzBezeichnung());
-		rassenSelect.setItemCaption(
-				Rassen.FLAT_COATED_RETRIEVER.getRassenKurzBezeichnung(),
+		rassenSelect.addItem(Rassen.FLAT_COATED_RETRIEVER.getRassenKurzBezeichnung());
+		rassenSelect.setItemCaption(Rassen.FLAT_COATED_RETRIEVER.getRassenKurzBezeichnung(),
 				Rassen.FLAT_COATED_RETRIEVER.getRassenLangBezeichnung());
 
-		rassenSelect.addItem(Rassen.CURLY_COATED_RETRIEVER
-				.getRassenKurzBezeichnung());
-		rassenSelect.setItemCaption(
-				Rassen.CURLY_COATED_RETRIEVER.getRassenKurzBezeichnung(),
+		rassenSelect.addItem(Rassen.CURLY_COATED_RETRIEVER.getRassenKurzBezeichnung());
+		rassenSelect.setItemCaption(Rassen.CURLY_COATED_RETRIEVER.getRassenKurzBezeichnung(),
 				Rassen.CURLY_COATED_RETRIEVER.getRassenLangBezeichnung());
 
-		rassenSelect.addItem(Rassen.NOVA_SCOTIA_DUCK_TOLLING_RETRIEVER
-				.getRassenKurzBezeichnung());
-		rassenSelect.setItemCaption(Rassen.NOVA_SCOTIA_DUCK_TOLLING_RETRIEVER
-				.getRassenKurzBezeichnung(),
-				Rassen.NOVA_SCOTIA_DUCK_TOLLING_RETRIEVER
-						.getRassenLangBezeichnung());
+		rassenSelect.addItem(Rassen.NOVA_SCOTIA_DUCK_TOLLING_RETRIEVER.getRassenKurzBezeichnung());
+		rassenSelect.setItemCaption(Rassen.NOVA_SCOTIA_DUCK_TOLLING_RETRIEVER.getRassenKurzBezeichnung(),
+				Rassen.NOVA_SCOTIA_DUCK_TOLLING_RETRIEVER.getRassenLangBezeichnung());
 
 		infoFormLayout.addComponent(rassenSelect);
 
 		mainLayout.addComponent(infoFormLayout);
 		mainLayout.setExpandRatio(infoFormLayout, 1);
 
-		mainLayout.setComponentAlignment(infoFormLayout,
-				Alignment.MIDDLE_CENTER);
+		mainLayout.setComponentAlignment(infoFormLayout, Alignment.MIDDLE_CENTER);
 
 		scrollPanel = new Panel();
 		scrollPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
@@ -192,16 +180,17 @@ public final class ShowInfoUI extends UI {
 			@Override
 			public void valueChange(ValueChangeEvent event) {
 				System.out.println("vlaue " + yearSelect.getValue());
-				showContainer
-						.addContainerFilter(new Between("datum",
-								new GregorianCalendar((int) yearSelect
-										.getValue(), 1, 1).getTime(),
-								new GregorianCalendar((int) yearSelect
-										.getValue(), 12, 31).getTime()));
+				showContainer.removeAllContainerFilters();
+				showContainer.addContainerFilter(
+						new Between("datum", new GregorianCalendar((int) yearSelect.getValue(), 1, 1).getTime(),
+								new GregorianCalendar((int) yearSelect.getValue(), 12, 31).getTime()));
+				showContainer.addContainerFilter(new Or(new Equal("schautyp", "I"), new Equal("schautyp", "C")));
 
 				showSelect.setContainerDataSource(showContainer);
 				showSelect.markAsDirty();
 				showSelect.setEnabled(true);
+				rassenSelect.setEnabled(false);
+				rassenSelect.select(null);
 
 			}
 
@@ -213,6 +202,7 @@ public final class ShowInfoUI extends UI {
 			public void valueChange(ValueChangeEvent event) {
 				// TODO Auto-generated method stub
 				rassenSelect.setEnabled(true);
+				rassenSelect.select(null);
 				addShowFilter();
 
 			}
@@ -226,7 +216,9 @@ public final class ShowInfoUI extends UI {
 				// TODO Auto-generated method stub
 
 				addRasseFilter();
-				buildInfoArea();
+				if (!(rassenSelect.getValue() == null)) {
+					buildInfoArea();
+				}
 			}
 		});
 
@@ -241,11 +233,12 @@ public final class ShowInfoUI extends UI {
 		}
 
 		Item showItem = showContainer.getItem(showSelect.getValue());
-		showFilter = new Equal("idschau", showItem.getItemProperty("idschau")
-				.getValue());
+		if (!(showItem == null)) {
+			showFilter = new Equal("idschau", showItem.getItemProperty("idschau").getValue());
 
-		hundContainer.addContainerFilter(showFilter);
+			hundContainer.addContainerFilter(showFilter);
 
+		}
 	}
 
 	private void addRasseFilter() {
@@ -253,8 +246,10 @@ public final class ShowInfoUI extends UI {
 			hundContainer.removeContainerFilter(rassenFilter);
 		}
 
-		rassenFilter = new Equal("rasse", rassenSelect.getValue());
-		hundContainer.addContainerFilter(rassenFilter);
+		if (!(rassenSelect.getValue() == null)) {
+			rassenFilter = new Equal("rasse", rassenSelect.getValue());
+			hundContainer.addContainerFilter(rassenFilter);
+		}
 	}
 
 	private void buildInfoArea() {
@@ -275,64 +270,46 @@ public final class ShowInfoUI extends UI {
 			String geschlecht = "";
 			String currentKlasse = "";
 			for (int i = 0; i < hundContainer.size(); i++) {
-				Item currentItem = hundContainer.getItem(hundContainer
-						.getIdByIndex(i));
+				Item currentItem = hundContainer.getItem(hundContainer.getIdByIndex(i));
 
 				VerticalLayout hundLayout = new VerticalLayout();
 				// hundLayout.setSizeFull();
 
-				if (!geschlecht.equals(currentItem
-						.getItemProperty("geschlecht").getValue())) {
+				if (!geschlecht.equals(currentItem.getItemProperty("geschlecht").getValue())) {
 					Label klassenLabel = new Label();
 					klassenLabel.setContentMode(ContentMode.HTML);
-					klassenLabel
-							.setValue("<center>"
-									+ (currentItem
-											.getItemProperty("geschlecht")
-											.getValue().toString().equals("R") ? "Rüden"
-											: "Hündinnen") + "</center>");
+					klassenLabel.setValue(
+							"<center>" + (currentItem.getItemProperty("geschlecht").getValue().toString().equals("R")
+									? "Rüden" : "Hündinnen") + "</center>");
 					klassenLabel.addStyleName(ValoTheme.LABEL_H2);
 					hundLayout.addComponent(klassenLabel);
-					hundLayout.setComponentAlignment(klassenLabel,
-							Alignment.TOP_CENTER);
+					hundLayout.setComponentAlignment(klassenLabel, Alignment.TOP_CENTER);
 
-					currentKlasse = currentItem.getItemProperty("geschlecht")
-							.getValue().toString();
-					geschlecht = currentItem.getItemProperty("geschlecht")
-							.getValue().toString();
+					currentKlasse = currentItem.getItemProperty("geschlecht").getValue().toString();
+					geschlecht = currentItem.getItemProperty("geschlecht").getValue().toString();
 					currentKlasse = "";
 				}
 
-				if (!currentKlasse.equals(currentItem.getItemProperty("klasse")
-						.getValue())) {
+				if (!currentKlasse.equals(currentItem.getItemProperty("klasse").getValue())) {
 					Label klassenLabel = new Label();
 					klassenLabel.setContentMode(ContentMode.HTML);
-					System.out.println("klasse: "
-							+ currentItem.getItemProperty("klasse").getValue()
-									.toString().trim());
+					System.out.println("klasse: " + currentItem.getItemProperty("klasse").getValue().toString().trim());
 					klassenLabel
 							.setValue("<center>"
-									+ ShowKlassen
-											.getLangBezeichnungFuerKurzBezeichnung(currentItem
-													.getItemProperty("klasse")
-													.getValue().toString()
-													.trim()) + "</center>");
+									+ ShowKlassen.getLangBezeichnungFuerKurzBezeichnung(
+											currentItem.getItemProperty("klasse").getValue().toString().trim())
+									+ "</center>");
 					klassenLabel.addStyleName(ValoTheme.LABEL_H2);
 					hundLayout.addComponent(klassenLabel);
-					hundLayout.setComponentAlignment(klassenLabel,
-							Alignment.TOP_CENTER);
+					hundLayout.setComponentAlignment(klassenLabel, Alignment.TOP_CENTER);
 
-					currentKlasse = currentItem.getItemProperty("klasse")
-							.getValue().toString();
+					currentKlasse = currentItem.getItemProperty("klasse").getValue().toString();
 				}
 
 				Label hund = new Label();
 				hund.setContentMode(ContentMode.HTML);
-				String name = "<center><b>"
-						+ currentItem.getItemProperty("katalognummer")
-								.getValue() + "</b> "
-						+ currentItem.getItemProperty("name").getValue()
-						+ "</center>";
+				String name = "<center><b>" + currentItem.getItemProperty("katalognummer").getValue() + "</b> "
+						+ currentItem.getItemProperty("name").getValue() + "</center>";
 				hund.setValue(name.trim());
 				hund.setReadOnly(true);
 				hund.addStyleName(ValoTheme.LABEL_H3);
@@ -341,47 +318,37 @@ public final class ShowInfoUI extends UI {
 
 				Label zbnrWt = new Label();
 				zbnrWt.setContentMode(ContentMode.HTML);
-				zbnrWt.setValue("<center>"
-						+ currentItem.getItemProperty("zuchtbuchnummer")
-								.getValue()
-						+ ", gew. am "
-						+ new SimpleDateFormat("dd.MM.yyyy").format(currentItem
-								.getItemProperty("wurftag").getValue())
+				zbnrWt.setValue("<center>" + currentItem.getItemProperty("zuchtbuchnummer").getValue() + ", gew. am "
+						+ new SimpleDateFormat("dd.MM.yyyy").format(currentItem.getItemProperty("wurftag").getValue())
 						+ "</center>");
 				hundLayout.addComponent(zbnrWt);
 				hundLayout.setComponentAlignment(zbnrWt, Alignment.TOP_CENTER);
 
 				Label besitzer = new Label();
 				besitzer.setContentMode(ContentMode.HTML);
-				besitzer.setValue("<center><b>Besitzer: </b>"
-						+ currentItem.getItemProperty("besitzershow")
-								.getValue() + "</center>");
+				besitzer.setValue("<center><b>Besitzer: </b>" + currentItem.getItemProperty("besitzershow").getValue()
+						+ "</center>");
 				hundLayout.addComponent(besitzer);
-				hundLayout
-						.setComponentAlignment(besitzer, Alignment.TOP_CENTER);
+				hundLayout.setComponentAlignment(besitzer, Alignment.TOP_CENTER);
 
 				Label zuechter = new Label();
 				zuechter.setContentMode(ContentMode.HTML);
-				zuechter.setValue("<center><b>Züchter: </b>"
-						+ currentItem.getItemProperty("zuechter").getValue()
-						+ "</center>");
+				zuechter.setValue(
+						"<center><b>Züchter: </b>" + currentItem.getItemProperty("zuechter").getValue() + "</center>");
 				hundLayout.addComponent(zuechter);
-				hundLayout
-						.setComponentAlignment(zuechter, Alignment.TOP_CENTER);
+				hundLayout.setComponentAlignment(zuechter, Alignment.TOP_CENTER);
 
 				Label vater = new Label();
 				vater.setContentMode(ContentMode.HTML);
-				vater.setValue("<center><b>Vater: </b>"
-						+ currentItem.getItemProperty("vater").getValue()
-						+ "</center>");
+				vater.setValue(
+						"<center><b>Vater: </b>" + currentItem.getItemProperty("vater").getValue() + "</center>");
 				hundLayout.addComponent(vater);
 				hundLayout.setComponentAlignment(vater, Alignment.TOP_CENTER);
 
 				Label mutter = new Label();
 				mutter.setContentMode(ContentMode.HTML);
-				mutter.setValue("<center><b>Mutter: </b>"
-						+ currentItem.getItemProperty("mutter").getValue()
-						+ "</center>");
+				mutter.setValue(
+						"<center><b>Mutter: </b>" + currentItem.getItemProperty("mutter").getValue() + "</center>");
 				hundLayout.addComponent(mutter);
 				hundLayout.setComponentAlignment(mutter, Alignment.TOP_CENTER);
 
@@ -391,74 +358,73 @@ public final class ShowInfoUI extends UI {
 				beschreibung.setWidth(50.f, Unit.PERCENTAGE);
 
 				if (!(currentItem.getItemProperty("hundfehlt").getValue() == null)) {
-					if (currentItem.getItemProperty("hundfehlt").getValue()
-							.toString().equals("J"))
+					if (currentItem.getItemProperty("hundfehlt").getValue().toString().equals("J"))
 						beschreibung.setValue("Hund fehlt");
 					else
-						beschreibung.setValue(""
-								+ currentItem.getItemProperty("bewertung")
-										.getValue());
+						beschreibung.setValue("" + currentItem.getItemProperty("bewertung").getValue());
+				} else {
+					if (!(currentItem.getItemProperty("bewertung").getValue() == null)) {
+
+						beschreibung.setValue("" + currentItem.getItemProperty("bewertung").getValue());
+
+					}
+
 				}
 
 				StringBuilder sb = new StringBuilder();
 				String bewertung = "";
 
-				if (!(currentItem.getItemProperty("hundfehlt").getValue() == null)
-						&& currentItem.getItemProperty("hundfehlt").getValue()
-								.equals("N")
-						&& !(currentItem.getItemProperty("formwert").getValue() == null)) {
+				if ((!(currentItem.getItemProperty("hundfehlt").getValue() == null)
+						&& currentItem.getItemProperty("hundfehlt").getValue().toString().equals("N"))
+						|| currentItem.getItemProperty("hundfehlt").getValue() == null) {
 
-					switch (currentItem.getItemProperty("formwert").getValue()
-							.toString()) {
-					case "vv":
-						sb.append("vielversprechend");
-						break;
-					case "v":
-						if (currentItem.getItemProperty("klasse").getValue()
-								.toString().equals("JÜ"))
-							sb.append("versprechend");
-						else
-							sb.append("V");
-						break;
-					case "sg":
-						sb.append("SG");
-						break;
-					case "g":
-						sb.append("gut");
-						break;
-					case "gen":
-						sb.append("genügend");
-						break;
-					case "ob":
-						sb.append("ohne bewertung");
-						break;
-					default:
-						sb.append("");
+					if (!(currentItem.getItemProperty("formwert").getValue() == null)) {
+						switch (currentItem.getItemProperty("formwert").getValue().toString()) {
+						case "vv":
+							sb.append("vielversprechend");
+							break;
+						case "v":
+							if (currentItem.getItemProperty("klasse").getValue().toString().equals("JÜ"))
+								sb.append("versprechend");
+							else
+								sb.append("V");
+							break;
+						case "sg":
+							sb.append("SG");
+							break;
+						case "g":
+							sb.append("gut");
+							break;
+						case "gen":
+							sb.append("genügend");
+							break;
+						case "ob":
+							sb.append("ohne bewertung");
+							break;
+						default:
+							sb.append("");
 
+						}
 					}
+					
 					if (!(currentItem.getItemProperty("platzierung").getValue() == null))
-						sb.append(currentItem.getItemProperty("platzierung")
-								.getValue());
+						sb.append(currentItem.getItemProperty("platzierung").getValue());
 
 					if (!(currentItem.getItemProperty("CACA").getValue() == null)) {
-						if (currentItem.getItemProperty("CACA").getValue()
-								.equals("J"))
+						if (currentItem.getItemProperty("CACA").getValue().equals("J"))
 							sb.append(", JB");
 						else
-							sb.append(currentItem.getItemProperty("CACA")
-									.getValue().equals("C") ? ", CACA"
+							sb.append(currentItem.getItemProperty("CACA").getValue().equals("C") ? ", CACA"
 									: ", Res.CACA");
 					}
 
 					if (!(currentItem.getItemProperty("CACIB").getValue() == null)) {
-						sb.append(currentItem.getItemProperty("CACIB")
-								.getValue().equals("C") ? ", CACIB"
+						sb.append(currentItem.getItemProperty("CACIB").getValue().equals("C") ? ", CACIB"
 								: ", Res.CACIB");
 					}
 
 					if (!(currentItem.getItemProperty("BOB").getValue() == null)) {
-						sb.append(currentItem.getItemProperty("BOB").getValue()
-								.equals("B") ? ", BOB" : ", BOS");
+						sb.append(currentItem.getItemProperty("BOB").getValue().equals("B") ? ", BOB" : ", BOS");
 					}
 					// sb.append((!(currentItem.getItemProperty("CACA").getValue()
 					// == null &&))
@@ -467,20 +433,16 @@ public final class ShowInfoUI extends UI {
 
 				Label formwert = new Label();
 				formwert.setContentMode(ContentMode.HTML);
-				formwert.setValue("<center><b>Bewertung: </b>" + sb.toString()
-						+ "</center>");
+				formwert.setValue("<center><b>Bewertung: </b>" + sb.toString() + "</center>");
 				hundLayout.addComponent(formwert);
-				hundLayout
-						.setComponentAlignment(formwert, Alignment.BOTTOM_CENTER);
+				hundLayout.setComponentAlignment(formwert, Alignment.BOTTOM_CENTER);
 
 				beschreibung.setReadOnly(true);
 				hundLayout.addComponent(beschreibung);
-				hundLayout.setComponentAlignment(beschreibung,
-						Alignment.MIDDLE_CENTER);
+				hundLayout.setComponentAlignment(beschreibung, Alignment.MIDDLE_CENTER);
 
 				infoLayout.addComponent(hundLayout);
-				infoLayout.setComponentAlignment(hundLayout,
-						Alignment.MIDDLE_CENTER);
+				infoLayout.setComponentAlignment(hundLayout, Alignment.MIDDLE_CENTER);
 			}
 		}
 

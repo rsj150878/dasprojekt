@@ -16,6 +16,7 @@ import com.app.enumPackage.ShowKlassen;
 import com.app.printClasses.ShowBewertungsBlatt;
 import com.app.showData.Show;
 import com.app.showData.ShowHund;
+import com.app.showData.ShowRing;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
@@ -58,15 +59,22 @@ public class ShowHundBewertungComponent extends Panel {
 
 	private ShowHund hund;
 	private Show show;
+	private ShowRing ring;
 	VerticalLayout panelContent;
 
-	public ShowHundBewertungComponent(DBShowNeu db, Show show, ShowHund hund) {
+	public ShowHundBewertungComponent(DBShowNeu db, Show show, ShowRing ring, ShowHund hund) {
 		this.hund = hund;
 		this.show = show;
 		this.db = db;
+		this.ring = ring;
 		// setHeight("100%");
 		setWidth("100%");
-		setCaption("Hundebewertung");
+		StringBuilder caption = new StringBuilder();
+		caption.append("Hundebewertung: Hund ");
+		caption.append(ring.getPositionOfDog(hund));
+		caption.append(" von ");
+		caption.append(ring.getNumberOfDogsOfRing());
+		setCaption(caption.toString());
 		panelContent = new VerticalLayout();
 		panelContent.setWidth("100%");
 
@@ -74,6 +82,9 @@ public class ShowHundBewertungComponent extends Panel {
 				buildFormwertInfo(), buildPrintButton());
 
 		setContent(panelContent);
+		
+		setEditingFieldsEnabled(!hundFehlt.getValue());
+		
 
 		// Set the size as undefined at all levels
 		// panelContent.setSizeUndefined();
@@ -131,6 +142,7 @@ public class ShowHundBewertungComponent extends Panel {
 		hundFehlt.addValueChangeListener(event -> {
 			hund.setHundfehlt(hundFehlt.getValue() == true ? "J" : "N");
 			saveHund();
+			setEditingFieldsEnabled(!hundFehlt.getValue());
 		});
 
 		mitglied = new CheckBox("Mitglied");
@@ -156,14 +168,57 @@ public class ShowHundBewertungComponent extends Panel {
 	}
 
 	private Component buildPrintButton() {
-		Button printButton = new Button("Bewertung");
+		HorizontalLayout buttonLeisteLayout = new HorizontalLayout();
+		buttonLeisteLayout.setWidth("100%");
+		
+		Button printButton = new Button("Bewertung drucken");
 		printButton.addClickListener(event -> {
 			ShowBewertungsBlatt blatt = new ShowBewertungsBlatt(show, hund);
 			panelContent.addComponent(blatt);
 
 		});
+		
+		buttonLeisteLayout.addComponent(printButton);
+		
+		Button resetButton = new Button("Bewertung zurücksetzen");
+		
+		resetButton.addClickListener(event -> {
 
-		return printButton;
+			if (!(klubSieger == null)) {
+				klubSieger.setValue(false);
+			}
+
+			
+			if (!(formwertJuengsten == null)) {
+				formwertJuengsten.setSelectedItem(null);
+			}
+
+			if (!(formwertErw == null)) {
+				formwertErw.setSelectedItem(null);
+			}
+
+			if (!(platzierung == null)) {
+				platzierung.setSelectedItem(null);
+			}
+
+			if (!(cacaButtonGroup == null)) {
+				cacaButtonGroup.setSelectedItem(null);
+			}
+
+			if (!(bobButtonGroup == null)) {
+				bobButtonGroup.setSelectedItem(null);
+			}
+			
+			if (!(cacibButtonGroup == null)) {
+				cacibButtonGroup.setSelectedItem(null);
+			}
+
+			
+		});
+		
+		buttonLeisteLayout.addComponent(resetButton);
+
+		return buttonLeisteLayout;
 	}
 
 	private Component buildFormwertInfo() {
@@ -183,7 +238,7 @@ public class ShowHundBewertungComponent extends Panel {
 				layout.addComponent(formwertJuengsten);
 
 				formwertJuengsten.addValueChangeListener(event -> {
-					hund.setFormwert(formwertJuengsten.getValue().getFormwert());
+					hund.setFormwert(formwertJuengsten.getValue() == null ? null : formwertJuengsten.getValue().getFormwert());
 					saveHund();
 				});
 			} else {
@@ -195,7 +250,7 @@ public class ShowHundBewertungComponent extends Panel {
 				formwertErw.setSelectedItem(FormWertErwachsen.getFormwertForKurzBezeichnung(hund.getFormwert()));
 
 				formwertErw.addValueChangeListener(event -> {
-					hund.setFormwert(formwertErw.getValue().getFormwert());
+					hund.setFormwert(formwertErw.getValue() == null ? null : formwertErw.getValue().getFormwert());
 					saveHund();
 				});
 
@@ -227,7 +282,7 @@ public class ShowHundBewertungComponent extends Panel {
 				cacaButtonGroup.setSelectedItem(CacaDataType.getTextForDataBaseValue(hund.getCACA()));
 
 				cacaButtonGroup.addValueChangeListener(event -> {
-					hund.setCACA(cacaButtonGroup.getValue().getDataBaseValue());
+					hund.setCACA(cacaButtonGroup.getValue() == null ? null : cacaButtonGroup.getValue().getDataBaseValue());
 					saveHund();
 				});
 
@@ -241,7 +296,7 @@ public class ShowHundBewertungComponent extends Panel {
 				bobButtonGroup.setSelectedItem(BobDataType.getTextForDataBaseValue(hund.getBOB()));
 
 				bobButtonGroup.addValueChangeListener(event -> {
-					hund.setBOB(bobButtonGroup.getValue().getDataBaseValue());
+					hund.setBOB(bobButtonGroup.getValue() == null ? null : bobButtonGroup.getValue().getDataBaseValue());
 					saveHund();
 				});
 
@@ -255,7 +310,8 @@ public class ShowHundBewertungComponent extends Panel {
 						|| hund.getKlasse().equals(ShowKlassen.CHAMPIONKLASSE)) {
 
 					klubSieger = new CheckBox("KlubSieger");
-					klubSieger.setValue(hund.getClubsieger() != null && hund.getClubsieger().equals("C") ? true : false);
+					klubSieger
+							.setValue(hund.getClubsieger() != null && hund.getClubsieger().equals("C") ? true : false);
 					layout.addComponent(klubSieger);
 
 					klubSieger.addValueChangeListener(event -> {
@@ -264,7 +320,8 @@ public class ShowHundBewertungComponent extends Panel {
 					});
 				} else if (hund.getKlasse().equals(ShowKlassen.JUGENDKLASSE)) {
 					klubSieger = new CheckBox("KlubJugendSieger");
-					klubSieger.setValue(hund.getClubsieger() != null && hund.getClubsieger().equals("J") ? true : false);
+					klubSieger
+							.setValue(hund.getClubsieger() != null && hund.getClubsieger().equals("J") ? true : false);
 					layout.addComponent(klubSieger);
 
 					klubSieger.addValueChangeListener(event -> {
@@ -274,7 +331,8 @@ public class ShowHundBewertungComponent extends Panel {
 
 				} else if (hund.getKlasse().equals(ShowKlassen.JUGENDKLASSE)) {
 					klubSieger = new CheckBox("KlubVeteranenSieger");
-					klubSieger.setValue(hund.getClubsieger() != null && hund.getClubsieger().equals("V") ? true : false);
+					klubSieger
+							.setValue(hund.getClubsieger() != null && hund.getClubsieger().equals("V") ? true : false);
 					layout.addComponent(klubSieger);
 
 					klubSieger.addValueChangeListener(event -> {
@@ -288,7 +346,7 @@ public class ShowHundBewertungComponent extends Panel {
 						|| hund.getKlasse().equals(ShowKlassen.OFFENEKLASSE)
 						|| hund.getKlasse().equals(ShowKlassen.GEBRAUCHSHUNDEKLASSE)
 						|| hund.getKlasse().equals(ShowKlassen.CHAMPIONKLASSE)) {
-					
+
 					cacibButtonGroup = new RadioButtonGroup<>("CACIB");
 					cacibButtonGroup.setItems(Arrays.asList(CacibDataType.values()));
 					cacibButtonGroup.setItemCaptionGenerator(CacibDataType::getLangText);
@@ -297,12 +355,11 @@ public class ShowHundBewertungComponent extends Panel {
 					cacibButtonGroup.setSelectedItem(CacibDataType.getTextForDataBaseValue(hund.getCACIB()));
 
 					cacibButtonGroup.addValueChangeListener(event -> {
-						hund.setCACIB(cacibButtonGroup.getValue().getDataBaseValue());
+						hund.setCACIB(cacibButtonGroup.getValue() == null ? null : cacibButtonGroup.getValue().getDataBaseValue());
 						saveHund();
 					});
 
 					layout.addComponent(cacibButtonGroup);
-
 
 				}
 			}
@@ -322,4 +379,39 @@ public class ShowHundBewertungComponent extends Panel {
 		}
 	}
 
+	private void setEditingFieldsEnabled(boolean enabled) {
+
+		if (!(klubSieger == null)) {
+			klubSieger.setEnabled(enabled);
+		}
+
+		if (!(bewertung == null)) {
+			bewertung.setEnabled(enabled);
+		}
+
+		if (!(formwertJuengsten == null)) {
+			formwertJuengsten.setEnabled(enabled);
+		}
+
+		if (!(formwertErw == null)) {
+			formwertErw.setEnabled(enabled);
+		}
+
+		if (!(platzierung == null)) {
+			platzierung.setEnabled(enabled);
+		}
+
+		if (!(cacaButtonGroup == null)) {
+			cacaButtonGroup.setEnabled(enabled);
+		}
+
+		if (!(bobButtonGroup == null)) {
+			bobButtonGroup.setEnabled(enabled);
+		}
+		
+		if (!(cacibButtonGroup == null)) {
+			cacibButtonGroup.setEnabled(enabled);
+		}
+
+	}
 }

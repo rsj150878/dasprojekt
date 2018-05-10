@@ -3,6 +3,7 @@ package com.app.DashBoard.View;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import com.app.DashBoard.Event.DashBoardEventBus;
@@ -33,6 +34,7 @@ import com.vaadin.ui.Upload.SucceededListener;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.Property;
 import com.vaadin.v7.data.util.filter.Compare.Equal;
 import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
 import com.vaadin.v7.data.util.sqlcontainer.query.QueryDelegate.RowIdChangeEvent;
@@ -236,6 +238,7 @@ public class ShowImporter extends VerticalLayout implements View {
 						schauRingContainer.addContainerFilter(
 								new Equal("idschau", newItem.getItemProperty("idschau").getValue()));
 						schauRingContainer.addContainerFilter(new Equal("ringnummer", row.getInt("Ring").toString()));
+						schauRingContainer.addContainerFilter(new Equal("richter", row.getString("Richtername")) );
 
 						Item schauRingContainerItem;
 						if (schauRingContainer.size() == 0) {
@@ -298,7 +301,10 @@ public class ShowImporter extends VerticalLayout implements View {
 						schauHundItem.getItemProperty("katalognummer").setValue(
 								row.getInt("Katalognummer").toString().trim() + row.getString("aNummer").trim());
 
-						schauHundItem.getItemProperty("sort_kat_nr").setValue(row.getInt("Katalognummer"));
+						System.out.println(row.getInt("Katalognummer"));
+					
+						Property s = schauHundItem.getItemProperty("sort_kat_nr");
+						schauHundItem.getItemProperty("sort_kat_nr").setValue(new BigDecimal(row.getInt("Katalognummer").toString()));
 
 						if (!(row.getString("Beschreibung") == null)) {
 							schauHundItem.getItemProperty("bewertung").setValue(row.getString("Beschreibung"));
@@ -324,6 +330,7 @@ public class ShowImporter extends VerticalLayout implements View {
 
 						schauHundItem.getItemProperty("geschlecht").setValue(row.getString("Geschlecht"));
 						schauHundItem.getItemProperty("zuechter").setValue(row.getString("Zuechter"));
+						schauHundItem.getItemProperty("mitglied").setValue(row.getBoolean("Vereinsmitglied") ? "J" : "N");
 
 						if (!(row.getInt("Numerierung") == null)) {
 							schauHundItem.getItemProperty("platzierung").setValue(row.getInt("Numerierung").toString());

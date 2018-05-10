@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <!DOCTYPE ivy-module [
-	<!ENTITY vaadin.version "8.1.0.alpha6">
+	<!ENTITY vaadin.version "8.1.5" >
+	<!ENTITY itext.version "7.1.0">
+	
 ]>  
 <ivy-module version="2.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -21,6 +23,8 @@
 		<dependency org="com.vaadin" name="vaadin-server" rev="&vaadin.version;" />
 		<dependency org="com.vaadin" name="vaadin-compatibility-server" rev="&vaadin.version;" />
 
+		<dependency org="com.vaadin" name="vaadin-compatibility-shared" rev="&vaadin.version;" />
+
 		<!-- Vaadin themes -->
 		<dependency org="com.vaadin" name="vaadin-themes" rev="&vaadin.version;" />
 		<dependency org="com.vaadin" name="vaadin-compatibility-themes" rev="&vaadin.version;" />
@@ -36,7 +40,14 @@
 		<dependency org="javax.servlet" name="javax.servlet-api" rev="3.0.1" conf="nodeploy->default" />
 
 		<!-- itextpdf - drucken -->
-		<dependency org="com.itextpdf" name="itextpdf" rev="5.1.1"/>
+		<!--<dependency org="com.itextpdf" name="itextpdf" rev="5.1.1"/> -->
+		<dependency org="com.itextpdf" name="kernel" rev="&itext.version;"/>
+		<dependency org="com.itextpdf" name="io" rev="&itext.version;"/>
+		<dependency org="com.itextpdf" name="layout" rev="&itext.version;"/>
+		<dependency org="com.itextpdf" name="forms" rev="&itext.version;"/>
+		<dependency org="com.itextpdf" name="pdfa" rev="&itext.version;"/>
+		<dependency org="com.itextpdf" name="sign" rev="&itext.version;"/>
+		<dependency org="com.itextpdf" name="forms" rev="&itext.version;"/>
 		
 		<dependency org="org.peimari"  name="maddon"  rev="1.21" />
 		
@@ -47,9 +58,9 @@
 		<!-- filtertable -->
 		<dependency org="org.vaadin.addons" name="googleanalyticstracker" rev="2.1.0"/>
 		
-		<dependency org="com.google.gwt" name="gwt-dev" rev="2.8.0-beta1"/>
+		<dependency org="com.google.gwt" name="gwt-dev" rev="2.8.2"/>
 		
-		<dependency org="com.google.gwt" name="gwt-user" rev="2.8.0-beta1"/>
+		<dependency org="com.google.gwt" name="gwt-user" rev="2.8.2"/>
 		
 		<dependency org="com.healthmarketscience.jackcess" name="jackcess" rev="2.1.3"/>
 		

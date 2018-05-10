@@ -21,17 +21,8 @@ public class DBConnectionMicrosoftNeu {
 			String dbPasswort = "1q2w3e4r";
 			
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-			String dbUrl = "";
-
-			if (DashboardUI.getUseLocalUrl()) {
-				dbUrl = "test1";
-			} else if (DashboardUI.getUseProdUrl()) {
-				dbUrl = "prod";
-
-			}
-
 			connect = DriverManager.getConnection(
-					"jdbc:sqlserver://192.168.178.25:1433;databaseName=OERCNeu;user=" + DB_USER + ";password=" + dbPasswort);
+					"jdbc:sqlserver://192.168.178.25:1433;databaseName=OERC;user=" + DB_USER + ";password=" + dbPasswort);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

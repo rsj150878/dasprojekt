@@ -29,9 +29,13 @@ public class ShowKlasse extends ShowRing  {
 	
 		
 	}
+	
+	
+	public int getAnzahl() {
+		return hundeDerKlasse.size();
+	}
 
 	public String getKatalogNummer() {
-		System.out.println("getkatlognummer klasse");
 		return rasse.getRassenLangBezeichnung() + " " + klasse.getShowKlasseLangBezeichnung();
 	}
 	

@@ -39,7 +39,14 @@ public enum VeranstaltungsStufen {
 	WESENSTEST_GRUPPE_6(21, "Wesenstest Gruppe 6", "Wesenstest Gruppe 6", null, VeranstaltungsStationen.WESENSTEST, 17, 18),
 	STUFE_RBP2_2017(22,"RBP2","Retrieverbasisprüfung 2", RBP22017RichterBlatt.class, VeranstaltungsStationen.RBP2_2017, 6,7,8,9,10),
 	STUFE_RBP3_2017(23,"RBP3","Retrieverbasisprüfung 3", RBP32017RichterBlatt.class, VeranstaltungsStationen.RBP3_2017, 6,7,8,9,10),
-;
+	TRAININGS_WT_EINSTEIGER(24, "Einsteiger", "Einstieger", null, null, BewertungEnum.TRAINING_WT_BESTANDEN.id),
+	TRAININGS_WT_LEICHT(25, "Fortgeschritten", "Fortgeschritten", null, null, BewertungEnum.TRAINING_WT_BESTANDEN.id),
+	TRAININGS_WT_MITTEL(26, "Advanced", "Advanced", null, null, BewertungEnum.TRAINING_WT_BESTANDEN.id),
+	JUNGHUNDEPRUEFUNG(27, "Junghundepruefung", "Junghundepruefung", null, null, BewertungEnum.TRAINING_WT_BESTANDEN.id),
+	
+	
+
+	;
 	;
 	
 	private Integer veranstaltungsStufeId;

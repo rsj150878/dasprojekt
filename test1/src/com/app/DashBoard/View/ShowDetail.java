@@ -160,13 +160,15 @@ public class ShowDetail extends CustomComponent {
 		thirdLineLayout.addComponent(createAllgemeinComponent("BIS", "B", "BIS", null, null));
 		thirdLineLayout.addComponent(createAllgemeinComponent("Res.-BIS", "R", "BIS", null, null));
 		thirdLineLayout.addComponent(createAllgemeinComponent("BOD", "B", "BOD", null, null));
+		thirdLineLayout.addComponent(createAllgemeinComponent("Res.-BOD", "R", "BOD", null, null));
+		thirdLineLayout.addComponent(createAllgemeinComponent("3. -BOD", "3", "BOD", null, null));
 
 		if (currentShowItem.getItemProperty("schautyp").getValue().toString().equals("I")) {
 			TabSheet ehrenRingPlatzierungen = new TabSheet();
-			ehrenRingPlatzierungen.addTab(createEhrenRingTab("JÜ"), "Jüngsten");
-			ehrenRingPlatzierungen.addTab(createEhrenRingTab("JU"), "Jugend");
-			ehrenRingPlatzierungen.addTab(createEhrenRingTab("GRP"), "Gruppe 8");
-			ehrenRingPlatzierungen.addTab(createEhrenRingTab("VE"), "Veteran");
+			ehrenRingPlatzierungen.addTab(createEhrenRingTab("JÜ", "platzehrenring"), "Jüngsten");
+			ehrenRingPlatzierungen.addTab(createEhrenRingTab("JU", "platzehrenring"), "Jugend");
+			ehrenRingPlatzierungen.addTab(createEhrenRingTab("GRP", "platzehrenringgruppe"), "Gruppe 8");
+			ehrenRingPlatzierungen.addTab(createEhrenRingTab("VE", "platzehrenring"), "Veteran");
 
 			thirdLineLayout.addComponent(ehrenRingPlatzierungen);
 		} else {
@@ -174,7 +176,7 @@ public class ShowDetail extends CustomComponent {
 			thirdLineLayout.addComponent(createAllgemeinComponent("Bester Jüngster", "J", "bestehrenring", "JÜ", null));
 			thirdLineLayout.addComponent(createAllgemeinComponent("Bester Junghund", "B", "bestehrenring", "JU", null));
 			thirdLineLayout
-					.addComponent(createAllgemeinComponent("Bester Gebrauchshund", "G", "bestehrenring", "GK", null));
+					.addComponent(createAllgemeinComponent("Bester Gebrauchshund", "G", "bestehrenring", "GB", null));
 			thirdLineLayout.addComponent(createAllgemeinComponent("Bester Veteran", "V", "bestehrenring", "VE", null));
 
 		}
@@ -182,7 +184,7 @@ public class ShowDetail extends CustomComponent {
 		return thirdLineLayout;
 	}
 
-	private VerticalLayout createEhrenRingTab(String klasse) {
+	private VerticalLayout createEhrenRingTab(String klasse, String fieldName) {
 		VerticalLayout ehrenRingLayout = new VerticalLayout();
 		ehrenRingLayout.setWidth("100%");
 		ehrenRingLayout.setHeight("100%");
@@ -190,11 +192,11 @@ public class ShowDetail extends CustomComponent {
 		ehrenRingLayout.setSpacing(true);
 		;
 
-		ehrenRingLayout.addComponent(createAllgemeinComponent("1. Platz", "1", "platzehrenring", klasse, null));
-		ehrenRingLayout.addComponent(createAllgemeinComponent("2. Platz", "2", "platzehrenring", klasse, null));
-		ehrenRingLayout.addComponent(createAllgemeinComponent("3. Platz", "3", "platzehrenring", klasse, null));
-		ehrenRingLayout.addComponent(createAllgemeinComponent("4. Platz", "4", "platzehrenring", klasse, null));
-		ehrenRingLayout.addComponent(createAllgemeinComponent("5. Platz", "5", "platzehrenring", klasse, null));
+		ehrenRingLayout.addComponent(createAllgemeinComponent("1. Platz", "1", fieldName, klasse, null));
+		ehrenRingLayout.addComponent(createAllgemeinComponent("2. Platz", "2", fieldName, klasse, null));
+		ehrenRingLayout.addComponent(createAllgemeinComponent("3. Platz", "3", fieldName, klasse, null));
+		ehrenRingLayout.addComponent(createAllgemeinComponent("4. Platz", "4", fieldName, klasse, null));
+		ehrenRingLayout.addComponent(createAllgemeinComponent("5. Platz", "5", fieldName, klasse, null));
 
 		return ehrenRingLayout;
 	}
@@ -243,8 +245,8 @@ public class ShowDetail extends CustomComponent {
 
 					if (!(klasse == null)) {
 						if (klasse.equals("GRP")) {
-							klassenFilter = new Or(new Equal("klasse", "ZK"), new Equal("klasse", "OF"),
-									new Equal("klasse", "GK"), new Equal("klasse", "CH"));
+							klassenFilter = new Or(new Equal("klasse", "JU"), new Equal("klasse", "ZK"), new Equal("klasse", "OF"),
+									new Equal("klasse", "GK"), new Equal("klasse", "CH"), new Equal("klasse", "VE"));
 						} else {
 							klassenFilter = new Equal("klasse", klasse);
 						}
@@ -300,8 +302,8 @@ public class ShowDetail extends CustomComponent {
 			Filter klassenFilter = null;
 			if (!(klasse == null)) {
 				if (klasse.equals("GRP")) {
-					klassenFilter = new Or(new Equal("klasse", "ZK"), new Equal("klasse", "OF"),
-							new Equal("klasse", "GK"), new Equal("klasse", "CH"));
+					klassenFilter = new Or(new Equal("klasse", "JU"), new Equal("klasse", "ZK"), new Equal("klasse", "OF"),
+							new Equal("klasse", "GK"), new Equal("klasse", "CH"), new Equal("klasse", "VE"));
 				} else {
 					klassenFilter = new Equal("klasse", klasse);
 				}

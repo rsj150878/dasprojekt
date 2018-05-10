@@ -1,32 +1,34 @@
 package com.app.printClasses;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
-import java.util.Set;
+import java.util.Map;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import com.app.dbIO.DBConnection;
 import com.app.service.TemporaryFileDownloadResource;
-import com.itextpdf.text.pdf.AcroFields;
-import com.itextpdf.text.pdf.BaseFont;
-import com.itextpdf.text.pdf.PdfCopyFields;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStamper;
+import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.PdfPageFormCopier;
+import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.v7.data.Item;
 import com.vaadin.v7.data.util.filter.Compare.Equal;
 import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.v7.data.util.sqlcontainer.query.OrderBy;
 import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 
 public class BGH1RichterBlatt extends CustomComponent {
 
 	private PdfReader reader;
-	private PdfStamper stamper;
 	private FileOutputStream fos;
 	/** The original PDF file. */
 	public static final String DATASHEET = "files/BGH1-NEU_FORMULAR.pdf";
@@ -45,23 +47,7 @@ public class BGH1RichterBlatt extends CustomComponent {
 
 	public BGH1RichterBlatt(Item veranstaltung, Item veranstaltungsStufe) {
 
-		try {
-			reader = new PdfReader(DATASHEET);
-			// Get the fields from the reader (read-only!!!)
-			AcroFields form = reader.getAcroFields();
-			// Loop over the fields and get info about them
-			Set<String> fields = form.getFields().keySet();
-			for (String key : fields) {
-				System.out.println(key);
-
-			}
-
-		} catch (Exception ee) {
-
-		}
-
-		q3 = new TableQuery("veranstaltungs_teilnehmer",
-				DBConnection.INSTANCE.getConnectionPool());
+		q3 = new TableQuery("veranstaltungs_teilnehmer", DBConnection.INSTANCE.getConnectionPool());
 		q3.setVersionColumn("version");
 
 		q4 = new TableQuery("person", DBConnection.INSTANCE.getConnectionPool());
@@ -76,33 +62,21 @@ public class BGH1RichterBlatt extends CustomComponent {
 			hundContainer = new SQLContainer(q5);
 			teilnehmerContainer = new SQLContainer(q3);
 
-			teilnehmerContainer
-					.addContainerFilter(new Equal("id_stufe",
-							veranstaltungsStufe.getItemProperty("id_stufe")
-									.getValue()));
+			teilnehmerContainer.addContainerFilter(
+					new Equal("id_stufe", veranstaltungsStufe.getItemProperty("id_stufe").getValue()));
+
+			teilnehmerContainer.addOrderBy(new OrderBy("startnr", true));
 
 			mainLayout = new AbsoluteLayout();
 			mainLayout.setWidth("100%");
 			mainLayout.setHeight("100%");
 			setCompositionRoot(mainLayout);
 
-			fos = new FileOutputStream(RESULT);
-			PdfCopyFields copy = new PdfCopyFields(fos);
-			copy.open();
-
-			for (Object id : teilnehmerContainer.getItemIds()) {
-				PdfReader zwReader = new PdfReader(bauPdf(veranstaltung,
-						veranstaltungsStufe, teilnehmerContainer.getItem(id)));
-				copy.addDocument(zwReader);
-				zwReader.close();
-			}
-
-			copy.close();
+			bauPdf(veranstaltung, veranstaltungsStufe);
 
 			TemporaryFileDownloadResource s = null;
 			try {
-				s = new TemporaryFileDownloadResource(RESULT,
-						"application/pdf", new File(RESULT));
+				s = new TemporaryFileDownloadResource(RESULT, "application/pdf", new File(RESULT));
 			} catch (final FileNotFoundException e) {
 
 			}
@@ -115,156 +89,109 @@ public class BGH1RichterBlatt extends CustomComponent {
 		}
 	}
 
-	private byte[] bauPdf(Item veranstaltung, Item veranstaltungsStufe,
-			Item teilnehmerItem) throws Exception {
+	private void bauPdf(Item veranstaltung, Item veranstaltungsStufe) throws Exception {
 
-		PdfReader reader = new PdfReader(DATASHEET);
-		// fos = new FileOutputStream(RESULT);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		stamper = new PdfStamper(reader, baos);
-		AcroFields fields = stamper.getAcroFields();
+		PdfDocument pdfDoc = new PdfDocument(new PdfWriter(RESULT));
+		pdfDoc.initializeOutlines();
 
-		BaseFont unicode = BaseFont.createFont(FONT, BaseFont.IDENTITY_H,
-				BaseFont.EMBEDDED);
-		fields.addSubstitutionFont(unicode);
+		ByteArrayOutputStream baos;
+		PdfDocument pdfInnerDoc;
+		Map<String, PdfFormField> fields;
+		PdfAcroForm form;
+		for (Object id : teilnehmerContainer.getItemIds()) {
 
-		hundContainer.addContainerFilter(new Equal("idhund", teilnehmerItem
-				.getItemProperty("id_hund").getValue()));
+			Item teilnehmerItem = teilnehmerContainer.getItem(id);
+			// create a PDF in memory
+			baos = new ByteArrayOutputStream();
+			pdfInnerDoc = new PdfDocument(new PdfReader(DATASHEET), new PdfWriter(baos));
+			form = PdfAcroForm.getAcroForm(pdfInnerDoc, true);
+			fields = form.getFormFields();
+			hundContainer.addContainerFilter(new Equal("idhund", teilnehmerItem.getItemProperty("id_hund").getValue()));
 
-		personContainer.addContainerFilter(new Equal("idperson", teilnehmerItem
-				.getItemProperty("id_person").getValue()));
+			personContainer
+					.addContainerFilter(new Equal("idperson", teilnehmerItem.getItemProperty("id_person").getValue()));
 
-		fields.setField("Prüfungsleiter",
-				veranstaltung.getItemProperty("veranstaltungsleiter")
-						.getValue().toString());
-		
-		SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd.MM.yyyy");
-		fields.setField("Prüfung am", dateFormat1.format(veranstaltung
-				.getItemProperty("datum").getValue()));
-		fields.setField("Veranstaltung am", dateFormat1.format(veranstaltung
-				.getItemProperty("datum").getValue()));
+			fields.get("Prüfungsleiter")
+					.setValue(veranstaltung.getItemProperty("veranstaltungsleiter").getValue().toString());
 
-		
-		fields.setField("Rasse",
-				hundContainer.getItem(hundContainer.firstItemId())
-						.getItemProperty("rasse").getValue().toString());
-		fields.setField("Verbandsverein", "Österreichischer Retrieverclub");
+			SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd.MM.yyyy");
+			fields.get("Prüfung am").setValue(dateFormat1.format(veranstaltung.getItemProperty("datum").getValue()));
+			fields.get("Veranstaltung am")
+					.setValue(dateFormat1.format(veranstaltung.getItemProperty("datum").getValue()));
 
-		if (!(hundContainer.getItem(hundContainer.firstItemId())
-				.getItemProperty("zuchtbuchnummer").getValue() == null)) {
-			fields.setField("Zuchtbuch / Reg.-Nr",
-					hundContainer.getItem(hundContainer.firstItemId())
-							.getItemProperty("zuchtbuchnummer").getValue()
-							.toString());
+			fields.get("Rasse").setValue(
+					hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("rasse").getValue().toString());
+
+			if (!(hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("zuchtbuchnummer")
+					.getValue() == null)) {
+				fields.get("Zuchtbuch / Reg.-Nr").setValue(hundContainer.getItem(hundContainer.firstItemId())
+						.getItemProperty("zuchtbuchnummer").getValue().toString());
+			}
+			fields.get("Name des Hundes").setValue(hundContainer.getItem(hundContainer.firstItemId())
+					.getItemProperty("zwingername").getValue().toString());
+
+			fields.get("Name des Hundes_2").setValue(hundContainer.getItem(hundContainer.firstItemId())
+					.getItemProperty("zwingername").getValue().toString());
+
+			fields.get("Wurftag").setValue(dateFormat1.format(
+					hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("wurfdatum").getValue()));
+
+			fields.get("Mikrochip").setValue(hundContainer.getItem(hundContainer.firstItemId())
+					.getItemProperty("chipnummer").getValue().toString());
+			fields.get("Mikrochip_2").setValue(hundContainer.getItem(hundContainer.firstItemId())
+					.getItemProperty("chipnummer").getValue().toString());
+
+			fields.get("Kat.Nr").setValue(teilnehmerItem.getItemProperty("startnr").getValue().toString());
+			fields.get("Kat.Nr_2").setValue(teilnehmerItem.getItemProperty("startnr").getValue().toString());
+
+			if (teilnehmerItem.getItemProperty("hundefuehrer").getValue() != null) {
+
+				fields.get("Name des Hundeführers")
+						.setValue(teilnehmerItem.getItemProperty("hundefuehrer").getValue().toString());
+				fields.get("Name des Hundeführers_2")
+						.setValue(teilnehmerItem.getItemProperty("hundefuehrer").getValue().toString());
+			} else {
+				fields.get("Name des Hundeführers")
+						.setValue(personContainer.getItem(personContainer.firstItemId()).getItemProperty("nachname")
+								.getValue().toString() + " "
+								+ personContainer.getItem(personContainer.firstItemId()).getItemProperty("vorname")
+										.getValue().toString()
+
+				);
+				fields.get("Name des Hundeführers_2")
+						.setValue(personContainer.getItem(personContainer.firstItemId()).getItemProperty("nachname")
+								.getValue().toString() + " "
+								+ personContainer.getItem(personContainer.firstItemId()).getItemProperty("vorname")
+										.getValue().toString()
+
+				);
+			}
+
+			fields.get("Geschlecht").setValue(hundContainer.getItem(hundContainer.firstItemId())
+					.getItemProperty("geschlecht").getValue().toString());
+
+			fields.get("Veranstalter").setValue(veranstaltung.getItemProperty("veranstalter").getValue().toString());
+			fields.get("Leistungsrichter  B").setValue(veranstaltung.getItemProperty("richter").getValue().toString());
+
+			fields.get("Prüfung in").setValue(veranstaltung.getItemProperty("veranstaltungsort").getValue().toString());
+			fields.get("Veranstaltung in_2")
+					.setValue(veranstaltung.getItemProperty("veranstaltungsort").getValue().toString());
+
+			hundContainer.removeAllContainerFilters();
+			personContainer.removeAllContainerFilters();
+
+			hundContainer.removeAllContainerFilters();
+			personContainer.removeAllContainerFilters();
+
+			form.flattenFields();
+			pdfInnerDoc.close();
+
+			pdfInnerDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())));
+			pdfInnerDoc.copyPagesTo(1, pdfInnerDoc.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
+			pdfInnerDoc.close();
 		}
-		fields.setField("Name des Hundes",
-				hundContainer.getItem(hundContainer.firstItemId())
-						.getItemProperty("zwingername").getValue().toString());
 
-		fields.setField("Name des Hundes_2",
-				hundContainer.getItem(hundContainer.firstItemId())
-						.getItemProperty("zwingername").getValue().toString());
-
-		fields.setField(
-				"Wurftag",
-				dateFormat1.format(hundContainer
-						.getItem(hundContainer.firstItemId())
-						.getItemProperty("wurfdatum").getValue()));
-
-		fields.setField("Mikrochip",
-				hundContainer.getItem(hundContainer.firstItemId())
-						.getItemProperty("chipnummer").getValue().toString());
-		fields.setField("Mikrochip_2",
-				hundContainer.getItem(hundContainer.firstItemId())
-						.getItemProperty("chipnummer").getValue().toString());
-
-		if (teilnehmerItem.getItemProperty("hundefuehrer").getValue() != null) {
-
-			fields.setField("Name des Hundeführers", teilnehmerItem
-					.getItemProperty("hundefuehrer").getValue().toString());
-			fields.setField("Name des Hundeführers_2", teilnehmerItem
-					.getItemProperty("hundefuehrer").getValue().toString());
-		} else {
-			fields.setField(
-					"Name des Hundeführers",
-					personContainer.getItem(personContainer.firstItemId())
-							.getItemProperty("nachname").getValue().toString()
-							+ " "
-							+ personContainer
-									.getItem(personContainer.firstItemId())
-									.getItemProperty("vorname").getValue()
-									.toString()
-
-			);
-			fields.setField(
-					"Name des Hundeführers_2",
-					personContainer.getItem(personContainer.firstItemId())
-							.getItemProperty("nachname").getValue().toString()
-							+ " "
-							+ personContainer
-									.getItem(personContainer.firstItemId())
-									.getItemProperty("vorname").getValue()
-									.toString()
-
-			);
-		}
-
-		fields.setField("Geschlecht",
-				hundContainer.getItem(hundContainer.firstItemId())
-						.getItemProperty("geschlecht").getValue().toString());
-
-		fields.setField("Ortsgruppe", "Retriever in Ebreichsdorf");
-		fields.setField("Veranstalter",
-				veranstaltung.getItemProperty("veranstalter").getValue()
-						.toString());
-		fields.setField("Leistungsrichter  B",
-				veranstaltung.getItemProperty("richter").getValue().toString());
-
-		fields.setField("Prüfung in",
-				veranstaltung.getItemProperty("veranstaltungsort").getValue()
-						.toString());
-		fields.setField("Veranstaltung in_2",
-				veranstaltung.getItemProperty("veranstaltungsort").getValue()
-						.toString());
-
-		hundContainer.removeAllContainerFilters();
-		personContainer.removeAllContainerFilters();
-
-		stamper.close();
-		reader.close();
-		return baos.toByteArray();
+		pdfDoc.close();
 	}
-	// Prüfungsleiter
-	// Prüfung am
-	// Name des Hundes_2
-	// Los Nr
-	// Rasse
-	// Name des Hundes
-	// TätowierNr_2
-	// Wurftag
-	// Kat.Nr_2
-	// Kat.Nr
-	// Name des Hundeführers
-	// Tätowier-Nr
-	// Geschlecht
-	// Zuchtbuch / Reg.-Nr
-	// Veranstaltung am
-	// Veranstalter
-	// Leistungsrichter B
-	// Prüfung in
-	// Mikrochip
-	// Name des Hundeführers_2
-	// Los Nr_2
-	// Veranstaltung in_2
-	// Mikrochip_2
-
-	// PdfReader reader = new PdfReader(DATASHEET);
-	// // Get the fields from the reader (read-only!!!)
-	// AcroFields form = reader.getAcroFields();
-	// // Loop over the fields and get info about them
-	// Set<String> fields = form.getFields().keySet();
-	// for (String key : fields) {
-	// System.out.println(key);
-	// }
 
 }

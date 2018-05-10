@@ -15,6 +15,8 @@ import com.app.enumPackage.VeranstaltungsStufen;
 import com.app.enumPackage.VeranstaltungsTypen;
 import com.app.printClasses.BHMeldeBlatt;
 import com.app.printClasses.BewertungsListeNeu;
+import com.app.printClasses.JungHundePruefung2017;
+import com.app.printClasses.StarterListe;
 import com.app.printClasses.Urkunde;
 import com.app.printClasses.UrkundeTrainingsWorkingtest;
 import com.app.printClasses.WesentestBewertungsblatt;
@@ -170,7 +172,7 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent implements Quer
 
 		Panel secondLine = new Panel();
 
-		secondLineLayout = new GridLayout(5, 3);
+		secondLineLayout = new GridLayout(5, 4);
 		secondLineLayout.setWidth("100%");
 		secondLineLayout.setHeight("100%");
 
@@ -302,7 +304,90 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent implements Quer
 			secondLineLayout.addComponent(showUebertrag, 4, 2, 4, 2);
 			;
 		}
+		
+		Button printStarterListe = new Button();
+		printStarterListe.setCaption("Starterliste Extern");
+		printStarterListe.addStyleName(ValoTheme.BUTTON_SMALL);
+		printStarterListe.addClickListener(new ClickListener() {
 
+			@Override
+			public void buttonClick(ClickEvent event) {
+				if (!(currentPrintComponent == null)) {
+					secondLineLayout.removeComponent(currentPrintComponent);
+				}
+
+				StarterListe starterListe = new StarterListe(currentVeranstaltungsItem,false);
+				secondLineLayout.addComponent(starterListe);
+				currentPrintComponent = starterListe;
+			}
+
+		});
+		secondLineLayout.addComponent(printStarterListe, 0, 3);
+		
+		Button printStarterListeIntern = new Button();
+		printStarterListeIntern.setCaption("Starterliste Intern");
+		printStarterListeIntern.addStyleName(ValoTheme.BUTTON_SMALL);
+		printStarterListeIntern.addClickListener(new ClickListener() {
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				if (!(currentPrintComponent == null)) {
+					secondLineLayout.removeComponent(currentPrintComponent);
+				}
+
+				StarterListe starterListe = new StarterListe(currentVeranstaltungsItem,true);
+				secondLineLayout.addComponent(starterListe);
+				currentPrintComponent = starterListe;
+			}
+
+		});
+		
+		secondLineLayout.addComponent(printStarterListeIntern, 1, 3);
+		
+		if (defTyp.equals(VeranstaltungsTypen.JUNGHUNDEPRUEFUNG)) {
+
+			Button jungHundePruefungKurz = new Button();
+			jungHundePruefungKurz.setCaption("Urkunde kurz");
+			jungHundePruefungKurz.addStyleName(ValoTheme.BUTTON_SMALL);
+			jungHundePruefungKurz.addClickListener(new ClickListener() {
+
+				@Override
+				public void buttonClick(ClickEvent event) {
+					if (!(currentPrintComponent == null)) {
+						secondLineLayout.removeComponent(currentPrintComponent);
+					}
+
+					JungHundePruefung2017 urkunde = new JungHundePruefung2017(currentVeranstaltungsItem,true);
+					secondLineLayout.addComponent(urkunde);
+					currentPrintComponent = urkunde;
+				}
+
+			});
+			secondLineLayout.addComponent(jungHundePruefungKurz, 2, 3);
+			
+			Button jungHundePruefungLang = new Button();
+			jungHundePruefungLang.setCaption("Urkunde lang");
+			jungHundePruefungLang.addStyleName(ValoTheme.BUTTON_SMALL);
+			jungHundePruefungLang.addClickListener(new ClickListener() {
+
+				@Override
+				public void buttonClick(ClickEvent event) {
+					if (!(currentPrintComponent == null)) {
+						secondLineLayout.removeComponent(currentPrintComponent);
+					}
+
+					JungHundePruefung2017 urkunde = new JungHundePruefung2017(currentVeranstaltungsItem,false);
+					secondLineLayout.addComponent(urkunde);
+					currentPrintComponent = urkunde;
+				}
+
+			});
+			
+			secondLineLayout.addComponent(jungHundePruefungLang, 3, 3);
+
+		}
+		
+		
 		return secondLine;
 	}
 
@@ -472,7 +557,10 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent implements Quer
 					}
 
 					if (defStufe.equals(VeranstaltungsStufen.TRAININGS_WT_ANFAENGER)
-							|| defStufe.equals(VeranstaltungsStufen.TRAININGS_WT_FORTGESCHRITTEN)) {
+							|| defStufe.equals(VeranstaltungsStufen.TRAININGS_WT_FORTGESCHRITTEN) 
+							|| defStufe.equals(VeranstaltungsStufen.TRAININGS_WT_EINSTEIGER)
+							|| defStufe.equals(VeranstaltungsStufen.TRAININGS_WT_LEICHT)
+							|| defStufe.equals(VeranstaltungsStufen.TRAININGS_WT_MITTEL)) {
 						UrkundeTrainingsWorkingtest urkunde = new UrkundeTrainingsWorkingtest(veranstaltung,
 								veranstaltungsStufe);
 						anmeldungsPanelLayout.addComponent(urkunde);

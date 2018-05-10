@@ -1,20 +1,22 @@
 package com.app.printClasses;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
-import java.util.Set;
+import java.util.Map;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import com.app.service.TemporaryFileDownloadResource;
 import com.app.showData.Show;
 import com.app.showData.ShowHund;
-import com.itextpdf.text.pdf.AcroFields;
-import com.itextpdf.text.pdf.BaseFont;
-import com.itextpdf.text.pdf.PdfCopyFields;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStamper;
+import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.PdfPageFormCopier;
+import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.CustomComponent;
@@ -41,17 +43,8 @@ public class ShowBewertungsBlatt extends CustomComponent {
 		setCompositionRoot(mainLayout);
 
 		try {
-			fos = new FileOutputStream(RESULT);
-			PdfCopyFields copy = new PdfCopyFields(fos);
-			copy.open();
 
-			for (int i = 0; i < hund.length; i++) {
-				PdfReader zwReader = new PdfReader(bauPdf(show, hund[i]));
-				copy.addDocument(zwReader);
-				zwReader.close();
-			}
-
-			copy.close();
+			bauPdf(show, hund);
 
 			TemporaryFileDownloadResource s = null;
 			s = new TemporaryFileDownloadResource(RESULT, "application/pdf", new File(RESULT));
@@ -74,7 +67,7 @@ public class ShowBewertungsBlatt extends CustomComponent {
 	// Name Hund#
 	//
 
-	private byte[] bauPdf(Show show, ShowHund hund) throws Exception {
+	private void bauPdf(Show show, ShowHund... hund) throws Exception {
 
 		String vorlage = "";
 		if (show.getSchauTyp().equals("C")) {
@@ -84,145 +77,159 @@ public class ShowBewertungsBlatt extends CustomComponent {
 		} else {
 			vorlage = DATASHEET_IHA;
 		}
-		PdfReader reader = new PdfReader(vorlage);
-		// fos = new FileOutputStream(RESULT);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		PdfStamper stamper = new PdfStamper(reader, baos);
-		stamper.setFormFlattening(true);
-		AcroFields fields = stamper.getAcroFields();
 
-		BaseFont unicode = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-		fields.addSubstitutionFont(unicode);
+		PdfDocument pdfDoc = new PdfDocument(new PdfWriter(RESULT));
+		pdfDoc.initializeOutlines();
 
-		fields.setField("RASSE", hund.getRasse().getRassenLangBezeichnung());
-		
-		if (show.getSchauTyp().equals("W")) {
-			fields.setField("CHIP NR", hund.getChipnummer());
-		} else {
-			fields.setField("KATALOG NR", hund.getKatalognumer());
-			fields.setField("RING NR", hund.getRingNummer());
-		}
-		
-		fields.setField("NAME DES HUNDES", hund.getShowHundName());
-		fields.setField("GESCHLECHT", hund.getGeschlecht());
-		fields.setField("ZUCHTBUCHNUMMER", hund.getZuchtbuchnummer());
-		fields.setField("WURFDATUM", new SimpleDateFormat("dd.MM.yyyy").format(hund.getWurftag()));
-		fields.setField("KLASSE", hund.getKlasse().getShowKlassenKurzBezeichnung());
-		fields.setField("BESITZER", hund.getBesitzershow());
-		fields.setField("DATUM", new SimpleDateFormat("dd.MM.yyyy").format(show.getSchauDate()));
-		fields.setField("BEWERTUNGTEXT", hund.getBewertung());
+		ByteArrayOutputStream baos;
+		PdfDocument pdfInnerDoc;
+		Map<String, PdfFormField> fields;
+		PdfAcroForm form;
 
-		if (!(hund.getFormwert() == null)) {
-			switch (hund.getFormwert()) {
-			case "v":
-				fields.setField("VORZÜGLICH", "On");
-				break;
-			case "sg":
-				fields.setField("SEHR GUT", "On");
-				break;
-			case "g":
-				fields.setField("GUT", "On");
-				break;
-			case "ge":
-				fields.setField("GENÜGEND", "On");
-				break;
-			case "d":
-				fields.setField("DISQUALIFIZIERT", "On");
-				break;
-			case "ob":
-				fields.setField("OHNE BEWERTUNG", "On");
-				break;
-			case "V":
-				fields.setField("VERSPRECHEND", "On");
-				break;
-			case "VV":
-				fields.setField("VIELVERSPRECHEND", "On");
-				break;
-			case "NV":
-				fields.setField("NICHTVERSPRECHEND", "On");
-				break;
-			default:
 
-			}
-		}
+		for (int i = 0; i < hund.length; i++) {
+			baos = new ByteArrayOutputStream();
+			pdfInnerDoc = new PdfDocument(new PdfReader(vorlage), new PdfWriter(baos));
+			form = PdfAcroForm.getAcroForm(pdfInnerDoc, true);
+			fields = form.getFormFields();
 
-		fields.setField(hund.getPlatzierung(), "On");
+			fields.get("RASSE").setValue(hund[i].getRasse().getRassenLangBezeichnung());
 
-		if (!(hund.getCACA() == null)) {
-			switch (hund.getCACA()) {
-			case "J":
-				fields.setField("JUGENDBESTER", "On");
-				break;
-			case "C":
-				fields.setField("CACA", "On");
-				break;
-			case "V":
-				fields.setField("VETERANENSIEGER", "On");
-				break;
-			case "K":
-				fields.setField("OHNE TITEL", "On");
-				break;
-			case "R":
-				fields.setField("RESERVE CACA", "On");
-				break;
-			case "W":
-				break;
-			default:
-
-			}
-		}
-
-		if (!(hund.getHundfehlt() == null) && hund.getHundfehlt().equals("J")) {
-			fields.setField("HUND FEHLT", "On");
-		}
-
-		if (!(hund.getBOB() == null)) {
-			switch (hund.getBOB()) {
-			case "B":
-				fields.setField("BOB", "On");
-				break;
-			case "O":
-				fields.setField("BOS", "On");
-				break;
-			default:
-			}
-		}
-
-		if (!(hund.getClubsieger() == null)) {
-			switch (hund.getClubsieger()) {
-			case "J":
-				fields.setField("KLUBJUGENDSIEGER", "On");
-				break;
-			case "C":
-				fields.setField("KLUBSIEGER", "On");
-				break;
-			case "V":
-				fields.setField("KLUBVETERANENSIEGER", "On");
-				break;
-			default:
+			if (show.getSchauTyp().equals("W")) {
+				fields.get("CHIP NR").setValue(hund[i].getChipnummer());
+			} else {
+				fields.get("KATALOG NR").setValue(hund[i].getKatalognumer());
+				fields.get("RING NR").setValue(hund[i].getRingNummer());
 			}
 
-		}
+			fields.get("NAME DES HUNDES").setValue(hund[i].getShowHundName());
+			fields.get("GESCHLECHT").setValue(hund[i].getGeschlecht());
+			fields.get("ZUCHTBUCHNUMMER").setValue(hund[i].getZuchtbuchnummer());
+			fields.get("WURFDATUM").setValue(new SimpleDateFormat("dd.MM.yyyy").format(hund[i].getWurftag()));
+			fields.get("KLASSE").setValue(hund[i].getKlasse().getShowKlassenKurzBezeichnung());
+			fields.get("BESITZER").setValue(hund[i].getBesitzershow());
+			fields.get("DATUM").setValue(new SimpleDateFormat("dd.MM.yyyy").format(show.getSchauDate()));
+			fields.get("BEWERTUNGTEXT").setValue(hund[i].getBewertung() == null ? " " :hund[i].getBewertung());
 
-		if (!(hund.getCACIB() == null)) {
-			switch (hund.getCACIB()) {
-			case "C":
-				fields.setField("CACIB", "On");
-				break;
-			case "R":
-				fields.setField("RESERVE CACIB", "On");
-				break;
-			default:
+			if (!(hund[i].getFormwert() == null)) {
+				switch (hund[i].getFormwert()) {
+				case "v":
+					fields.get("VORZÜGLICH").setValue("On");
+					break;
+				case "sg":
+					fields.get("SEHR GUT").setValue("On");
+					break;
+				case "g":
+					fields.get("GUT").setValue("On");
+					break;
+				case "ge":
+					fields.get("GENÜGEND").setValue("On");
+					break;
+				case "d":
+					fields.get("DISQUALIFIZIERT").setValue("On");
+					break;
+				case "ob":
+					fields.get("OHNE BEWERTUNG").setValue("On");
+					break;
+				case "V":
+					fields.get("VERSPRECHEND").setValue("On");
+					break;
+				case "VV":
+					fields.get("VIELVERSPRECHEND").setValue("On");
+					break;
+				case "NV":
+					fields.get("NICHTVERSPRECHEND").setValue("On");
+					break;
+				default:
+
+				}
 			}
+
+			if (!(hund[i].getPlatzierung() == null )) {
+			
+				fields.get(hund[i].getPlatzierung()).setValue("On");
+			}
+
+			if (!(hund[i].getCACA() == null)) {
+				switch (hund[i].getCACA()) {
+				case "J":
+					fields.get("JUGENDBESTER").setValue("On");
+					break;
+				case "C":
+					fields.get("CACA").setValue("On");
+					break;
+				case "V":
+					fields.get("VETERANENSIEGER").setValue("On");
+					break;
+				case "K":
+					fields.get("OHNE TITEL").setValue("On");
+					break;
+				case "R":
+					fields.get("RESERVE CACA").setValue("On");
+					break;
+				case "W":
+					break;
+				default:
+
+				}
+			}
+
+			if (!(hund[i].getHundfehlt() == null) && hund[i].getHundfehlt().equals("J")) {
+				fields.get("HUND FEHLT").setValue("On");
+			}
+
+			if (!(hund[i].getBOB() == null)) {
+				switch (hund[i].getBOB()) {
+				case "B":
+					fields.get("BOB").setValue("On");
+					break;
+				case "O":
+					fields.get("BOS").setValue("On");
+					break;
+				default:
+				}
+			}
+
+			if (!(hund[i].getClubsieger() == null)) {
+				switch (hund[i].getClubsieger()) {
+				case "J":
+					fields.get("KLUBJUGENDSIEGER").setValue("On");
+					break;
+				case "C":
+					fields.get("KLUBSIEGER").setValue("On");
+					break;
+				case "V":
+					fields.get("KLUBVETERANENSIEGER").setValue("On");
+					break;
+				default:
+				}
+
+			}
+
+			if (!(hund[i].getCACIB() == null)) {
+				switch (hund[i].getCACIB()) {
+				case "C":
+					fields.get("CACIB").setValue("On");
+					break;
+				case "R":
+					fields.get("RESERVE CACIB").setValue("On");
+					break;
+				default:
+				}
+			}
+
+			fields.get("NAME DES RICHTERS").setValue(hund[i].getRichter());
+
+			fields.get("TITEL").setValue(show.getSchaubezeichnung());
+
+			form.flattenFields();
+			pdfInnerDoc.close();
+
+			pdfInnerDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())));
+			pdfInnerDoc.copyPagesTo(1, pdfInnerDoc.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
+			pdfInnerDoc.close();
 		}
-
-		fields.setField("NAME DES RICHTERS", hund.getRichter());
-
-		fields.setField("TITEL", show.getSchaubezeichnung());
-
-		stamper.close();
-		reader.close();
-		return baos.toByteArray();
+		pdfDoc.close();
 
 	}
 }

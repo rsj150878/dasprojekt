@@ -6,6 +6,7 @@ import java.util.Date;
 
 import com.app.DashBoard.Event.DashBoardEvent.NeueVeranstaltung;
 import com.app.DashBoard.Event.DashBoardEvent.ReportsCountUpdatedEvent;
+import com.app.Auth.User;
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.dbIO.DBConnection;
 import com.app.enumPackage.VeranstaltungsTypen;
@@ -15,6 +16,7 @@ import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.MouseEventDetails.MouseButton;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
@@ -136,8 +138,15 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 		// allDrafts.addComponent(titleAndDrafts);
 		// allDrafts
 		// .setComponentAlignment(titleAndDrafts, Alignment.MIDDLE_CENTER);
-		allDrafts.addComponent(buildCreateBox());
+		
+		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 
+		if (user.getRole().contains("admin")
+				//|| (!(view.getRollen() == null) && (user.getRole().contains(view.getRollen())))
+				) {
+			allDrafts.addComponent(buildCreateBox());
+		}
+	
 		buildDraftsList(allDrafts);
 
 		draftsPanel.setContent(allDrafts);
@@ -441,6 +450,8 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 		private Button newBgh = new Button("BH/BGH");
 		private Button newWt = new Button("Train-Wt");
 		private Button newWesensTest = new Button("Wesenstest");
+		private Button newJungHundePruefung = new Button("JunghundePrüfung");
+
 
 		public PopupTextFieldContent() {
 
@@ -483,13 +494,19 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 
 			layout.addComponent(newWt);
 			layout.setComponentAlignment(newWt, Alignment.MIDDLE_CENTER);
-			newWt.setData(VeranstaltungsTypen.TRAIN_WT);
+			newWt.setData(VeranstaltungsTypen.TRAIN_WT_2017);
 			newWt.addClickListener(listener);
 
 			layout.addComponent(newWesensTest);
 			layout.setComponentAlignment(newWesensTest, Alignment.MIDDLE_CENTER);
 			newWesensTest.setData(VeranstaltungsTypen.WESENSTEST);
 			newWesensTest.addClickListener(listener);
+			
+			layout.addComponent(newJungHundePruefung);
+			layout.setComponentAlignment(newJungHundePruefung, Alignment.MIDDLE_CENTER);
+			newJungHundePruefung.setData(VeranstaltungsTypen.JUNGHUNDEPRUEFUNG);
+			newJungHundePruefung.addClickListener(listener);
+
 
 			menuPanel.setContent(layout);
 		}

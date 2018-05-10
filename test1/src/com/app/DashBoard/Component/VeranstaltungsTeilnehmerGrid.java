@@ -152,7 +152,7 @@ public class VeranstaltungsTeilnehmerGrid extends Grid {
 		setContainerDataSource(cpContainer);
 
 		setColumns("teilnehmerperson", "teilnehmerhund", "bezahlt", "bestanden", "delete", "ges_punkte",
-				"sonderwertung", "hundefuehrer");
+				"startnr", "platzierung","sonderwertung", "hundefuehrer");
 		
 		CheckBox bezahlt = new CheckBox();
 		//bezahlt.setConvertedValue("J");
@@ -212,8 +212,19 @@ public class VeranstaltungsTeilnehmerGrid extends Grid {
 			TextField gesPunkte = new TextField();
 			getColumn("ges_punkte").setEditorField(gesPunkte);
 			gesPunkte.addValueChangeListener(e -> txContainer.specialCommit() );
+			
+		
 
 		}
+		
+		TextField platzierung = new TextField();
+		getColumn("platzierung").setEditorField(platzierung);
+		platzierung.addValueChangeListener(e -> txContainer.specialCommit() );
+
+		TextField startnr = new TextField();
+		getColumn("startnr").setEditorField(startnr);
+		startnr.addValueChangeListener(e -> txContainer.specialCommit() );
+
 
 		// getColumn("").getEditorField().setp
 
@@ -426,6 +437,8 @@ public class VeranstaltungsTeilnehmerGrid extends Grid {
 			newItem.getItemProperty("bestanden").setValue("N");
 			newItem.getItemProperty("formwert").setValue(formWert);
 			newItem.getItemProperty("gruppe").setValue(gruppe);
+			newItem.getItemProperty("platzierung").setValue(0);
+			newItem.getItemProperty("startnr").setValue(0);;
 
 			try {
 				veranstaltungsTeilnehmerContainer.commit();

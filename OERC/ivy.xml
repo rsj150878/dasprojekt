@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ivy-module [
-	<!ENTITY vaadin.version "8.0.0">
+	<!ENTITY vaadin.version "8.1.5">
+		<!ENTITY itext.version "7.0.4">
 ]>
 <ivy-module version="2.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -49,6 +50,40 @@
 			rev="&vaadin.version;" conf="widgetset-compile->default" />
 			
 				<dependency org="org.vaadin.addons" name="googleanalyticstracker" rev="2.1.0"/>
+	
+		<dependency org="com.google.gwt" name="gwt-dev" rev="2.8.0-beta1"/>
+		
+		<dependency org="com.google.gwt" name="gwt-user" rev="2.8.0-beta1"/>
+		 <dependency org="com.google.guava" name="guava" rev="18.0"/>
+		 
+		<dependency org="org.springframework"
+		    name="spring-core" rev="4.1.2.RELEASE" />
+		 <dependency org="org.springframework"
+		    name="spring-context" rev="4.1.2.RELEASE" conf="widgetset-compile->default"/>
+		     
+		 <dependency org="org.springframework"
+		    name="spring-web" rev="4.1.2.RELEASE" conf="widgetset-compile->default" />
+		     
+		 <dependency org="org.springframework.security"
+		    name="spring-security-core" rev="3.2.5.RELEASE" />
+		 
+		 <dependency org="org.springframework.security"
+		    name="spring-security-web" rev="3.2.5.RELEASE" />
+		 
+		<!-- itextpdf - drucken -->
+		<dependency org="com.itextpdf" name="kernel" rev="&itext.version;"/>
+		<dependency org="com.itextpdf" name="io" rev="&itext.version;"/>
+		<dependency org="com.itextpdf" name="layout" rev="&itext.version;"/>
+		<dependency org="com.itextpdf" name="forms" rev="&itext.version;"/>
+		<dependency org="com.itextpdf" name="pdfa" rev="&itext.version;"/>
+		<dependency org="com.itextpdf" name="sign" rev="&itext.version;"/>
+		<dependency org="com.itextpdf" name="forms" rev="&itext.version;"/>
+	
+		
+		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<dependency org="mysql" name="mysql-connector-java" rev="5.1.6"/>
+		
+		
 	
 	</dependencies>
 </ivy-module>

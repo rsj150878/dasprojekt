@@ -11,7 +11,7 @@ public enum DashBoardViewType {
     MYDOGS("Meine Hunde", MyHundeView.class, VaadinIcons.BAR_CHART, false, null),  
     MITGLIEDER("Mitgliederliste", MitgliederView.class, VaadinIcons.TABLE, false, null),
     EMAILZUSATZ("Emailadresse alt", EmailAdressNewsletterView.class, VaadinIcons.MAILBOX, false, null),
-    VERANSTALTUNG("Veranstaltungen", VeranstaltungsUebersicht.class, VaadinIcons.PARAGRAPH, false, null),
+    VERANSTALTUNG("Veranstaltungen", VeranstaltungsUebersicht.class, VaadinIcons.PARAGRAPH, false, "work"),
     MAILABGLEICH("Mailadressenabgleich", MailReplicateView.class, VaadinIcons.FORWARD, false, null),
     SCHOWIMPORT("SchowDatenImport", ShowImporter.class, VaadinIcons.EXCLAMATION, false, null),
     KURSGRUNDDATEN("KursGrundDaten", KursDetails.class, VaadinIcons.CODE, false, null),
@@ -20,10 +20,10 @@ public enum DashBoardViewType {
     HUNDEIMPORT("Hunde importieren", HundeImport.class, VaadinIcons.TICKET, false, null),
     SCHAUUEBERSICHT("Schauübersicht", ShowUebersicht.class,  VaadinIcons.SHARE, false, null),
     WUERFE("Würfe", WurfUebersicht.class, VaadinIcons.MICROPHONE, false, null),
-    TREE("Der Baum", TestTreeGrid2.class, VaadinIcons.FILE_TREE, false, null),
     SHOWBEWERTUNG("Schaubewertung", ShowBewertungUebersicht.class, VaadinIcons.FILE_TREE, false, "show"),
     SHOWBEWERTUNGKOKMPLETT("PDF Ergebnisse", ShowBewertungDruckUebersicht.class, VaadinIcons.PAPERCLIP, false, "show"),
-    BEZAHLTUNGTEST("TestPaymen", TestPayment.class, VaadinIcons.MONEY, false, null);
+    //BEZAHLTUNGTEST("TestPaymen", TestPayment.class, VaadinIcons.MONEY, false, null);
+    SIGNTEST("TestUnterschrift", SignTestView.class, VaadinIcons.SIGN_IN, false, null)
     ;
  
     private final String viewName;

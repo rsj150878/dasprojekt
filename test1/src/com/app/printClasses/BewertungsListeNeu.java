@@ -13,6 +13,7 @@ import com.vaadin.ui.CustomComponent;
 import com.vaadin.v7.data.Item;
 import com.vaadin.v7.data.util.filter.Compare.Equal;
 import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.v7.data.util.sqlcontainer.query.OrderBy;
 import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 
 import jxl.Workbook;
@@ -66,6 +67,8 @@ public class BewertungsListeNeu extends CustomComponent {
 			teilnehmerContainer.addContainerFilter(new Equal(
 					"id_veranstaltung", veranstaltung.getItemProperty(
 							"id_veranstaltung").getValue()));
+			
+			teilnehmerContainer.addOrderBy(new OrderBy("startnr", true));
 
 			mainLayout = new AbsoluteLayout();
 			mainLayout.setWidth("100%");

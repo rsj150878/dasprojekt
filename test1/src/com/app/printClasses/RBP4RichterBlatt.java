@@ -1,33 +1,32 @@
 package com.app.printClasses;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
-import java.util.Set;
+import java.util.Map;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import com.app.dbIO.DBConnection;
 import com.app.service.TemporaryFileDownloadResource;
-import com.itextpdf.text.pdf.AcroFields;
-import com.itextpdf.text.pdf.BaseFont;
-import com.itextpdf.text.pdf.PdfCopyFields;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStamper;
+import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.PdfPageFormCopier;
+import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.v7.data.Item;
 import com.vaadin.v7.data.util.filter.Compare.Equal;
 import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.v7.data.util.sqlcontainer.query.OrderBy;
 import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 
 public class RBP4RichterBlatt extends CustomComponent {
 
-	private PdfReader reader;
-	private PdfStamper stamper;
-	private FileOutputStream fos;
 	/** The original PDF file. */
 	public static final String DATASHEET = "files/RBP_Richterblatt_RBP4_FORMULAR.pdf";
 	public static final String FONT = "files/arialuni.ttf";
@@ -45,22 +44,7 @@ public class RBP4RichterBlatt extends CustomComponent {
 
 	public RBP4RichterBlatt(Item veranstaltung, Item veranstaltungsStufe) {
 
-		try {
-			reader = new PdfReader(DATASHEET);
-			// Get the fields from the reader (read-only!!!)
-			AcroFields form = reader.getAcroFields();
-			// Loop over the fields and get info about them
-			Set<String> fields = form.getFields().keySet();
-			for (String key : fields) {
-				System.out.println(key);
-
-			}
-
-		} catch (Exception ee) {
-
-		}
-
-		q3 = new TableQuery("veranstaltungs_teilnehmer",
+				q3 = new TableQuery("veranstaltungs_teilnehmer",
 				DBConnection.INSTANCE.getConnectionPool());
 		q3.setVersionColumn("version");
 
@@ -81,25 +65,16 @@ public class RBP4RichterBlatt extends CustomComponent {
 							veranstaltungsStufe.getItemProperty("id_stufe")
 									.getValue()));
 
+			teilnehmerContainer.addOrderBy(new OrderBy("startnr", true));
+
 			mainLayout = new AbsoluteLayout();
 			mainLayout.setWidth("100%");
 			mainLayout.setHeight("100%");
 			setCompositionRoot(mainLayout);
 
-			fos = new FileOutputStream(RESULT);
-			PdfCopyFields copy = new PdfCopyFields(fos);
-			copy.open();
-
-			for (Object id : teilnehmerContainer.getItemIds()) {
-				PdfReader zwReader = new PdfReader(bauPdf(veranstaltung,
-						veranstaltungsStufe, teilnehmerContainer.getItem(id)));
-				copy.addDocument(zwReader);
-				zwReader.close();
-			}
-
-			copy.close();
-
-			TemporaryFileDownloadResource s = null;
+			bauPdf(veranstaltung,
+						veranstaltungsStufe);
+						TemporaryFileDownloadResource s = null;
 			try {
 				s = new TemporaryFileDownloadResource(RESULT,
 						"application/pdf", new File(RESULT));
@@ -115,18 +90,24 @@ public class RBP4RichterBlatt extends CustomComponent {
 		}
 	}
 
-	private byte[] bauPdf(Item veranstaltung, Item veranstaltungsStufe,
-			Item teilnehmerItem) throws Exception {
+	private void bauPdf(Item veranstaltung, Item veranstaltungsStufe) throws Exception {
 
-		PdfReader reader = new PdfReader(DATASHEET);
-		// fos = new FileOutputStream(RESULT);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		stamper = new PdfStamper(reader, baos);
-		AcroFields fields = stamper.getAcroFields();
+		PdfDocument pdfDoc = new PdfDocument(new PdfWriter(RESULT));
+		pdfDoc.initializeOutlines();
 
-		BaseFont unicode = BaseFont.createFont(FONT, BaseFont.IDENTITY_H,
-				BaseFont.EMBEDDED);
-		fields.addSubstitutionFont(unicode);
+		ByteArrayOutputStream baos;
+		PdfDocument pdfInnerDoc;
+		Map<String, PdfFormField> fields;
+		PdfAcroForm form;
+		for (Object id : teilnehmerContainer.getItemIds()) {
+
+			Item teilnehmerItem = teilnehmerContainer.getItem(id);
+			// create a PDF in memory
+			baos = new ByteArrayOutputStream();
+			pdfInnerDoc = new PdfDocument(new PdfReader(DATASHEET), new PdfWriter(baos));
+			form = PdfAcroForm.getAcroForm(pdfInnerDoc, true);
+			fields = form.getFormFields();
+
 
 		hundContainer.addContainerFilter(new Equal("idhund", teilnehmerItem
 				.getItemProperty("id_hund").getValue()));
@@ -135,30 +116,30 @@ public class RBP4RichterBlatt extends CustomComponent {
 				.getItemProperty("id_person").getValue()));
 
 		SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd.MM.yyyy");
-		fields.setField("Datum", dateFormat1.format(veranstaltung
+		fields.get("Datum").setValue( dateFormat1.format(veranstaltung
 				.getItemProperty("datum").getValue()));
 
-		fields.setField("Hund",
+		fields.get("Hund").setValue(
 				hundContainer.getItem(hundContainer.firstItemId())
 						.getItemProperty("zwingername").getValue().toString());
 
-		fields.setField(
-				"Wurftag",
+		fields.get(
+				"Wurftag").setValue(
 				dateFormat1.format(hundContainer
 						.getItem(hundContainer.firstItemId())
 						.getItemProperty("wurfdatum").getValue()));
 
-		fields.setField("Chip- oder Tätonr.:",
+		fields.get("Chip- oder Tätonr.:").setValue(
 				hundContainer.getItem(hundContainer.firstItemId())
 						.getItemProperty("chipnummer").getValue().toString());
 
 		if (teilnehmerItem.getItemProperty("hundefuehrer").getValue() != null) {
 
-			fields.setField("HF", teilnehmerItem
+			fields.get("HF").setValue( teilnehmerItem
 					.getItemProperty("hundefuehrer").getValue().toString());
 		} else {
-			fields.setField(
-					"HF",
+			fields.get(
+					"HF").setValue(
 					personContainer.getItem(personContainer.firstItemId())
 							.getItemProperty("nachname").getValue().toString()
 							+ " "
@@ -170,20 +151,27 @@ public class RBP4RichterBlatt extends CustomComponent {
 			);
 		}
 
-		fields.setField("Geschlecht",
+		fields.get("Geschlecht").setValue(
 				hundContainer.getItem(hundContainer.firstItemId())
 						.getItemProperty("geschlecht").getValue().toString());
 
-		fields.setField("Ort",
+		fields.get("Ort").setValue(
 				veranstaltung.getItemProperty("veranstaltungsort").getValue()
 						.toString());
 
+		fields.get("startnr").setValue(teilnehmerItem.getItemProperty("startnr").getValue().toString());
+
 		hundContainer.removeAllContainerFilters();
 		personContainer.removeAllContainerFilters();
+		form.flattenFields();
+		pdfInnerDoc.close();
 
-		stamper.close();
-		reader.close();
-		return baos.toByteArray();
+		pdfInnerDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())));
+		pdfInnerDoc.copyPagesTo(1, pdfInnerDoc.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
+		pdfInnerDoc.close();
+	}
+
+	pdfDoc.close();
 	}
 
 	// HF

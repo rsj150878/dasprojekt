@@ -1,7 +1,6 @@
 package com.app.printClasses;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.StringJoiner;
@@ -12,17 +11,24 @@ import com.app.enumPackage.ShowKlassen;
 import com.app.service.TemporaryFileDownloadResource;
 import com.app.showData.Show;
 import com.app.showData.ShowHund;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Font.FontFamily;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfPageEventHelper;
-import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Tab;
+import com.itextpdf.layout.element.TabStop;
+import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.TabAlignment;
+import com.itextpdf.layout.property.TextAlignment;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.CustomComponent;
@@ -33,15 +39,17 @@ public class ShowPrintBewertungUebersicht extends CustomComponent {
 	 */
 	private static final long serialVersionUID = -6116930051112975615L;
 
-	//private PdfReader reader;
+	// private PdfReader reader;
 
-	//private FileOutputStream fos;
+	// private FileOutputStream fos;
 	/** The original PDF file. */
 	public static final String FONT = "files/arialuni.ttf";
 
 	public static final String RESULT = "Ergebnisse.pdf";
 
 	private AbsoluteLayout mainLayout;
+
+	static float hundTextFontSize = 12;
 	DBShowNeu db;
 
 	public ShowPrintBewertungUebersicht(Show show, Rassen rasse) {
@@ -55,58 +63,55 @@ public class ShowPrintBewertungUebersicht extends CustomComponent {
 
 		try {
 
-			File result = new File(RESULT);
-			Document document = new Document();
+			String fileResultName = show.getSchaubezeichnung() + " "
+					+ new SimpleDateFormat("dd.MM.yyyy").format(show.getSchauDate()) + "  "
+					+ rasse.getRassenLangBezeichnung() +  ".pdf";
+			fileResultName = fileResultName.replaceAll(" ", "_");
 
-			PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(RESULT));
-			ParagraphBorder border = new ParagraphBorder();
-			writer.setPageEvent(border);
-			document.open();
+			PdfDocument pdf = new PdfDocument(new PdfWriter( fileResultName));
 
-			Font f = new Font(FontFamily.HELVETICA, 25.0f, Font.BOLD); // ,
-																		// BaseColor.RED);
-			Chunk c = new Chunk(show.getSchaubezeichnung(), f);
-			Paragraph paragraph1 = new Paragraph(c);
-			paragraph1.setAlignment(Element.ALIGN_CENTER);
-			paragraph1.setSpacingAfter(10);
+			// Initialize document
+			Document document = new Document(pdf, PageSize.A4);
+			PdfFont bold = PdfFontFactory.createFont(FontConstants.HELVETICA_BOLD);
+			PdfFont standard = PdfFontFactory.createFont(FontConstants.HELVETICA);
+
+			// BaseColor.RED);
+			Text schauBezeichnung = new Text(show.getSchaubezeichnung()).setFont(bold).setFontSize(25)
+					.setHorizontalAlignment(HorizontalAlignment.CENTER);
+			Paragraph paragraph1 = new Paragraph(schauBezeichnung).setTextAlignment(TextAlignment.CENTER);
 			document.add(paragraph1);
 
-			f = new Font(FontFamily.HELVETICA, 16.0f, Font.BOLD, BaseColor.RED);
-			c = new Chunk(rasse.getRassenLangBezeichnung(), f);
-
-			paragraph1 = new Paragraph(c);
-			paragraph1.setAlignment(Element.ALIGN_LEFT);
-			paragraph1.setSpacingAfter(10);
+			Text rassenText = new Text(rasse.getRassenLangBezeichnung()).setFont(bold).setFontSize(16)
+					.setFontColor(ColorConstants.RED);
+			paragraph1 = new Paragraph(rassenText).setTextAlignment(TextAlignment.CENTER);
 			document.add(paragraph1);
 
 			List<String> richter = db.getRichterForRasse(show, rasse);
 			StringJoiner joiner = new StringJoiner(",", "", "");
 
 			richter.forEach(joiner::add);
-			c = new Chunk("   Richter: " + joiner.toString(), f);
-			paragraph1 = new Paragraph(c);
-			paragraph1.setAlignment(Element.ALIGN_LEFT);
-			paragraph1.setSpacingAfter(10);
+			Text richterText = new Text("   Richter: " + joiner.toString()).setFont(bold).setFontSize(16);
+			paragraph1 = new Paragraph(richterText);
 			document.add(paragraph1);
 
 			for (ShowKlassen x : ShowKlassen.values()) {
 				List<ShowHund> hundDerKlassen = db.getHundeForKlasse(show, x, rasse, "R");
 
-				printKlasse(show, document, border, x, hundDerKlassen, "R");
+				printKlasse(show, document, x, hundDerKlassen, "R");
 
 			}
 
 			for (ShowKlassen x : ShowKlassen.values()) {
 				List<ShowHund> hundDerKlassen = db.getHundeForKlasse(show, x, rasse, "H");
 
-				printKlasse(show, document, border, x, hundDerKlassen, "H");
+				printKlasse(show, document, x, hundDerKlassen, "H");
 
 			}
 
 			document.close();
 
 			TemporaryFileDownloadResource s = null;
-			s = new TemporaryFileDownloadResource(RESULT, "application/pdf", result);
+			s = new TemporaryFileDownloadResource(fileResultName, "application/pdf", new File(fileResultName));
 
 			BrowserFrame e = new BrowserFrame("ShowBewertungsBlatt", s);
 			mainLayout.addComponent(e);
@@ -120,79 +125,91 @@ public class ShowPrintBewertungUebersicht extends CustomComponent {
 
 	}
 
-	private void printKlasse(Show show, Document document, ParagraphBorder border, ShowKlassen x,
-			List<ShowHund> hundDerKlassen, String geschlecht) throws DocumentException, Exception {
-		Font f;
-		Chunk c;
-		Paragraph paragraph1;
-		if (hundDerKlassen.size() > 0) {
-			f = new Font(FontFamily.HELVETICA, 16.0f, Font.BOLD);
-			c = new Chunk((geschlecht.equals("R") ? "Rüden - " : "Hündinnen - ") + x.getShowKlasseLangBezeichnung(), f);
-			c.setUnderline(0.1f, -2f);
+	private void printKlasse(Show show, Document document, ShowKlassen x, List<ShowHund> hundDerKlassen,
+			String geschlecht) throws Exception {
 
-			paragraph1 = new Paragraph(c);
-			paragraph1.setAlignment(Element.ALIGN_LEFT);
+		Paragraph paragraph1;
+
+		PdfFont bold = PdfFontFactory.createFont(FontConstants.HELVETICA_BOLD);
+		PdfFont standard = PdfFontFactory.createFont(FontConstants.HELVETICA);
+
+		if (hundDerKlassen.size() > 0) {
+
+			Text geschlechtText = new Text(
+					(geschlecht.equals("R") ? "Rüden - " : "Hündinnen - ") + x.getShowKlasseLangBezeichnung())
+							.setFont(bold).setFontSize(14).setUnderline();
+			paragraph1 = new Paragraph(geschlechtText);
+			paragraph1.setKeepWithNext(true);
 			document.add(paragraph1);
-			
-			
 
 			for (ShowHund hund : hundDerKlassen) {
-				
-				f = new Font(FontFamily.HELVETICA, 16.0f, Font.BOLD);
-				c = new Chunk(hund.getKatalognumer() + " - " + hund.getShowHundName(), f);
 
-				paragraph1 = new Paragraph(c);
-				paragraph1.setAlignment(Element.ALIGN_LEFT);
-				paragraph1.setIndentationLeft(50);
-				document.add(paragraph1);
+				Text hundText = new Text(hund.getKatalognumer() + " - " + hund.getShowHundName()).setFont(bold)
+						.setFontSize(14);
+				Div div = new Div().setKeepTogether(true).setPaddingLeft(50).setSpacingRatio(0.5f).setPaddingBottom(20);
+				paragraph1 = new Paragraph(hundText);
+				// paragraph1.setPaddingLeft(50);
+				paragraph1.setMarginBottom(0);
+				div.add(paragraph1);
 
-				f = new Font(FontFamily.HELVETICA, 12.0f, Font.NORMAL);
-				c = new Chunk("Besitzer: " + hund.getBesitzershow(), f);
-				paragraph1 = new Paragraph(c);
-				paragraph1.setAlignment(Element.ALIGN_LEFT);
-				paragraph1.setIndentationLeft(50);
-				document.add(paragraph1);
+				Text besitzerText = new Text("Besitzer: ").setFont(bold).setFontSize(hundTextFontSize);
+				paragraph1 = new Paragraph(besitzerText);
+				besitzerText = new Text(hund.getBesitzershow()).setFont(standard).setFontSize(hundTextFontSize);
+				paragraph1.add(besitzerText);
+				paragraph1.setMarginBottom(0);
+				paragraph1.setMarginTop(0);
+				div.add(paragraph1);
 
-				c = new Chunk("Vater: " + hund.getVater(), f);
-				paragraph1 = new Paragraph(c);
-				paragraph1.setAlignment(Element.ALIGN_LEFT);
-				paragraph1.setIndentationLeft(50);
-				document.add(paragraph1);
+				Text vaterText = new Text("Vater: ").setFontSize(hundTextFontSize).setFont(bold);
+				paragraph1 = new Paragraph(vaterText);
+				vaterText = new Text(hund.getVater()).setFontSize(hundTextFontSize).setFont(standard);
+				paragraph1.add((vaterText));
+				paragraph1.setMarginBottom(0);
+				paragraph1.setMarginTop(0);
+				div.add(paragraph1);
 
-				c = new Chunk("Mutter: " + hund.getMutter(), f);
-				paragraph1 = new Paragraph(c);
-				paragraph1.setAlignment(Element.ALIGN_LEFT);
-				paragraph1.setIndentationLeft(50);
-				document.add(paragraph1);
+				Text mutterText = new Text("Mutter: ").setFontSize(hundTextFontSize).setFont(bold);
+				paragraph1 = new Paragraph(mutterText);
+				mutterText = new Text(hund.getMutter()).setFontSize(hundTextFontSize).setFont(standard);
+				paragraph1.add(mutterText);
+				paragraph1.setMarginBottom(0);
+				paragraph1.setMarginTop(0);
+				div.add(paragraph1);
 
-				c = new Chunk("Zuchtbuchnummer: " + hund.getZuchtbuchnummer(), f);
-				paragraph1 = new Paragraph(c);
-				paragraph1.setAlignment(Element.ALIGN_LEFT);
-				paragraph1.setIndentationLeft(50);
-				document.add(paragraph1);
+				Text zbnrText = new Text("Zuchtbuchnummer: ").setFont(bold).setFontSize(hundTextFontSize);
+				paragraph1 = new Paragraph(zbnrText);
+				zbnrText = new Text(hund.getZuchtbuchnummer()).setFont(standard).setFontSize(hundTextFontSize);
+				paragraph1.add(zbnrText);
+				paragraph1.add(new Tab());
+				paragraph1.addTabStops(new TabStop(1000, TabAlignment.RIGHT));
 
-				c = new Chunk("Wurftag: " + new SimpleDateFormat("dd.MM.yyyy").format(hund.getWurftag()), f);
-				paragraph1 = new Paragraph(c);
-				paragraph1.setAlignment(Element.ALIGN_LEFT);
-				paragraph1.setIndentationLeft(50);
-				document.add(paragraph1);
+				Text wurfTagText = new Text("Wurftag: ").setFontSize(hundTextFontSize).setFont(bold);
+				paragraph1.add(wurfTagText);
+				wurfTagText = new Text(new SimpleDateFormat("dd.MM.yyyy").format(hund.getWurftag()))
+						.setFontSize(hundTextFontSize).setFont(standard);
+				paragraph1.add(wurfTagText);
+				paragraph1.setMarginBottom(0);
+				paragraph1.setMarginTop(0);
+				div.add(paragraph1);
 
-				border.setActive(true);
-				c = new Chunk(hund.getBewertung() == null ? " " : hund.getBewertung(), f);
-				paragraph1 = new Paragraph(c);
-				paragraph1.setAlignment(Element.ALIGN_LEFT);
-				paragraph1.setIndentationLeft(50);
-				document.add(paragraph1);
-				border.setActive(false);
+				Text bewertungText = new Text(
+						hund.getBewertung() == null || hund.getBewertung().isEmpty() ? "\n" : hund.getBewertung())
+								.setFontSize(hundTextFontSize).setFont(standard);
+				paragraph1 = new Paragraph(bewertungText);
+				paragraph1.setBorder(new SolidBorder(.5f));
+				paragraph1.setMarginBottom(0);
+				paragraph1.setMarginTop(0);
+				div.add(paragraph1);
 
-				f = new Font(FontFamily.HELVETICA, 14.0f, Font.BOLD, BaseColor.RED);
-				c = new Chunk("Bewertung: " + getFormwertText(show, hund), f);
-				paragraph1 = new Paragraph(c);
-				paragraph1.setAlignment(Element.ALIGN_LEFT);
-				paragraph1.setIndentationLeft(50);
-				paragraph1.setSpacingAfter(25);
-				document.add(paragraph1);
+				Text formWertText = new Text("Bewertung: " + getFormwertText(show, hund)).setFontSize(14).setFont(bold)
+						.setFontColor(ColorConstants.RED);
+				;
+				paragraph1 = new Paragraph(formWertText);
+				paragraph1.setMarginBottom(0);
+				paragraph1.setMarginTop(0);
+				div.add(paragraph1);
 
+				document.add(div);
 				// paragraph1.setAlignment(Element.ALIGN_LEFT);
 				// document.add(paragraph1);
 			}
@@ -250,7 +267,7 @@ public class ShowPrintBewertungUebersicht extends CustomComponent {
 
 		}
 
-		if (!(hund.getCACA() == null)) {
+		if (!(hund.getCACA() == null) && !hund.getCACA().equals("K")) {
 			sb.append(", ");
 			switch (hund.getCACA()) {
 			case "J":
@@ -326,44 +343,4 @@ public class ShowPrintBewertungUebersicht extends CustomComponent {
 		return sb.toString();
 	}
 
-	class ParagraphBorder extends PdfPageEventHelper {
-		public boolean active = false;
-
-		public void setActive(boolean active) {
-			this.active = active;
-		}
-
-		public float offset = 5;
-		public float startPosition;
-
-		@Override
-		public void onStartPage(PdfWriter writer, Document document) {
-			startPosition = document.top();
-		}
-
-		@Override
-		public void onParagraph(PdfWriter writer, Document document, float paragraphPosition) {
-			this.startPosition = paragraphPosition;
-		}
-
-		@Override
-		public void onEndPage(PdfWriter writer, Document document) {
-			if (active) {
-				PdfContentByte cb = writer.getDirectContentUnder();
-				cb.rectangle(document.left() + 50, document.bottom() - offset, document.right() - document.left() - 50,
-						startPosition - document.bottom());
-				cb.stroke();
-			}
-		}
-
-		@Override
-		public void onParagraphEnd(PdfWriter writer, Document document, float paragraphPosition) {
-			if (active) {
-				PdfContentByte cb = writer.getDirectContentUnder();
-				cb.rectangle(document.left() + 50, paragraphPosition - offset, document.right() - document.left() - 50,
-						startPosition - paragraphPosition);
-				cb.stroke();
-			}
-		}
-	}
 }

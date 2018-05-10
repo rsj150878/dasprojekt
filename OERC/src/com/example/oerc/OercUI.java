@@ -13,10 +13,10 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
-@Theme("oerc")
+//@Theme("oerc")
 public class OercUI extends UI {
 
-	@WebServlet(value = "/*", asyncSupported = true)
+	//@WebServlet(value = "/*", asyncSupported = true)
 	@VaadinServletConfiguration(productionMode = false, ui = OercUI.class)
 	public static class Servlet extends VaadinServlet {
 	}

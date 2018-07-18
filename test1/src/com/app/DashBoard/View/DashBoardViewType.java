@@ -1,7 +1,7 @@
 package com.app.DashBoard.View;
 
-import com.app.Components.HundeImport;
 import com.app.DashBoard.DashboardView;
+import com.app.components.HundeImport;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.server.Resource;

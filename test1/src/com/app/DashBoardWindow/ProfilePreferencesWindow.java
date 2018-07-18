@@ -1,5 +1,8 @@
 package com.app.DashBoardWindow;
 
+import java.time.ZoneId;
+
+import com.app.Auth.AbstractPersonClass;
 import com.app.Auth.Person;
 import com.app.Auth.User;
 import com.app.DashBoard.Event.DashBoardEvent.CloseOpenWindowsEvent;
@@ -7,9 +10,13 @@ import com.app.DashBoard.Event.DashBoardEvent.ProfileUpdatedEvent;
 import com.app.DashBoard.Event.DashBoardEvent.UpdateUserEvent;
 import com.app.DashBoard.Event.DashBoardEvent.UserNewEvent;
 import com.app.DashBoard.Event.DashBoardEventBus;
-import com.vaadin.annotations.PropertyId;
+import com.app.enumPackage.JaNeinDataType;
+import com.app.enumPackage.LaenderDataType;
+import com.app.enumPackage.MenschGeschlechtDataType;
+import com.vaadin.data.Binder;
+import com.vaadin.data.converter.LocalDateToDateConverter;
 import com.vaadin.event.ShortcutAction.KeyCode;
-import com.vaadin.server.FontAwesome;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.ThemeResource;
@@ -19,118 +26,77 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.v7.ui.ComboBox;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
-import com.vaadin.v7.ui.DateField;
+import com.vaadin.ui.DateField;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.RadioButtonGroup;
 import com.vaadin.ui.TabSheet;
-import com.vaadin.v7.ui.TextArea;
-import com.vaadin.v7.ui.TextField;
+import com.vaadin.ui.TextArea;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
-import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.v7.shared.ui.datefield.Resolution;
-import com.vaadin.v7.ui.OptionGroup;
-import com.vaadin.v7.ui.PopupDateField;
 
 @SuppressWarnings("serial")
 public class ProfilePreferencesWindow extends Window {
 
 	public static final String ID = "profilepreferenceswindow";
 
-	private final BeanFieldGroup<Person> fieldGroupPerson;
-	private final BeanFieldGroup<User> fieldGroupUser;
-	/*
-	 * Fields for editing the User object are defined here as class members.
-	 * They are later bound to a FieldGroup by calling
-	 * fieldGroup.bindMemberFields(this). The Fields' values don't need to be
-	 * explicitly set, calling fieldGroup.setItemDataSource(user) synchronizes
-	 * the fields with the user object.
-	 */
-	@PropertyId("firstName")
+	private final Binder<AbstractPersonClass> fieldGroupPerson;
+
 	private TextField firstNameField;
-	@PropertyId("lastName")
 	private TextField lastNameField;
-	@PropertyId("title")
 	private TextField titleField;
-	@PropertyId("male")
-	private OptionGroup sexField;
-	@PropertyId("gebdat")
+	private RadioButtonGroup<MenschGeschlechtDataType> sexField;
 	private DateField birthDate;
-	@PropertyId("email")
 	private TextField emailField;
-	@PropertyId("strasse")
 	private TextField strasseField;
-	@PropertyId("hausnummer")
 	private TextField hausnummerField;
-	@PropertyId("plz")
 	private TextField plzField;
-	@PropertyId("ort")
 	private TextField ortField;
-
-	@PropertyId("phone")
 	private TextField phoneField;
-	@PropertyId("mobnr")
 	private TextField mobNrField;
-
-	@PropertyId("land")
-	private ComboBox landField;
-	@PropertyId("website")
+	private ComboBox<LaenderDataType> landField;
 	private TextField websiteField;
-	@PropertyId("bio")
 	private TextArea bioField;
-	@PropertyId("newsletter")
-	private OptionGroup newsletter;
-	@PropertyId("email2")
+	private RadioButtonGroup<JaNeinDataType> newsletter;
 	private TextField emailField2;
-	@PropertyId("newsletter2")
-	private OptionGroup newsletter2;
-	@PropertyId("email3")
+	private RadioButtonGroup<JaNeinDataType> newsletter2;
 	private TextField emailField3;
-	@PropertyId("newsletter3")
-	private OptionGroup newsletter3;
+	private RadioButtonGroup<JaNeinDataType> newsletter3;
 
-	private final User user;
-	private final Person person;
+	private final AbstractPersonClass abstractPerson;
 	private final boolean update;
 
-	private ProfilePreferencesWindow(final User user,
-			final boolean preferencesTabOpen) {
+	private ProfilePreferencesWindow(final User user, final boolean preferencesTabOpen) {
 
-		this.user = user;
-		this.person = null;
+		this.abstractPerson = user;
+
 		this.update = false;
+		fieldGroupPerson = new Binder<AbstractPersonClass>(AbstractPersonClass.class);
 
 		initWindow(preferencesTabOpen);
 
-		fieldGroupPerson = null;
-
-		fieldGroupUser = new BeanFieldGroup<User>(User.class);
-		fieldGroupUser.bindMemberFields(this);
-		fieldGroupUser.setItemDataSource(user);
+		fieldGroupPerson.readBean(abstractPerson);
 
 	}
 
 	private ProfilePreferencesWindow(final Person person, final boolean update) {
 
-		this.user = null;
-		this.person = person;
+		this.abstractPerson = person;
 		this.update = update;
+		fieldGroupPerson = new Binder<AbstractPersonClass>(AbstractPersonClass.class);
 
 		initWindow(false);
 
-		fieldGroupUser = null;
-
-		fieldGroupPerson = new BeanFieldGroup<Person>(Person.class);
-		fieldGroupPerson.bindMemberFields(this);
-		fieldGroupPerson.setItemDataSource(person);
+		fieldGroupPerson.readBean(abstractPerson);
 
 	}
 
@@ -171,7 +137,7 @@ public class ProfilePreferencesWindow extends Window {
 	private Component buildPreferencesTab() {
 		VerticalLayout root = new VerticalLayout();
 		root.setCaption("Preferences");
-		root.setIcon(FontAwesome.COGS);
+		root.setIcon(VaadinIcons.COGS);
 		root.setSpacing(true);
 		root.setMargin(true);
 		root.setSizeFull();
@@ -188,7 +154,7 @@ public class ProfilePreferencesWindow extends Window {
 	private Component buildProfileTab() {
 		HorizontalLayout root = new HorizontalLayout();
 		root.setCaption("Profile");
-		root.setIcon(FontAwesome.USER);
+		root.setIcon(VaadinIcons.USER);
 		root.setWidth(100.0f, Unit.PERCENTAGE);
 		root.setSpacing(true);
 		root.setMargin(true);
@@ -197,8 +163,7 @@ public class ProfilePreferencesWindow extends Window {
 		VerticalLayout pic = new VerticalLayout();
 		pic.setSizeUndefined();
 		pic.setSpacing(true);
-		Image profilePic = new Image(null, new ThemeResource(
-				"img/profile-pic-300px.jpg"));
+		Image profilePic = new Image(null, new ThemeResource("img/profile-pic-300px.jpg"));
 		profilePic.setWidth(100.0f, Unit.PIXELS);
 		pic.addComponent(profilePic);
 
@@ -218,11 +183,9 @@ public class ProfilePreferencesWindow extends Window {
 		root.addComponent(details);
 		root.setExpandRatio(details, 1);
 
-		sexField = new OptionGroup("Anrede");
-		sexField.addItem("M");
-		sexField.setItemCaption("M", "Herr");
-		sexField.addItem("F");
-		sexField.setItemCaption("F", "Frau");
+		sexField = new RadioButtonGroup<>("Anrede");
+		sexField.setItems(MenschGeschlechtDataType.values());
+		sexField.setItemCaptionGenerator(MenschGeschlechtDataType::getLangText);
 		sexField.addStyleName("horizontal");
 		details.addComponent(sexField);
 
@@ -231,12 +194,12 @@ public class ProfilePreferencesWindow extends Window {
 
 		firstNameField = new TextField("Vorname");
 		details.addComponent(firstNameField);
+
 		lastNameField = new TextField("Familienname");
 		details.addComponent(lastNameField);
 
-		birthDate = new PopupDateField("GeburtsDatum");
+		birthDate = new DateField("GeburtsDatum");
 		birthDate.setWidth("100%");
-		birthDate.setResolution(Resolution.DAY);
 		birthDate.setDateFormat("dd.MM.yyyy");
 		details.addComponent(birthDate);
 
@@ -247,26 +210,21 @@ public class ProfilePreferencesWindow extends Window {
 
 		emailField = new TextField("Email");
 		emailField.setWidth("100%");
-		emailField.setRequired(true);
-		emailField.setNullRepresentation("");
+
 		details.addComponent(emailField);
 
-		newsletter = new OptionGroup("Newsletter");
-		newsletter.addItem("J");
-		newsletter.setItemCaption("J", "Ja");
-		newsletter.addItem("N");
-		newsletter.setItemCaption("N", "Nein");
+		newsletter = new RadioButtonGroup<>("Newsletter");
+		newsletter.setItems(JaNeinDataType.values());
+		newsletter.setItemCaptionGenerator(JaNeinDataType::getLangText);
 		newsletter.addStyleName("horizontal");
 		details.addComponent(newsletter);
 
 		phoneField = new TextField("Telefon");
 		phoneField.setWidth("100%");
-		phoneField.setNullRepresentation("");
 		details.addComponent(phoneField);
 
 		mobNrField = new TextField("Mobil");
 		mobNrField.setWidth("100%");
-		mobNrField.setNullRepresentation("");
 		details.addComponent(mobNrField);
 
 		section = new Label("Addresse");
@@ -274,34 +232,27 @@ public class ProfilePreferencesWindow extends Window {
 		section.addStyleName(ValoTheme.LABEL_COLORED);
 		details.addComponent(section);
 
-		landField = new ComboBox("Land");
-		landField.addItem("AT");
-		landField.setItemCaption("AT", "Österreich");
-		landField.addItem("DE");
-		landField.setItemCaption("DE", "Deutschland");
-		landField.addItem("CH");
-		landField.setItemCaption("CH", "Schweiz");
+		landField = new ComboBox<>("Land");
+		landField.setItems(LaenderDataType.values());
+		landField.setItemCaptionGenerator(LaenderDataType::getLangText);
+
 		landField.addStyleName("horizontal");
 		details.addComponent(landField);
 
 		strasseField = new TextField("Strasse");
 		strasseField.setWidth("100%");
-		strasseField.setNullRepresentation("");
 		details.addComponent(strasseField);
 
 		hausnummerField = new TextField("Hausnummer");
 		hausnummerField.setWidth("100%");
-		hausnummerField.setNullRepresentation("");
 		details.addComponent(hausnummerField);
 
 		plzField = new TextField("Postleitzahl");
 		plzField.setWidth("100%");
-		plzField.setNullRepresentation("");
 		details.addComponent(plzField);
 
 		ortField = new TextField("Ort");
 		ortField.setWidth("100%");
-		ortField.setNullRepresentation("");
 		details.addComponent(ortField);
 
 		section = new Label("Zusatzinfos");
@@ -311,43 +262,83 @@ public class ProfilePreferencesWindow extends Window {
 
 		emailField2 = new TextField("Email 2");
 		emailField2.setWidth("100%");
-		emailField2.setNullRepresentation("");
 		details.addComponent(emailField2);
 
-		newsletter2 = new OptionGroup("Newsletter 2");
-		newsletter2.addItem("J");
-		newsletter2.setItemCaption("J", "Ja");
-		newsletter2.addItem("N");
-		newsletter2.setItemCaption("N", "Nein");
+		newsletter2 = new RadioButtonGroup<>("Newsletter 2");
+		newsletter2.setItems(JaNeinDataType.values());
+		newsletter2.setItemCaptionGenerator(JaNeinDataType::getLangText);
 		newsletter2.addStyleName("horizontal");
+
 		details.addComponent(newsletter2);
 
 		emailField3 = new TextField("Email 3");
 		emailField3.setWidth("100%");
-		emailField3.setNullRepresentation("");
 		details.addComponent(emailField3);
 
-		newsletter3 = new OptionGroup("Newsletter 3");
-		newsletter3.addItem("J");
-		newsletter3.setItemCaption("J", "Ja");
-		newsletter3.addItem("N");
-		newsletter3.setItemCaption("N", "Nein");
+		newsletter3 = new RadioButtonGroup<>("Newsletter 3");
+		newsletter3.setItems(JaNeinDataType.values());
+		newsletter3.setItemCaptionGenerator(JaNeinDataType::getLangText);
 		newsletter3.addStyleName("horizontal");
 		details.addComponent(newsletter3);
 
 		websiteField = new TextField("Website");
-		websiteField.setInputPrompt("http://");
+		websiteField.setPlaceholder("http://");
 		websiteField.setWidth("100%");
-		websiteField.setNullRepresentation("");
 		details.addComponent(websiteField);
 
 		bioField = new TextArea("Zusatztext");
 		bioField.setWidth("100%");
 		bioField.setRows(4);
-		bioField.setNullRepresentation("");
 		details.addComponent(bioField);
 
+		bindFields();
+
 		return root;
+	}
+
+	private void bindFields() {
+
+		fieldGroupPerson.forField(emailField3).bind(AbstractPersonClass::getEmail3, AbstractPersonClass::setEmail3);
+		fieldGroupPerson.forField(newsletter3)
+				.withConverter(JaNeinDataType::getKurzText,
+						value -> JaNeinDataType.getJaNeinDataTypeForKurzbezeichnung(value))
+				.bind(AbstractPersonClass::getNewsletter3, AbstractPersonClass::setNewsletter3);
+		fieldGroupPerson.forField(websiteField).bind(AbstractPersonClass::getWebsite, AbstractPersonClass::setWebsite);
+		fieldGroupPerson.forField(bioField).bind(AbstractPersonClass::getBio, AbstractPersonClass::setBio);
+		fieldGroupPerson.forField(strasseField).bind(AbstractPersonClass::getStrasse, AbstractPersonClass::setStrasse);
+		fieldGroupPerson.forField(landField)
+				.withConverter(LaenderDataType::getKurzText,
+						value -> LaenderDataType.getLaenderDataTypeForKurzbezeichnung(value))
+				.bind(AbstractPersonClass::getLand, AbstractPersonClass::setLand);
+		fieldGroupPerson.forField(mobNrField).bind(AbstractPersonClass::getMobnr, AbstractPersonClass::setMobnr);
+		fieldGroupPerson.forField(phoneField).bind(AbstractPersonClass::getPhone, AbstractPersonClass::setPhone);
+		fieldGroupPerson.forField(newsletter)
+				.withConverter(JaNeinDataType::getKurzText,
+						value -> JaNeinDataType.getJaNeinDataTypeForKurzbezeichnung(value))
+				.bind(AbstractPersonClass::getNewsletter, AbstractPersonClass::setNewsletter);
+		fieldGroupPerson.forField(emailField).asRequired("Bitte Email angeben").bind(AbstractPersonClass::getEmail,
+				AbstractPersonClass::setEmail);
+		fieldGroupPerson.forField(birthDate).withConverter(new LocalDateToDateConverter(ZoneId.systemDefault()))
+				.bind(AbstractPersonClass::getGebdat, AbstractPersonClass::setGebdat);
+		fieldGroupPerson.forField(lastNameField).bind(AbstractPersonClass::getLastName,
+				AbstractPersonClass::setLastName);
+		fieldGroupPerson.forField(firstNameField).bind(AbstractPersonClass::getFirstName,
+				AbstractPersonClass::setFirstName);
+		fieldGroupPerson.forField(titleField).bind(AbstractPersonClass::getTitle, AbstractPersonClass::setTitle);
+		fieldGroupPerson.forField(sexField)
+				.withConverter(MenschGeschlechtDataType::getKurzText,
+						value -> MenschGeschlechtDataType.getMenschGeschlechtDataTypeForKurzbezeichnung(value))
+				.bind(AbstractPersonClass::getMale, AbstractPersonClass::setMale);
+		fieldGroupPerson.forField(hausnummerField).bind(AbstractPersonClass::getHausnummer,
+				AbstractPersonClass::setHausnummer);
+		fieldGroupPerson.forField(plzField).bind(AbstractPersonClass::getPlz, AbstractPersonClass::setPlz);
+		fieldGroupPerson.forField(ortField).bind(AbstractPersonClass::getOrt, AbstractPersonClass::setOrt);
+		fieldGroupPerson.forField(emailField2).bind(AbstractPersonClass::getEmail2, AbstractPersonClass::setEmail2);
+		fieldGroupPerson.forField(newsletter2)
+				.withConverter(JaNeinDataType::getKurzText,
+						value -> JaNeinDataType.getJaNeinDataTypeForKurzbezeichnung(value))
+				.bind(AbstractPersonClass::getNewsletter2, AbstractPersonClass::setNewsletter2);
+
 	}
 
 	private Component buildFooter() {
@@ -362,27 +353,20 @@ public class ProfilePreferencesWindow extends Window {
 			public void buttonClick(ClickEvent event) {
 				try {
 
-				
-					if (user == null) {
-						fieldGroupPerson.commit();
-						person.commit();
-					} else {
-						fieldGroupUser.commit();
-						user.commit();
-					}
+					fieldGroupPerson.writeBean(abstractPerson);
+					abstractPerson.commit();
 
-					Notification success = new Notification(
-							"Profile updated successfully");
+					Notification success = new Notification("Profile updated successfully");
 					success.setDelayMsec(2000);
 					success.setStyleName("bar success small");
 					success.setPosition(Position.BOTTOM_CENTER);
 					success.show(Page.getCurrent());
 
-					if (user == null) {
+					if (abstractPerson instanceof Person) {
 						if (update == true) {
 							DashBoardEventBus.post(new UpdateUserEvent());
 						} else {
-							DashBoardEventBus.post(new UserNewEvent(person));
+							DashBoardEventBus.post(new UserNewEvent((Person) abstractPerson));
 						}
 					} else {
 						DashBoardEventBus.post(new ProfileUpdatedEvent());
@@ -391,8 +375,7 @@ public class ProfilePreferencesWindow extends Window {
 					close();
 				} catch (Exception e) {
 					e.printStackTrace();
-					Notification.show("Error while updating profile",
-							Type.ERROR_MESSAGE);
+					Notification.show("Error while updating profile", Type.ERROR_MESSAGE);
 				}
 
 			}

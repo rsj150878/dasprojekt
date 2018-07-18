@@ -16,9 +16,9 @@ import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutListener;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
 import com.vaadin.ui.Button;
@@ -26,16 +26,14 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.themes.ValoTheme;
-import com.vaadin.v7.ui.HorizontalLayout;
-import com.vaadin.v7.ui.Label;
 
-@SuppressWarnings({ "serial", "unchecked" })
+@SuppressWarnings({ "serial" })
 public class MitgliederView extends VerticalLayout implements View {
 
 	private final Grid<MitgliederListe> table;
@@ -104,7 +102,7 @@ public class MitgliederView extends VerticalLayout implements View {
 
 	private Component buildFilter() {
 		final TextField filterField = new TextField();
-		filterField.setIcon(FontAwesome.SEARCH);
+		filterField.setIcon(VaadinIcons.SEARCH);
 		filterField.addStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
 		filterField.addValueChangeListener(this::onNameFilterTextChange);
 		filterField.addShortcutListener(new ShortcutListener("Clear", KeyCode.ESCAPE, null) {
@@ -126,7 +124,7 @@ public class MitgliederView extends VerticalLayout implements View {
 	}
 
 	private Grid<MitgliederListe> buildTable() {
-		final Grid<MitgliederListe> gridTable = new Grid(MitgliederListe.class);
+		final Grid<MitgliederListe> gridTable = new Grid<>(MitgliederListe.class);
 		gridTable.setSizeFull();
 
 		gridTable.addStyleName(ValoTheme.TABLE_BORDERLESS);
@@ -147,13 +145,13 @@ public class MitgliederView extends VerticalLayout implements View {
 
 		gridTable.setFrozenColumnCount(2);
 
-		gridTable.addColumn(MitgliederListe -> "edit", new ButtonRenderer(clickEvent -> {
+		gridTable.addColumn(MitgliederListe -> "edit", new ButtonRenderer<>(clickEvent -> {
 			MitgliederListe zw = (MitgliederListe) clickEvent.getItem();
 			ProfilePreferencesWindow.open(zw.getPerson(), true);
 
 		})).setId("edit");
 
-		gridTable.addColumn(MitgliederListe -> "Hunde", new ButtonRenderer(clickEvent -> {
+		gridTable.addColumn(MitgliederListe -> "Hunde", new ButtonRenderer<>(clickEvent -> {
 			MitgliederListe zw = (MitgliederListe) clickEvent.getItem();
 			HundeDetailWindow.open(zw.getPerson(), zw.getHunde());
 
@@ -161,11 +159,7 @@ public class MitgliederView extends VerticalLayout implements View {
 
 		//
 		gridTable.getDefaultHeaderRow().join("edit", "hundebutton").setText("Tools");
-		for (Column x : gridTable.getColumns()) {
-			System.out.println(x.getId());
-
-		}
-
+		
 		gridTable.setItems(mitgliederListe);
 		gridTable.setDataProvider(listDataProvider);
 

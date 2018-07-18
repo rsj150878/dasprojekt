@@ -3,10 +3,10 @@ package com.app.DashBoard.View;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.app.Components.ShowGeschlechtAbschlussComponent;
-import com.app.Components.ShowHundBewertungComponent;
-import com.app.Components.ShowKlassenAbschlussComponent;
 import com.app.DashBoard.Event.DashBoardEventBus;
+import com.app.component.ShowGeschlechtAbschlussComponent;
+import com.app.component.ShowHundBewertungComponent;
+import com.app.component.ShowKlassenAbschlussComponent;
 import com.app.dbIO.DBShowNeu;
 import com.app.showData.Show;
 import com.app.showData.ShowGeschlechtEnde;
@@ -31,6 +31,11 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 public class ShowRingBewertungView extends Panel implements View, Handler {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2896526756903535600L;
 
 	Component bewertungPart = null;
 

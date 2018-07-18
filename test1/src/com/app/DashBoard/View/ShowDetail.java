@@ -1,6 +1,6 @@
 package com.app.DashBoard.View;
 
-import com.app.Components.ShowInfoForm;
+import com.app.components.ShowInfoForm;
 import com.app.dbIO.DBConnection;
 import com.vaadin.ui.Accordion;
 import com.vaadin.ui.Component;

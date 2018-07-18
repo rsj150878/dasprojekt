@@ -4,15 +4,17 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 
-import com.app.Components.WesensTestImporter;
 import com.app.DashBoard.Component.VeranstaltungsTeilnehmerGrid;
 import com.app.DashBoard.Event.DashBoardEventBus;
 import com.app.DashBoardWindow.SearchWindow;
+import com.app.components.WesensTestImporter;
 import com.app.dbIO.DBConnection;
 import com.app.dbIO.DBShowNeu;
+import com.app.enumPackage.DokumentGehoertZuType;
 import com.app.enumPackage.Rassen;
 import com.app.enumPackage.VeranstaltungsStufen;
 import com.app.enumPackage.VeranstaltungsTypen;
+import com.app.filestorage.HundeDokumenteImporter;
 import com.app.printClasses.BHMeldeBlatt;
 import com.app.printClasses.BewertungsListeNeu;
 import com.app.printClasses.JungHundePruefung2017;
@@ -95,6 +97,7 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent implements Quer
 
 	private TabSheet stufenSheet;
 	private WesensTestImporter receiver = new WesensTestImporter();;
+	private HundeDokumenteImporter hundeDokumenteImporter = new HundeDokumenteImporter();
 
 	/**
 	 * The constructor should first build the main layout, set the composition
@@ -297,6 +300,20 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent implements Quer
 			;
 		}
 
+		if (defTyp.equals(VeranstaltungsTypen.RBP_2017_WASSER) || defTyp.equals(VeranstaltungsTypen.GAP_PRÜFUNG)) {
+
+			this.hundeDokumenteImporter.setGehoertZu(
+					new Integer(currentVeranstaltungsItem.getItemProperty("id_veranstaltung").getValue().toString()));
+			this.hundeDokumenteImporter.setGehoertZuType(DokumentGehoertZuType.VERANSTALTUNG);
+			Upload upload = new Upload("starte Urkundenupload hier", this.hundeDokumenteImporter);
+			upload.setButtonCaption("Urkunde");
+			upload.addSucceededListener(this.hundeDokumenteImporter);
+			upload.addFailedListener(this.hundeDokumenteImporter);
+			upload.setId("upload");
+			secondLineLayout.addComponent(upload, 1, 2, 3, 2);
+			;
+		}
+
 		if (defTyp.equals(VeranstaltungsTypen.WESENSTEST)) {
 
 			Button showUebertrag = new Button("übertrage Daten in show");
@@ -304,7 +321,7 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent implements Quer
 			secondLineLayout.addComponent(showUebertrag, 4, 2, 4, 2);
 			;
 		}
-		
+
 		Button printStarterListe = new Button();
 		printStarterListe.setCaption("Starterliste Extern");
 		printStarterListe.addStyleName(ValoTheme.BUTTON_SMALL);
@@ -316,14 +333,14 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent implements Quer
 					secondLineLayout.removeComponent(currentPrintComponent);
 				}
 
-				StarterListe starterListe = new StarterListe(currentVeranstaltungsItem,false);
+				StarterListe starterListe = new StarterListe(currentVeranstaltungsItem, false);
 				secondLineLayout.addComponent(starterListe);
 				currentPrintComponent = starterListe;
 			}
 
 		});
 		secondLineLayout.addComponent(printStarterListe, 0, 3);
-		
+
 		Button printStarterListeIntern = new Button();
 		printStarterListeIntern.setCaption("Starterliste Intern");
 		printStarterListeIntern.addStyleName(ValoTheme.BUTTON_SMALL);
@@ -335,15 +352,15 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent implements Quer
 					secondLineLayout.removeComponent(currentPrintComponent);
 				}
 
-				StarterListe starterListe = new StarterListe(currentVeranstaltungsItem,true);
+				StarterListe starterListe = new StarterListe(currentVeranstaltungsItem, true);
 				secondLineLayout.addComponent(starterListe);
 				currentPrintComponent = starterListe;
 			}
 
 		});
-		
+
 		secondLineLayout.addComponent(printStarterListeIntern, 1, 3);
-		
+
 		if (defTyp.equals(VeranstaltungsTypen.JUNGHUNDEPRUEFUNG)) {
 
 			Button jungHundePruefungKurz = new Button();
@@ -357,14 +374,14 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent implements Quer
 						secondLineLayout.removeComponent(currentPrintComponent);
 					}
 
-					JungHundePruefung2017 urkunde = new JungHundePruefung2017(currentVeranstaltungsItem,true);
+					JungHundePruefung2017 urkunde = new JungHundePruefung2017(currentVeranstaltungsItem, true);
 					secondLineLayout.addComponent(urkunde);
 					currentPrintComponent = urkunde;
 				}
 
 			});
 			secondLineLayout.addComponent(jungHundePruefungKurz, 2, 3);
-			
+
 			Button jungHundePruefungLang = new Button();
 			jungHundePruefungLang.setCaption("Urkunde lang");
 			jungHundePruefungLang.addStyleName(ValoTheme.BUTTON_SMALL);
@@ -376,18 +393,17 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent implements Quer
 						secondLineLayout.removeComponent(currentPrintComponent);
 					}
 
-					JungHundePruefung2017 urkunde = new JungHundePruefung2017(currentVeranstaltungsItem,false);
+					JungHundePruefung2017 urkunde = new JungHundePruefung2017(currentVeranstaltungsItem, false);
 					secondLineLayout.addComponent(urkunde);
 					currentPrintComponent = urkunde;
 				}
 
 			});
-			
+
 			secondLineLayout.addComponent(jungHundePruefungLang, 3, 3);
 
 		}
-		
-		
+
 		return secondLine;
 	}
 
@@ -557,7 +573,7 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent implements Quer
 					}
 
 					if (defStufe.equals(VeranstaltungsStufen.TRAININGS_WT_ANFAENGER)
-							|| defStufe.equals(VeranstaltungsStufen.TRAININGS_WT_FORTGESCHRITTEN) 
+							|| defStufe.equals(VeranstaltungsStufen.TRAININGS_WT_FORTGESCHRITTEN)
 							|| defStufe.equals(VeranstaltungsStufen.TRAININGS_WT_EINSTEIGER)
 							|| defStufe.equals(VeranstaltungsStufen.TRAININGS_WT_LEICHT)
 							|| defStufe.equals(VeranstaltungsStufen.TRAININGS_WT_MITTEL)) {

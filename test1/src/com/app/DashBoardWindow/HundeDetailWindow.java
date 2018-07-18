@@ -1,5 +1,6 @@
 package com.app.DashBoardWindow;
 
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Set;
 
@@ -8,11 +9,13 @@ import com.app.Auth.Person;
 import com.app.DashBoard.Event.DashBoardEvent.CloseOpenWindowsEvent;
 import com.app.DashBoard.Event.DashBoardEvent.DogUpdatedEvent;
 import com.app.DashBoard.Event.DashBoardEventBus;
+import com.app.enumPackage.HundeGeschlechtDataType;
 import com.app.enumPackage.Rassen;
 import com.app.printClasses.Kursblatt;
-import com.vaadin.annotations.PropertyId;
+import com.vaadin.data.Binder;
+import com.vaadin.data.converter.LocalDateToDateConverter;
 import com.vaadin.event.ShortcutAction.KeyCode;
-import com.vaadin.server.FontAwesome;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.ThemeResource;
@@ -22,53 +25,41 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.DateField;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.RadioButtonGroup;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
-import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.v7.shared.ui.datefield.Resolution;
-import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.HorizontalLayout;
-import com.vaadin.v7.ui.Label;
-import com.vaadin.v7.ui.OptionGroup;
-import com.vaadin.v7.ui.PopupDateField;
-import com.vaadin.v7.ui.TextField;
-import com.vaadin.v7.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
 public class HundeDetailWindow extends Window {
 
 	public static final String ID = "hundedetailwindow";
 
-	private BeanFieldGroup<Hund> fieldGroup;
+	private Binder<Hund> fieldGroup;
 
-	@PropertyId("bhdatum")
-	private PopupDateField bhDatumField;
-	@PropertyId("chipnummer")
+	private DateField bhDatumField;
 	private TextField chipnummerField;
-	@PropertyId("farbe")
 	private TextField farbeField;
-	@PropertyId("geschlecht")
-	private OptionGroup geschlechtGroup;
-	@PropertyId("rasse")
-	private ComboBox rasseGroup;
-	@PropertyId("rufname")
+	private RadioButtonGroup<HundeGeschlechtDataType> geschlechtGroup;
+	private ComboBox<Rassen> rasseGroup;
 	private TextField rufnameField;
-	@PropertyId("wurfdatum")
-	private PopupDateField wurfDatumField;
-	@PropertyId("zuchtbuchnummer")
+	private DateField wurfDatumField;
 	private TextField zuchtbuchnummerField;
-	@PropertyId("zuechter")
 	private TextField zuechterField;
-	@PropertyId("zwingername")
 	private TextField zwingernameField;
 
 	private Hund hund;
@@ -86,12 +77,11 @@ public class HundeDetailWindow extends Window {
 		this.hundeCollection = hundeCollection;
 		this.person = person;
 
-		height = 100.0f;
+		height = 130.0f;
+		fieldGroup = new Binder<Hund>(Hund.class);
 		initWindow();
 
-		fieldGroup = new BeanFieldGroup<Hund>(Hund.class);
-		fieldGroup.bindMemberFields(this);
-		fieldGroup.setItemDataSource(hund);
+		fieldGroup.readBean(hund);
 
 	}
 
@@ -99,10 +89,9 @@ public class HundeDetailWindow extends Window {
 
 		this.hund = hund;
 		height = 90.0f;
+		fieldGroup = new Binder<Hund>(Hund.class);
 		initWindow();
-		fieldGroup = new BeanFieldGroup<Hund>(Hund.class);
-		fieldGroup.bindMemberFields(this);
-		fieldGroup.setItemDataSource(hund);
+		fieldGroup.readBean(hund);
 
 	}
 
@@ -113,7 +102,8 @@ public class HundeDetailWindow extends Window {
 		// addStyleName("profile-form");
 
 		setModal(true);
-		setCloseShortcut(KeyCode.ESCAPE, null);
+		addCloseShortcut(KeyCode.ESCAPE, null);
+
 		setResizable(false);
 		setClosable(false);
 		setHeight(height, Unit.PERCENTAGE);
@@ -154,7 +144,7 @@ public class HundeDetailWindow extends Window {
 	private Component buildPreferencesTab() {
 		VerticalLayout root = new VerticalLayout();
 		root.setCaption("Preferences");
-		root.setIcon(FontAwesome.COGS);
+		root.setIcon(VaadinIcons.COGS);
 		root.setSpacing(true);
 		root.setMargin(true);
 		root.setSizeFull();
@@ -194,7 +184,7 @@ public class HundeDetailWindow extends Window {
 				dogTable.addColumn(Hund::getRufname);
 				dogTable.addColumn(Hund::getZwingername);
 
-				// dogTable.select(newHund.getIdhund());
+				dogTable.select(newHund);
 
 			}
 
@@ -215,27 +205,20 @@ public class HundeDetailWindow extends Window {
 		layout.addComponent(buttonLayout);
 
 		dogTable = new Grid<>(Hund.class);
-		layout.addComponent(dogTable);
+		dogTable.removeAllColumns();
 		dogTable.setSizeFull();
+		dogTable.addColumn(Hund::getRufname);
+		dogTable.addColumn(Hund::getZwingername);
+		dogTable.setItems(hundeCollection);
 
 		dogTable.addStyleName(ValoTheme.TABLE_BORDERLESS);
 		dogTable.addStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
 		// dogTable.addStyleName(ValoTheme.TABLE_);
 
-		if (hundeCollection.size() > 0) {
-			
-			dogTable.setItems(hundeCollection);
-			dogTable.removeAllColumns();
-			dogTable.addColumn(Hund::getRufname);
-			dogTable.addColumn(Hund::getZwingername);
-
-		}
-
 		dogTable.addSelectionListener(event -> {
 			try {
-				if (!(fieldGroup.getItemDataSource() == null)) {
-					fieldGroup.commit();
-				}
+
+				fieldGroup.writeBean(hund);
 				// Updated user should also be persisted to database. But
 				// not in this demo.
 
@@ -253,14 +236,15 @@ public class HundeDetailWindow extends Window {
 				Notification.show("Es ist ein Fehler passiert\n" + e.getMessage(), Type.ERROR_MESSAGE);
 
 			}
-			 Set<Hund> selected = dogTable.getSelectedItems();
-			 
-			 if (selected.size() > 0) {
-				 hund = (Hund) selected.toArray()[0];
-				 fieldGroup.setItemDataSource(hund);
-			 }
+			Set<Hund> selected = dogTable.getSelectedItems();
+
+			if (selected.size() > 0) {
+				hund = (Hund) selected.toArray()[0];
+				fieldGroup.readBean(hund);
+			}
 
 		});
+		layout.addComponent(dogTable);
 
 		layout.setExpandRatio(dogTable, 1);
 
@@ -270,7 +254,7 @@ public class HundeDetailWindow extends Window {
 	private Component buildProfileTab() {
 		HorizontalLayout root = new HorizontalLayout();
 		root.setCaption("Profile");
-		root.setIcon(FontAwesome.USER);
+		root.setIcon(VaadinIcons.USER);
 
 		// if (!(hundeCollection == null)) {
 		// root.setWidth(80.0f, Unit.PERCENTAGE);
@@ -305,57 +289,60 @@ public class HundeDetailWindow extends Window {
 		root.setExpandRatio(details, 1);
 
 		rufnameField = new TextField("Rufname");
+		fieldGroup.forField(rufnameField).bind(Hund::getRufname, Hund::setRufname);
 		details.addComponent(rufnameField);
 
 		zwingernameField = new TextField("Zwingername");
-		zwingernameField.setNullRepresentation("");
+		fieldGroup.forField(zwingernameField).bind(Hund::getZwingername, Hund::setZwingername);
 		details.addComponent(zwingernameField);
 
 		chipnummerField = new TextField("Chipnummer");
-		chipnummerField.setNullRepresentation("");
+		fieldGroup.forField(chipnummerField).bind(Hund::getChipnummer, Hund::setChipnummer);
 		details.addComponent(chipnummerField);
 
 		zuchtbuchnummerField = new TextField("Zuchtbuchnummer");
-		zuchtbuchnummerField.setNullRepresentation("");
+		fieldGroup.forField(zuchtbuchnummerField).bind(Hund::getZuchtbuchnummer, Hund::setZuchtbuchnummer);
 		details.addComponent(zuchtbuchnummerField);
 
-		geschlechtGroup = new OptionGroup("Geschlecht");
-		geschlechtGroup.addItem("R");
-		geschlechtGroup.setItemCaption("R", "Rüde");
-		geschlechtGroup.addItem("H");
-		geschlechtGroup.setItemCaption("H", "Hündin");
+		geschlechtGroup = new RadioButtonGroup<>("Geschlecht");
+		geschlechtGroup.setItems(HundeGeschlechtDataType.values());
+		geschlechtGroup.setItemCaptionGenerator(HundeGeschlechtDataType::getLangBezeichnung);
 		geschlechtGroup.addStyleName("horizontal");
+		fieldGroup.forField(geschlechtGroup)
+				.withConverter(HundeGeschlechtDataType::getKurzBezeichnung,
+						value -> HundeGeschlechtDataType.getDataTypeKurzBezeichnung(value))
+				.bind(Hund::getGeschlecht, Hund::setGeschlecht);
 		details.addComponent(geschlechtGroup);
 
-		rasseGroup = new ComboBox("Rasse");
-
-		for (Rassen x : Rassen.values()) {
-			rasseGroup.addItem(x.getRassenKurzBezeichnung());
-			rasseGroup.setItemCaption(x.getRassenKurzBezeichnung(), x.getRassenLangBezeichnung());
-		}
-
+		rasseGroup = new ComboBox<>("Rasse");
+		rasseGroup.setItems(Rassen.values());
+		rasseGroup.setItemCaptionGenerator(Rassen::getRassenLangBezeichnung);
 		rasseGroup.addStyleName("horizontal");
+		fieldGroup.forField(rasseGroup)
+				.withConverter(Rassen::getRassenKurzBezeichnung, value -> Rassen.getRasseForKurzBezeichnung(value))
+				.bind(Hund::getRasse, Hund::setRasse);
 		details.addComponent(rasseGroup);
 
-		wurfDatumField = new PopupDateField("Wurfdatum");
+		wurfDatumField = new DateField("Wurfdatum");
 		wurfDatumField.setWidth("100%");
-		wurfDatumField.setResolution(Resolution.DAY);
 		wurfDatumField.setDateFormat("dd.MM.yyyy");
+		fieldGroup.forField(wurfDatumField).withConverter(new LocalDateToDateConverter(ZoneId.systemDefault()))
+				.bind(Hund::getWurfdatum, Hund::setWurfdatum);
 		details.addComponent(wurfDatumField);
 
 		farbeField = new TextField("Farbe");
-		farbeField.setNullRepresentation("");
+		fieldGroup.forField(farbeField).bind(Hund::getFarbe, Hund::setFarbe);
 		details.addComponent(farbeField);
 
 		zuechterField = new TextField("Züchter");
-		zuechterField.setNullRepresentation("");
+		fieldGroup.forField(zuechterField).bind(Hund::getZuechter, Hund::setZuechter);
 		details.addComponent(zuechterField);
 
-		bhDatumField = new PopupDateField("BH-Datum");
+		bhDatumField = new DateField("BH-Datum");
 		bhDatumField.setWidth("100%");
-		bhDatumField.setResolution(Resolution.DAY);
 		bhDatumField.setDateFormat("dd.MM.yyyy");
-
+		fieldGroup.forField(bhDatumField).withConverter(new LocalDateToDateConverter(ZoneId.systemDefault()))
+				.bind(Hund::getBhdatum, Hund::setBhdatum);
 		details.addComponent(bhDatumField);
 
 		// Label section = new Label("Contact Info");
@@ -380,7 +367,6 @@ public class HundeDetailWindow extends Window {
 
 				@Override
 				public void buttonClick(ClickEvent event) {
-					// TODO Auto-generated method stub
 
 					if (!(zw == null)) {
 						footer.removeComponent(zw);
@@ -403,7 +389,7 @@ public class HundeDetailWindow extends Window {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				try {
-					fieldGroup.commit();
+					fieldGroup.writeBean(hund);
 					// Updated user should also be persisted to database. But
 					// not in this demo.
 

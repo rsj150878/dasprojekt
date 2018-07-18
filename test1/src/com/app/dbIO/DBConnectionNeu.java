@@ -20,16 +20,17 @@ public class DBConnectionNeu {
 		try {
 			ServletContext sc = DashboardServlet.getCurrent().getServletContext();
 			String dbPasswort = sc.getInitParameter("passwort");
+			String dbUrl = sc.getInitParameter("database");
 			
 			Class.forName("com.mysql.jdbc.Driver");
-			String dbUrl = "";
-
-			if (DashboardUI.getUseLocalUrl()) {
-				dbUrl = "test1";
-			} else if (DashboardUI.getUseProdUrl()) {
-				dbUrl = "prod";
-
-			}
+//			String dbUrl = "";
+//
+//			if (DashboardUI.getUseLocalUrl()) {
+//				dbUrl = "test1";
+//			} else if (DashboardUI.getUseProdUrl()) {
+//				dbUrl = "prod";
+//
+//			}
 
 			connect = DriverManager.getConnection(
 					"jdbc:mysql://localhost:3306/" + dbUrl + "?user=" + dbUrl + DB_USER + "&password=" + dbPasswort);

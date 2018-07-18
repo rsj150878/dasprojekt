@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE ivy-module [
-	<!ENTITY vaadin.version "8.1.5" >
+	<!ENTITY vaadin.version "8.4.2" >
 	<!ENTITY itext.version "7.1.0">
 	
 ]>  

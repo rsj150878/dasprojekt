@@ -10,8 +10,11 @@ import java.util.Map;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import com.app.dbIO.DBConnection;
+import com.app.dbIO.DBHundDokumente;
+import com.app.enumPackage.DokumentGehoertZuType;
 import com.app.enumPackage.Rassen;
 import com.app.enumPackage.VeranstaltungsStufen;
+import com.app.filestorage.HundeDokumente;
 import com.app.service.TemporaryFileDownloadResource;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfPageFormCopier;
@@ -98,12 +101,25 @@ public class Urkunde extends CustomComponent {
 		PdfDocument pdfInnerDoc;
 		Map<String, PdfFormField> fields;
 		PdfAcroForm form;
+		HundeDokumente doc = new HundeDokumente();
+		DBHundDokumente dbHundDoc = new DBHundDokumente();
+		doc = dbHundDoc.getHundDokumentForId(DokumentGehoertZuType.VERANSTALTUNG,
+				new Integer(veranstaltung.getItemProperty("id_veranstaltung").getValue().toString()));
+
 		for (Object id : teilnehmerContainer.getItemIds()) {
 
 			Item teilnehmerItem = teilnehmerContainer.getItem(id);
 			// create a PDF in memory
 			baos = new ByteArrayOutputStream();
-			pdfInnerDoc = new PdfDocument(new PdfReader(DATASHEET), new PdfWriter(baos));
+
+			System.out.println("idhund: " + teilnehmerItem.getItemProperty("id_hund").getValue());
+
+			if (doc == null ) {
+				pdfInnerDoc = new PdfDocument(new PdfReader(DATASHEET), new PdfWriter(baos));
+					
+			} else {
+				pdfInnerDoc = new PdfDocument(new PdfReader(doc.getHundDokument()), new PdfWriter(baos));
+			}
 			form = PdfAcroForm.getAcroForm(pdfInnerDoc, true);
 			fields = form.getFormFields();
 			hundContainer.addContainerFilter(new Equal("idhund", teilnehmerItem.getItemProperty("id_hund").getValue()));
@@ -115,19 +131,20 @@ public class Urkunde extends CustomComponent {
 					&& !teilnehmerItem.getItemProperty("hundefuehrer").getValue().toString().isEmpty()
 					&& teilnehmerItem.getItemProperty("hundefuehrer").getValue().toString().length() > 0) {
 
-				fields.get("HUNDEFÜHRER/IN").setValue(teilnehmerItem.getItemProperty("hundefuehrer").getValue().toString());
+				fields.get("HUNDEFÜHRER/IN")
+						.setValue(teilnehmerItem.getItemProperty("hundefuehrer").getValue().toString());
 			} else {
-				fields.get("HUNDEFÜHRER/IN").setValue(
-						personContainer.getItem(personContainer.firstItemId()).getItemProperty("nachname").getValue()
-								.toString() + " "
+				fields.get("HUNDEFÜHRER/IN")
+						.setValue(personContainer.getItem(personContainer.firstItemId()).getItemProperty("nachname")
+								.getValue().toString() + " "
 								+ personContainer.getItem(personContainer.firstItemId()).getItemProperty("vorname")
 										.getValue().toString()
 
 				);
 			}
 
-			fields.get("CHIP-NR").setValue(hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("chipnummer")
-					.getValue().toString());
+			fields.get("CHIP-NR").setValue(hundContainer.getItem(hundContainer.firstItemId())
+					.getItemProperty("chipnummer").getValue().toString());
 
 			SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd.MM.yyyy");
 			fields.get("GEWORFEN AM").setValue(dateFormat1.format(
@@ -157,25 +174,25 @@ public class Urkunde extends CustomComponent {
 			fields.get("NAME DES HUNDES").setValue(hundContainer.getItem(hundContainer.firstItemId())
 					.getItemProperty("zwingername").getValue().toString());
 
-			fields.get("ORT/DATUM").setValue(veranstaltung.getItemProperty("veranstaltungsort").getValue().toString() + " "
-					+ dateFormat1.format(veranstaltung.getItemProperty("datum").getValue()));
+			fields.get("ORT/DATUM").setValue(veranstaltung.getItemProperty("veranstaltungsort").getValue().toString()
+					+ " " + dateFormat1.format(veranstaltung.getItemProperty("datum").getValue()));
 
-			fields.get("VERANSTALTER/AUSBILDUNGSSTÄTTE").setValue(
-					veranstaltung.getItemProperty("veranstalter").getValue().toString());
+			fields.get("VERANSTALTER/AUSBILDUNGSSTÄTTE")
+					.setValue(veranstaltung.getItemProperty("veranstalter").getValue().toString());
 			VeranstaltungsStufen defStufe = VeranstaltungsStufen.getBezeichnungForId(
 					new Integer(veranstaltungsStufe.getItemProperty("stufen_typ").getValue().toString()));
 
 			fields.get("PRÜFUNG").setValue(defStufe.getLangBezeichnung());
 
-			fields.get("ZEILE 3").setValue( "");
-			fields.get("ZEILE 1").setValue( defStufe.getLangBezeichnung());
+			fields.get("ZEILE 3").setValue("");
+			fields.get("ZEILE 1").setValue(defStufe.getLangBezeichnung());
 
 			if (teilnehmerItem.getItemProperty("bestanden").getValue() != null) {
 
 				if ("N".equals(teilnehmerItem.getItemProperty("bestanden").getValue().toString())) {
 					fields.get("ZEILE 2").setValue("leider nicht bestanden");
 				} else if (defStufe == VeranstaltungsStufen.STUFE_BH) {
-					fields.get("ZEILE 2").setValue( "erfolgreich bestanden");
+					fields.get("ZEILE 2").setValue("erfolgreich bestanden");
 
 				} else if (defStufe == VeranstaltungsStufen.STUFE_BGH1 || defStufe == VeranstaltungsStufen.STUFE_BGH2
 						|| defStufe == VeranstaltungsStufen.STUFE_BGH3
@@ -189,11 +206,11 @@ public class Urkunde extends CustomComponent {
 						|| defStufe == VeranstaltungsStufen.STUFE_RBP3_2017
 
 				) {
-					fields.get("ZEILE 2").setValue( "erfolgreich mit "
+					fields.get("ZEILE 2").setValue("erfolgreich mit "
 							+ teilnehmerItem.getItemProperty("ges_punkte").getValue().toString() + " Punkten und "
 							+ defStufe.getBewertung(
 									new Integer(teilnehmerItem.getItemProperty("ges_punkte").getValue().toString())));
-					fields.get("ZEILE 3").setValue( "bestanden");
+					fields.get("ZEILE 3").setValue("bestanden");
 
 				}
 			}

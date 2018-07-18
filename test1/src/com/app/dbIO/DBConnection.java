@@ -21,16 +21,8 @@ public class DBConnection {
 
 		ServletContext sc = DashboardServlet.getCurrent().getServletContext();
 		String dbPasswort = sc.getInitParameter("passwort");
-		
-		String dbUrl = "";
-
-		if (DashboardUI.getUseLocalUrl()) {
-			dbUrl = "test1";
-		} else if (DashboardUI.getUseProdUrl()) {
-			dbUrl = "prod";
-
-		}
-		
+		String dbUrl = sc.getInitParameter("database");
+				
 		String dataBase = "jdbc:mysql://localhost:3306/" + dbUrl;
 
 		try {

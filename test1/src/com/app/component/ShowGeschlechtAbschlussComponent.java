@@ -3,11 +3,11 @@ package com.app.component;
 import java.util.Arrays;
 import java.util.List;
 
-import com.app.dbIO.DBShowNeu;
-import com.app.printClasses.ShowBewertungsBlatt;
-import com.app.showData.Show;
-import com.app.showData.ShowGeschlechtEnde;
-import com.app.showData.ShowHund;
+import com.app.dbio.DBShowNeu;
+import com.app.printclasses.ShowBewertungsBlatt;
+import com.app.showdata.Show;
+import com.app.showdata.ShowGeschlechtEnde;
+import com.app.showdata.ShowHund;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBoxGroup;
 import com.vaadin.ui.Component;

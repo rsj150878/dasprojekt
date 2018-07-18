@@ -1,7 +1,7 @@
 package com.app.component;
 
-import com.app.EmailSender.EwsReplClass;
-import com.app.dbIO.DBConnection;
+import com.app.dbio.DBConnection;
+import com.app.emailsender.EwsReplClass;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;

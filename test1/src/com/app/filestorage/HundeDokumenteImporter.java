@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
-import com.app.dbIO.DBHundDokumente;
-import com.app.enumPackage.DokumentGehoertZuType;
+import com.app.dbio.DBHundDokumente;
+import com.app.enumdatatypes.DokumentGehoertZuType;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Upload.FailedEvent;

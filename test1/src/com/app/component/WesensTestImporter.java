@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
-import com.app.DashBoard.Component.VeranstaltungsTeilnehmerGrid;
-import com.app.DashBoard.View.VeranstaltungsDetailViewNeu.AnmeldungsPanel;
-import com.app.dbIO.DBConnection;
+import com.app.dashboard.component.VeranstaltungsTeilnehmerGrid;
+import com.app.dashboard.view.VeranstaltungsDetailViewNeu.AnmeldungsPanel;
+import com.app.dbio.DBConnection;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Notification;

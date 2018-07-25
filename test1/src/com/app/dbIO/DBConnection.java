@@ -9,7 +9,7 @@ import com.vaadin.v7.data.util.sqlcontainer.connection.SimpleJDBCConnectionPool;
 
 public class DBConnection {
 
-	private final static String DRIVER_NAME = "com.mysql.jdbc.Driver";
+	private final static String DRIVER_NAME = "com.mysql.cj.jdbc.Driver";
 
 	private final static String DB_USER = "_rdata";
 
@@ -30,8 +30,8 @@ public class DBConnection {
 			dbUrl = "prod";
 
 		}
-		
-		String dataBase = "jdbc:mysql://localhost:3306/" + dbUrl;
+
+		String dataBase = "jdbc:mysql://localhost:3306/" + dbUrl + "?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
 
 		try {
 

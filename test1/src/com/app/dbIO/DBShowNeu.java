@@ -3,6 +3,7 @@ package com.app.dbIO;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,6 @@ import com.app.showData.ShowHund;
 import com.app.showData.ShowKlasse;
 import com.app.showData.ShowKlasseEnde;
 import com.app.showData.ShowRing;
-import com.mysql.jdbc.Statement;
 import com.vaadin.server.VaadinSession;
 
 public class DBShowNeu {

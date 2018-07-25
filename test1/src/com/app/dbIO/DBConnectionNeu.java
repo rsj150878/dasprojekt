@@ -32,7 +32,9 @@ public class DBConnectionNeu {
 			}
 
 			connect = DriverManager.getConnection(
-					"jdbc:mysql://localhost:3306/" + dbUrl + "?user=" + dbUrl + DB_USER + "&password=" + dbPasswort);
+					"jdbc:mysql://localhost:3306/" + dbUrl + "?user=" + dbUrl + DB_USER + "&password=" + dbPasswort +
+					"&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

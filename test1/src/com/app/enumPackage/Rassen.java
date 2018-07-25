@@ -14,7 +14,8 @@ public enum Rassen {
 	COLLIE_LANGHAAR("CLH", "Langhaar Collie", "Langhaar Collie"),
 	ALLGEMEIN("ALG", "Allgemein", "Allgemein"), 
 	AUSTRALIAN_SHEPHERD ("ASH", "Australian Sheperd", "Australian Sheperd"),
-	PERRO_DE_AGUA_ESPANOL("PAE", "Perro de Agua Espanol", "Perro de Agua Espanol");
+	PERRO_DE_AGUA_ESPANOL("PAE", "Perro de Agua Espanol", "Perro de Agua Espanol"), 
+	LAGOTTO_ROMAGNOLO ("LGR", "Lagotto Romagnolo", "Lagotto Romagnolo");
 	
 	private final String RassenLangBezeichnung;
 	private final String RassenKurzBezeichnung;

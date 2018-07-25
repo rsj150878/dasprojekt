@@ -10,6 +10,7 @@ import com.app.dashboard.event.DashBoardEvent.UserNewEvent;
 import com.app.dashboard.event.DashBoardEventBus;
 import com.app.dashboardwindow.HundeDetailWindow;
 import com.app.dashboardwindow.ProfilePreferencesWindow;
+import com.app.dbio.DBPerson;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.data.HasValue;
 import com.vaadin.data.provider.DataProvider;
@@ -28,6 +29,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.renderers.ButtonRenderer;
@@ -115,9 +117,10 @@ public class MitgliederView extends VerticalLayout implements View {
 	}
 
 	private void onNameFilterTextChange(HasValue.ValueChangeEvent<String> event) {
-		//listDataProvider.filteringBySubstring(MitgliederListe::getSearchString,  event.getValue());
-		 listDataProvider.setFilter(MitgliederListe::getSearchString, s -> caseInsensitiveContains(s, event.getValue()));
-    }
+		// listDataProvider.filteringBySubstring(MitgliederListe::getSearchString,
+		// event.getValue());
+		listDataProvider.setFilter(MitgliederListe::getSearchString, s -> caseInsensitiveContains(s, event.getValue()));
+	}
 
 	private Boolean caseInsensitiveContains(String where, String what) {
 		return where.toLowerCase().contains(what.toLowerCase());
@@ -133,8 +136,13 @@ public class MitgliederView extends VerticalLayout implements View {
 
 		gridTable.setColumnReorderingAllowed(true);
 
-		mitgliederListe = com.app.auth.DataProvider.getMitgliederList();
+		try {
+			mitgliederListe = new DBPerson().getMitgliederListe();
 
+		} catch (Exception e) {
+			e.printStackTrace();
+			Notification.show("Fehler beim Lesen der Personen");
+		}
 		listDataProvider = DataProvider.ofCollection(mitgliederListe);
 
 		gridTable.setColumnOrder("vorName", "familienName", "adresse");
@@ -159,7 +167,7 @@ public class MitgliederView extends VerticalLayout implements View {
 
 		//
 		gridTable.getDefaultHeaderRow().join("edit", "hundebutton").setText("Tools");
-		
+
 		gridTable.setItems(mitgliederListe);
 		gridTable.setDataProvider(listDataProvider);
 

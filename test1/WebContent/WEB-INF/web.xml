@@ -41,27 +41,27 @@
 
 	<servlet>
 		<servlet-name>HuschuDashboard</servlet-name>
-		<servlet-class>com.app.DashBoard.DashboardServlet</servlet-class>
+		<servlet-class>com.app.dashboard.DashboardServlet</servlet-class>
 		<init-param>
 			<param-name>UI</param-name>
-			<param-value>com.app.DashBoard.DashboardUI</param-value>
+			<param-value>com.app.dashboard.DashboardUI</param-value>
 		</init-param>
 	</servlet>
 	<servlet>
 		<servlet-name>ShowInfoDashboard</servlet-name>
-		<servlet-class>com.app.DashBoard.DashboardServlet</servlet-class>
+		<servlet-class>com.app.dashboard.DashboardServlet</servlet-class>
 		<init-param>
 			<param-name>UI</param-name>
-			<param-value>com.app.DashBoard.ShowInfoUI</param-value>
+			<param-value>com.app.dashboard.ShowInfoUI</param-value>
 		</init-param>
 	</servlet>
 	
 	<servlet>
 		<servlet-name>PaymentConfirmDashboard</servlet-name>
-		<servlet-class>com.app.DashBoard.DashboardServlet</servlet-class>
+		<servlet-class>com.app.dashboard.DashboardServlet</servlet-class>
 		<init-param>
 			<param-name>UI</param-name>
-			<param-value>com.app.DashBoard.PaymentConfirm</param-value>
+			<param-value>com.app.dashboard.PaymentConfirm</param-value>
 		</init-param>
 	</servlet>
 	

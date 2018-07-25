@@ -22,7 +22,7 @@ public enum JaNeinDataType {
 	}
 	
 	public static JaNeinDataType getJaNeinDataTypeForKurzbezeichnung(String kurzbezeichnung) {
-		return kurzbezeichnung.equals(JaNeinDataType.JA.kurzText) ? JaNeinDataType.JA:JaNeinDataType.NEIN;
+		return kurzbezeichnung == null || kurzbezeichnung.equals(JaNeinDataType.NEIN.kurzText) ? JaNeinDataType.NEIN:JaNeinDataType.JA;
 	}
 	
 	

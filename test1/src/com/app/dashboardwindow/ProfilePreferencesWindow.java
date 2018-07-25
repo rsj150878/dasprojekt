@@ -9,10 +9,11 @@ import com.app.dashboard.event.DashBoardEvent.CloseOpenWindowsEvent;
 import com.app.dashboard.event.DashBoardEvent.ProfileUpdatedEvent;
 import com.app.dashboard.event.DashBoardEvent.UpdateUserEvent;
 import com.app.dashboard.event.DashBoardEvent.UserNewEvent;
+import com.app.dashboard.event.DashBoardEventBus;
+import com.app.dbio.DBPerson;
 import com.app.enumdatatypes.JaNeinDataType;
 import com.app.enumdatatypes.LaenderDataType;
 import com.app.enumdatatypes.MenschGeschlechtDataType;
-import com.app.dashboard.event.DashBoardEventBus;
 import com.vaadin.data.Binder;
 import com.vaadin.data.converter.LocalDateToDateConverter;
 import com.vaadin.event.ShortcutAction.KeyCode;
@@ -306,7 +307,7 @@ public class ProfilePreferencesWindow extends Window {
 		fieldGroupPerson.forField(websiteField).bind(AbstractPersonClass::getWebsite, AbstractPersonClass::setWebsite);
 		fieldGroupPerson.forField(bioField).bind(AbstractPersonClass::getBio, AbstractPersonClass::setBio);
 		fieldGroupPerson.forField(strasseField).bind(AbstractPersonClass::getStrasse, AbstractPersonClass::setStrasse);
-		fieldGroupPerson.forField(landField)
+		fieldGroupPerson.forField(landField).asRequired("bitte Land auswählen")
 				.withConverter(LaenderDataType::getKurzText,
 						value -> LaenderDataType.getLaenderDataTypeForKurzbezeichnung(value))
 				.bind(AbstractPersonClass::getLand, AbstractPersonClass::setLand);
@@ -346,6 +347,19 @@ public class ProfilePreferencesWindow extends Window {
 		footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
 		footer.setWidth(100.0f, Unit.PERCENTAGE);
 
+		Button cancel = new Button("Cancel");
+		cancel.addStyleName(ValoTheme.BUTTON_PRIMARY);
+		cancel.addClickListener(new ClickListener() {
+			@Override
+			public void buttonClick(ClickEvent event) {
+				close();
+
+			}
+		});
+		cancel.focus();
+		footer.addComponent(cancel);
+		footer.setComponentAlignment(cancel, Alignment.TOP_LEFT);
+
 		Button ok = new Button("OK");
 		ok.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		ok.addClickListener(new ClickListener() {
@@ -353,26 +367,29 @@ public class ProfilePreferencesWindow extends Window {
 			public void buttonClick(ClickEvent event) {
 				try {
 
-					fieldGroupPerson.writeBean(abstractPerson);
-					abstractPerson.commit();
+					if (fieldGroupPerson.validate().isOk()) {
+						fieldGroupPerson.writeBeanIfValid(abstractPerson);
+						DBPerson dbio = new DBPerson();
+						dbio.savePersion((Person) abstractPerson);
 
-					Notification success = new Notification("Profile updated successfully");
-					success.setDelayMsec(2000);
-					success.setStyleName("bar success small");
-					success.setPosition(Position.BOTTOM_CENTER);
-					success.show(Page.getCurrent());
+						Notification success = new Notification("Profile updated successfully");
+						success.setDelayMsec(2000);
+						success.setStyleName("bar success small");
+						success.setPosition(Position.BOTTOM_CENTER);
+						success.show(Page.getCurrent());
 
-					if (abstractPerson instanceof Person) {
-						if (update == true) {
-							DashBoardEventBus.post(new UpdateUserEvent());
+						if (abstractPerson instanceof Person) {
+							if (update == true) {
+								DashBoardEventBus.post(new UpdateUserEvent());
+							} else {
+								DashBoardEventBus.post(new UserNewEvent((Person) abstractPerson));
+							}
 						} else {
-							DashBoardEventBus.post(new UserNewEvent((Person) abstractPerson));
+							DashBoardEventBus.post(new ProfileUpdatedEvent());
 						}
-					} else {
-						DashBoardEventBus.post(new ProfileUpdatedEvent());
-					}
 
-					close();
+						close();
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 					Notification.show("Error while updating profile", Type.ERROR_MESSAGE);

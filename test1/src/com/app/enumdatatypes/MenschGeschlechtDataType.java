@@ -21,7 +21,7 @@ public enum MenschGeschlechtDataType {
 	}
 
 	public static MenschGeschlechtDataType getMenschGeschlechtDataTypeForKurzbezeichnung(String kurzbezeichnung) {
-		return kurzbezeichnung.equals(MenschGeschlechtDataType.MANN.kurzText) ? MenschGeschlechtDataType.MANN
+		return kurzbezeichnung == null || kurzbezeichnung.equals(MenschGeschlechtDataType.MANN.kurzText) ? MenschGeschlechtDataType.MANN
 				: MenschGeschlechtDataType.FRAU;
 	}
 

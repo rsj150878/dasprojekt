@@ -1,4 +1,4 @@
-package com.app.dbIO;
+package com.app.dbio;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

@@ -1,12 +1,12 @@
-package com.app.dbIO;
+package com.app.dbio;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 
 import javax.servlet.ServletContext;
 
-import com.app.DashBoard.DashboardServlet;
-import com.app.DashBoard.DashboardUI;
+import com.app.dashboard.DashboardServlet;
+import com.app.dashboard.DashboardUI;
 import com.vaadin.v7.data.util.sqlcontainer.connection.JDBCConnectionPool;
 import com.vaadin.v7.data.util.sqlcontainer.connection.SimpleJDBCConnectionPool;
 

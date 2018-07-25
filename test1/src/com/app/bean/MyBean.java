@@ -1,5 +1,6 @@
 package com.app.bean;
 
+
 import java.io.Serializable;
 
 /**

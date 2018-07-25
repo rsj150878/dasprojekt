@@ -1,4 +1,4 @@
-package com.app.dbIO;
+package com.app.dbio;
 
 import com.vaadin.shared.util.SharedUtil;
 import com.vaadin.v7.data.Property;

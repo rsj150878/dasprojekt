@@ -22,8 +22,6 @@ public enum DashBoardViewType {
     WUERFE("Würfe", WurfUebersicht.class, VaadinIcons.MICROPHONE, false, null),
     SHOWBEWERTUNG("Schaubewertung", ShowBewertungUebersicht.class, VaadinIcons.FILE_TREE, false, "show"),
     SHOWBEWERTUNGKOKMPLETT("PDF Ergebnisse", ShowBewertungDruckUebersicht.class, VaadinIcons.PAPERCLIP, false, "show"),
-    //BEZAHLTUNGTEST("TestPaymen", TestPayment.class, VaadinIcons.MONEY, false, null);
-    //SIGNTEST("TestUnterschrift", SignTestView.class, VaadinIcons.SIGN_IN, false, null)
     ERGEBNISSE("Punkte erfassen", VeranstaltungPunkteEingabeView.class, VaadinIcons.POINTER, false, null)
     ;
  

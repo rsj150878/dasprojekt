@@ -3,6 +3,7 @@ package com.app.dbio;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,6 @@ import com.app.showdata.ShowHund;
 import com.app.showdata.ShowKlasse;
 import com.app.showdata.ShowKlasseEnde;
 import com.app.showdata.ShowRing;
-import com.mysql.jdbc.Statement;
 import com.vaadin.server.VaadinSession;
 
 public class DBShowNeu {
@@ -87,9 +87,9 @@ public class DBShowNeu {
 
 		if (show.getSchauTyp().equals("W")) {
 
-			ShowKlasse zw = new ShowKlasse(Rassen.ALLGEMEIN, ShowKlassen.WESENSTEST);
+			ShowKlasse zw = new ShowKlasse(Rassen.ALLGEMEIN, ShowKlassen.WESENSTEST); 
 			zw.setHundeDerKlasse(getHundeForKlasse(zw, show, ring, null, null, null));
-			resultList.add(zw);
+			resultList.add(zw);   
 
 		} else {
 			String state = "select rasse, geschlecht, klasse, min(sort_kat_nr) as sort"

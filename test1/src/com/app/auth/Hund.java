@@ -12,7 +12,7 @@ import com.vaadin.v7.data.util.sqlcontainer.query.QueryDelegate;
 import com.vaadin.v7.data.util.sqlcontainer.query.QueryDelegate.RowIdChangeEvent;
 import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 
-public class Hund implements QueryDelegate.RowIdChangeListener {
+public class Hund  {
 
 	private Integer idhund;
 	private Integer idperson;
@@ -26,45 +26,20 @@ public class Hund implements QueryDelegate.RowIdChangeListener {
 	private String zuechter;
 	private String farbe;
 	private String geschlecht;
+	
+	public Hund () {
+		
+	}
 
 	// legt einen neuen hund an
 	public Hund(Integer idperson) {
-
-		TableQuery q1 = new TableQuery("hund",
-				DBConnection.INSTANCE.getConnectionPool());
-		q1.setVersionColumn("version");
-
-		Item hundItem;
-		SQLContainer hundContainer;
-
-		try {
-			hundContainer = new SQLContainer(q1);
-			hundContainer.addRowIdChangeListener(this);
-			hundItem = hundContainer.getItem(hundContainer.addItem());
-
-			hundItem.getItemProperty("idperson").setValue(idperson);
-			hundItem.getItemProperty("zwingername").setValue("neu");
-			;
-			hundItem.getItemProperty("rufname").setValue("neu");
-			hundItem.getItemProperty("wurfdatum").setValue(new Date());
-			hundItem.getItemProperty("rasse").setValue("GR");
-			hundItem.getItemProperty("chipnummer").setValue("0000000000000000");
-			hundItem.getItemProperty("geschlecht").setValue("R");
-			hundItem.getItemProperty("bhdatum").setValue(new Date());
-
-			hundContainer.commit();
 
 			this.rufname = "Neu";
 			this.rasse = "GR";
 			this.geschlecht = "R";
 			this.chipnummer = "0000000000000000";
-			this.wurfdatum = new Date();
-			this.bhdatum = new Date();
+			this.idperson = idperson;
 			
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 
 	}
 
@@ -99,44 +74,6 @@ public class Hund implements QueryDelegate.RowIdChangeListener {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
-	}
-
-	public void commit() throws Exception {
-		TableQuery q1 = new TableQuery("hund",
-				DBConnection.INSTANCE.getConnectionPool());
-		q1.setVersionColumn("version");
-
-		Item hundItem;
-		SQLContainer hundContainer;
-
-		hundContainer = new SQLContainer(q1);
-		hundContainer.addContainerFilter(new Equal("idhund", this.idhund));
-
-		hundItem = hundContainer.getItem(hundContainer.firstItemId());
-
-		hundItem.getItemProperty("zwingername").setValue(this.zwingername);
-		hundItem.getItemProperty("rufname").setValue(this.rufname);
-		hundItem.getItemProperty("wurfdatum").setValue(this.wurfdatum);
-		hundItem.getItemProperty("rasse").setValue(this.rasse);
-		hundItem.getItemProperty("chipnummer").setValue(this.chipnummer);
-		hundItem.getItemProperty("bhdatum").setValue(this.bhdatum);
-		hundItem.getItemProperty("farbe").setValue(this.farbe);
-		hundItem.getItemProperty("zuechter").setValue(this.zuechter);
-		hundItem.getItemProperty("geschlecht").setValue(this.geschlecht);
-		hundItem.getItemProperty("zuchtbuchnummer").setValue(
-				this.zuchtbuchnummer);
-
-		hundContainer.commit();
-
-	}
-
-	@Override
-	public void rowIdChange(RowIdChangeEvent arg0) {
-		RowId x = arg0.getNewRowId();
-		Long newID = (Long) x.getId()[0];
-
-		this.idhund = new Integer(newID.intValue());
 
 	}
 

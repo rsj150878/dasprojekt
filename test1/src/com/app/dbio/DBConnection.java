@@ -9,7 +9,7 @@ import com.vaadin.v7.data.util.sqlcontainer.connection.SimpleJDBCConnectionPool;
 
 public class DBConnection {
 
-	private final static String DRIVER_NAME = "com.mysql.jdbc.Driver";
+	private final static String DRIVER_NAME = "com.mysql.cj.jdbc.Driver";
 
 	private final static String DB_USER = "_rdata";
 
@@ -21,9 +21,17 @@ public class DBConnection {
 
 		ServletContext sc = DashboardServlet.getCurrent().getServletContext();
 		String dbPasswort = sc.getInitParameter("passwort");
-		String dbUrl = sc.getInitParameter("database");
-				
-		String dataBase = "jdbc:mysql://localhost:3306/" + dbUrl;
+		
+		String dbUrl = "";
+
+		if (DashboardUI.getUseLocalUrl()) {
+			dbUrl = "test1";
+		} else if (DashboardUI.getUseProdUrl()) {
+			dbUrl = "prod";
+
+		}
+
+		String dataBase = "jdbc:mysql://localhost:3306/" + dbUrl + "?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
 
 		try {
 

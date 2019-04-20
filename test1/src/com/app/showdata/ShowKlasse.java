@@ -19,7 +19,7 @@ public class ShowKlasse extends ShowRing  {
 		this.klasse = klasse;
 		hundeDerKlasse = new ArrayList<ShowRing>();
 	}
-	
+	 
 	public ShowKlasse() {
 		//super();
 

@@ -99,6 +99,9 @@ public final class DashboardUI extends UI {
     		Notification.show("User und/oder passwort falsch", Notification.Type.ERROR_MESSAGE);
     		e.printStackTrace();
     		
+    	} catch (Exception e) {
+    		Notification.show("Fehler aufgetreten", Notification.Type.ERROR_MESSAGE);
+    		e.printStackTrace();
     	}
     	VaadinSession.getCurrent().setAttribute(User.class.getName(), user);
         updateContent();

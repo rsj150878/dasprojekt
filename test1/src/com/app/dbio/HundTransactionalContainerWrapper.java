@@ -7,9 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.vaadin.data.tx.ItemGenerator;
-import org.vaadin.data.tx.TxListener;
-
 import com.vaadin.v7.data.Container;
 import com.vaadin.v7.data.Item;
 import com.vaadin.v7.data.Property;
@@ -417,7 +414,7 @@ public class HundTransactionalContainerWrapper extends AbstractInMemoryContainer
 	 *            Listener to remove
 	 * @return true if successfull, false otherwise
 	 */
-	public boolean removeTxListener(TxListener listener) {
+	public boolean removeTxListener(HundTxListener listener) {
 		return transactionListeners.remove(listener);
 	}
 

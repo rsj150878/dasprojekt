@@ -131,6 +131,44 @@ public class DBPerson {
 		return zw;
 	}
 	
+	public Person getPersonForUserId(Integer idUser) throws Exception {
+		Connection conn = DBConnectionNeu.INSTANCE.getConnection();
+		PreparedStatement st;
+		st = conn.prepareStatement("select * from person where iduser = ?");
+		st.setInt(1, idUser);
+		
+		Person zw = null;
+		ResultSet rs = st.executeQuery();
+		
+		if (rs.next()) {
+			zw = new Person();
+			zw.setBio(rs.getString("zusatztext"));
+			zw.setEmail(rs.getString("email"));
+			zw.setEmail2(rs.getString("email2"));
+			zw.setEmail3(rs.getString("email3"));
+			zw.setFirstName(rs.getString("vorname"));
+			zw.setGebdat(rs.getDate("geb_dat"));
+			zw.setHausnummer(rs.getString("hausnummer"));
+			zw.setIdPerson(rs.getInt("idperson"));
+			zw.setLand(rs.getString("land"));
+			zw.setLastName(rs.getString("nachname"));
+			zw.setMale(rs.getString("geschlecht"));
+			zw.setMobnr(rs.getString("mobnr"));
+			zw.setNewsletter(rs.getString("newsletter"));
+			zw.setNewsletter2(rs.getString("newsletter2"));
+			zw.setNewsletter3(rs.getString("newsletter3"));
+			zw.setOrt(rs.getString("ort"));
+			zw.setPhone(rs.getString("telnr"));
+			zw.setPlz(rs.getString("plz"));
+			zw.setStrasse(rs.getString("strasse"));
+			//zw.setRole(rs.getString("role"));
+			zw.setTitle(rs.getString("titel"));
+			zw.setWebsite(rs.getString("website"));
+		}
+		
+		return zw;
+	}
+	
 	public void savePersion(Person person) throws Exception {
 		Connection conn = DBConnectionNeu.INSTANCE.getConnection();
 		

@@ -10,7 +10,7 @@ import com.google.common.eventbus.SubscriberExceptionHandler;
  * relevant actions.
  */
 public class DashBoardEventBus implements SubscriberExceptionHandler {
-
+    
     private final EventBus eventBus = new EventBus(this);
 
     public static void post(final Object event) {

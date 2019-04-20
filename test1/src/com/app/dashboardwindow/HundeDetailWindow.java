@@ -8,9 +8,10 @@ import com.app.auth.Hund;
 import com.app.auth.Person;
 import com.app.dashboard.event.DashBoardEvent.CloseOpenWindowsEvent;
 import com.app.dashboard.event.DashBoardEvent.DogUpdatedEvent;
+import com.app.dashboard.event.DashBoardEventBus;
+import com.app.dbio.DBHund;
 import com.app.enumdatatypes.HundeGeschlechtDataType;
 import com.app.enumdatatypes.Rassen;
-import com.app.dashboard.event.DashBoardEventBus;
 import com.app.printclasses.Kursblatt;
 import com.vaadin.data.Binder;
 import com.vaadin.data.converter.LocalDateToDateConverter;
@@ -223,7 +224,8 @@ public class HundeDetailWindow extends Window {
 				// not in this demo.
 
 				if (!(hund == null)) {
-					hund.commit();
+					DBHund dbHund = new DBHund();
+					dbHund.saveHund(hund);
 				}
 				Notification success = new Notification("Hundedaten erfolgreich gespeichert");
 				success.setDelayMsec(2000);
@@ -393,7 +395,10 @@ public class HundeDetailWindow extends Window {
 					// Updated user should also be persisted to database. But
 					// not in this demo.
 
-					hund.commit();
+					if (!(hund == null)) {
+						DBHund dbHund = new DBHund();
+						dbHund.saveHund(hund);
+					}
 					Notification success = new Notification("Hundedaten erfolgreich gespeichert");
 					success.setDelayMsec(2000);
 					success.setStyleName("bar success small");

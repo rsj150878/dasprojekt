@@ -2,7 +2,6 @@ package com.app.dashboardwindow;
 
 import java.time.ZoneId;
 
-import com.app.auth.AbstractPersonClass;
 import com.app.auth.Person;
 import com.app.auth.User;
 import com.app.dashboard.event.DashBoardEvent.CloseOpenWindowsEvent;
@@ -50,7 +49,7 @@ public class ProfilePreferencesWindow extends Window {
 
 	public static final String ID = "profilepreferenceswindow";
 
-	private final Binder<AbstractPersonClass> fieldGroupPerson;
+	private final Binder<Person> fieldGroupPerson;
 
 	private TextField firstNameField;
 	private TextField lastNameField;
@@ -73,31 +72,35 @@ public class ProfilePreferencesWindow extends Window {
 	private TextField emailField3;
 	private RadioButtonGroup<JaNeinDataType> newsletter3;
 
-	private final AbstractPersonClass abstractPerson;
+	//private final Person abstractPerson;
+	private final Person person;
+	private final User user;
 	private final boolean update;
 
 	private ProfilePreferencesWindow(final User user, final boolean preferencesTabOpen) {
 
-		this.abstractPerson = user;
+		this.user = user;
+		this.person = user.getPerson();
 
 		this.update = false;
-		fieldGroupPerson = new Binder<AbstractPersonClass>(AbstractPersonClass.class);
+		fieldGroupPerson = new Binder<Person>(Person.class);
 
 		initWindow(preferencesTabOpen);
 
-		fieldGroupPerson.readBean(abstractPerson);
+		fieldGroupPerson.readBean(person);
 
 	}
 
 	private ProfilePreferencesWindow(final Person person, final boolean update) {
 
-		this.abstractPerson = person;
+		this.person = person;
 		this.update = update;
-		fieldGroupPerson = new Binder<AbstractPersonClass>(AbstractPersonClass.class);
+		this.user = null;
+		fieldGroupPerson = new Binder<Person>(Person.class);
 
 		initWindow(false);
 
-		fieldGroupPerson.readBean(abstractPerson);
+		fieldGroupPerson.readBean(person);
 
 	}
 
@@ -299,46 +302,46 @@ public class ProfilePreferencesWindow extends Window {
 
 	private void bindFields() {
 
-		fieldGroupPerson.forField(emailField3).bind(AbstractPersonClass::getEmail3, AbstractPersonClass::setEmail3);
+		fieldGroupPerson.forField(emailField3).bind(Person::getEmail3, Person::setEmail3);
 		fieldGroupPerson.forField(newsletter3)
 				.withConverter(JaNeinDataType::getKurzText,
 						value -> JaNeinDataType.getJaNeinDataTypeForKurzbezeichnung(value))
-				.bind(AbstractPersonClass::getNewsletter3, AbstractPersonClass::setNewsletter3);
-		fieldGroupPerson.forField(websiteField).bind(AbstractPersonClass::getWebsite, AbstractPersonClass::setWebsite);
-		fieldGroupPerson.forField(bioField).bind(AbstractPersonClass::getBio, AbstractPersonClass::setBio);
-		fieldGroupPerson.forField(strasseField).bind(AbstractPersonClass::getStrasse, AbstractPersonClass::setStrasse);
+				.bind(Person::getNewsletter3, Person::setNewsletter3);
+		fieldGroupPerson.forField(websiteField).bind(Person::getWebsite, Person::setWebsite);
+		fieldGroupPerson.forField(bioField).bind(Person::getBio, Person::setBio);
+		fieldGroupPerson.forField(strasseField).bind(Person::getStrasse, Person::setStrasse);
 		fieldGroupPerson.forField(landField).asRequired("bitte Land auswählen")
 				.withConverter(LaenderDataType::getKurzText,
 						value -> LaenderDataType.getLaenderDataTypeForKurzbezeichnung(value))
-				.bind(AbstractPersonClass::getLand, AbstractPersonClass::setLand);
-		fieldGroupPerson.forField(mobNrField).bind(AbstractPersonClass::getMobnr, AbstractPersonClass::setMobnr);
-		fieldGroupPerson.forField(phoneField).bind(AbstractPersonClass::getPhone, AbstractPersonClass::setPhone);
+				.bind(Person::getLand, Person::setLand);
+		fieldGroupPerson.forField(mobNrField).bind(Person::getMobnr, Person::setMobnr);
+		fieldGroupPerson.forField(phoneField).bind(Person::getPhone, Person::setPhone);
 		fieldGroupPerson.forField(newsletter)
 				.withConverter(JaNeinDataType::getKurzText,
 						value -> JaNeinDataType.getJaNeinDataTypeForKurzbezeichnung(value))
-				.bind(AbstractPersonClass::getNewsletter, AbstractPersonClass::setNewsletter);
-		fieldGroupPerson.forField(emailField).asRequired("Bitte Email angeben").bind(AbstractPersonClass::getEmail,
-				AbstractPersonClass::setEmail);
+				.bind(Person::getNewsletter, Person::setNewsletter);
+		fieldGroupPerson.forField(emailField).asRequired("Bitte Email angeben").bind(Person::getEmail,
+				Person::setEmail);
 		fieldGroupPerson.forField(birthDate).withConverter(new LocalDateToDateConverter(ZoneId.systemDefault()))
-				.bind(AbstractPersonClass::getGebdat, AbstractPersonClass::setGebdat);
-		fieldGroupPerson.forField(lastNameField).bind(AbstractPersonClass::getLastName,
-				AbstractPersonClass::setLastName);
-		fieldGroupPerson.forField(firstNameField).bind(AbstractPersonClass::getFirstName,
-				AbstractPersonClass::setFirstName);
-		fieldGroupPerson.forField(titleField).bind(AbstractPersonClass::getTitle, AbstractPersonClass::setTitle);
+				.bind(Person::getGebdat, Person::setGebdat);
+		fieldGroupPerson.forField(lastNameField).bind(Person::getLastName,
+				Person::setLastName);
+		fieldGroupPerson.forField(firstNameField).bind(Person::getFirstName,
+				Person::setFirstName);
+		fieldGroupPerson.forField(titleField).bind(Person::getTitle, Person::setTitle);
 		fieldGroupPerson.forField(sexField)
 				.withConverter(MenschGeschlechtDataType::getKurzText,
 						value -> MenschGeschlechtDataType.getMenschGeschlechtDataTypeForKurzbezeichnung(value))
-				.bind(AbstractPersonClass::getMale, AbstractPersonClass::setMale);
-		fieldGroupPerson.forField(hausnummerField).bind(AbstractPersonClass::getHausnummer,
-				AbstractPersonClass::setHausnummer);
-		fieldGroupPerson.forField(plzField).bind(AbstractPersonClass::getPlz, AbstractPersonClass::setPlz);
-		fieldGroupPerson.forField(ortField).bind(AbstractPersonClass::getOrt, AbstractPersonClass::setOrt);
-		fieldGroupPerson.forField(emailField2).bind(AbstractPersonClass::getEmail2, AbstractPersonClass::setEmail2);
+				.bind(Person::getMale, Person::setMale);
+		fieldGroupPerson.forField(hausnummerField).bind(Person::getHausnummer,
+				Person::setHausnummer);
+		fieldGroupPerson.forField(plzField).bind(Person::getPlz, Person::setPlz);
+		fieldGroupPerson.forField(ortField).bind(Person::getOrt, Person::setOrt);
+		fieldGroupPerson.forField(emailField2).bind(Person::getEmail2, Person::setEmail2);
 		fieldGroupPerson.forField(newsletter2)
 				.withConverter(JaNeinDataType::getKurzText,
 						value -> JaNeinDataType.getJaNeinDataTypeForKurzbezeichnung(value))
-				.bind(AbstractPersonClass::getNewsletter2, AbstractPersonClass::setNewsletter2);
+				.bind(Person::getNewsletter2, Person::setNewsletter2);
 
 	}
 
@@ -368,9 +371,9 @@ public class ProfilePreferencesWindow extends Window {
 				try {
 
 					if (fieldGroupPerson.validate().isOk()) {
-						fieldGroupPerson.writeBeanIfValid(abstractPerson);
+						fieldGroupPerson.writeBeanIfValid(person);
 						DBPerson dbio = new DBPerson();
-						dbio.savePersion((Person) abstractPerson);
+						dbio.savePersion(person);
 
 						Notification success = new Notification("Profile updated successfully");
 						success.setDelayMsec(2000);
@@ -378,11 +381,11 @@ public class ProfilePreferencesWindow extends Window {
 						success.setPosition(Position.BOTTOM_CENTER);
 						success.show(Page.getCurrent());
 
-						if (abstractPerson instanceof Person) {
+						if (user == null) {
 							if (update == true) {
 								DashBoardEventBus.post(new UpdateUserEvent());
 							} else {
-								DashBoardEventBus.post(new UserNewEvent((Person) abstractPerson));
+								DashBoardEventBus.post(new UserNewEvent(person));
 							}
 						} else {
 							DashBoardEventBus.post(new ProfileUpdatedEvent());

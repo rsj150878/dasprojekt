@@ -55,12 +55,10 @@ public class MyHundeView extends VerticalLayout implements View {
 		// titleAndDrafts.addStyleName("drafts");
 		//
 		// titleAndDrafts.addComponent(buildHundeList());
-		
-		
+
 		Component hundeList = buildHundeList();
 		addComponent(hundeList);
-		setExpandRatio(hundeList,1);
-		
+		setExpandRatio(hundeList, 1);
 
 		// setComponentAlignment(titleAndDrafts, Alignment.TOP_CENTER);
 		// addComponent(titleAndDrafts);
@@ -93,7 +91,7 @@ public class MyHundeView extends VerticalLayout implements View {
 
 		title.addStyleName(ValoTheme.LABEL_H1);
 		title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
-		
+
 		header.addComponent(title);
 
 		return header;
@@ -105,7 +103,6 @@ public class MyHundeView extends VerticalLayout implements View {
 		panel.addStyleName(ValoTheme.PANEL_SCROLL_INDICATOR);
 		panel.setSizeFull();
 
-		
 		hunde = new GridLayout(5, 5);
 		hunde.setSizeUndefined();
 
@@ -113,12 +110,17 @@ public class MyHundeView extends VerticalLayout implements View {
 
 		hunde.addComponent(buildCreateBox());
 		// hunde.addComponent(buildHundeThumb());
-		User user = (User) VaadinSession.getCurrent().getAttribute(
-				User.class.getName());
+		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 
-		Collection<Hund> zwCollection = user.getAllHunde();
+		Collection<Hund> zwCollection = null;
+		try {
+			zwCollection = user.getAllHunde();
 
-		Iterator <Hund>i = zwCollection.iterator();
+		} catch (Exception e) {
+			Notification.show(e.getMessage());
+		}
+
+		Iterator<Hund> i = zwCollection.iterator();
 
 		while (i.hasNext()) {
 
@@ -128,10 +130,9 @@ public class MyHundeView extends VerticalLayout implements View {
 
 		panel.setContent(hunde);
 		return panel;
-		//return hunde;
-		
-	}
+		// return hunde;
 
+	}
 
 	private Component buildCreateBox() {
 		VerticalLayout createBox = new VerticalLayout();
@@ -170,16 +171,14 @@ public class MyHundeView extends VerticalLayout implements View {
 
 		public HundeThumbClass() {
 
-			User user = (User) VaadinSession.getCurrent().getAttribute(
-					User.class.getName());
+			User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 
-			hund = new Hund(user.getIdPerson());
+			hund = new Hund(user.getPerson().getIdPerson());
 
 			setCompositionRoot(buildHundeThumb());
 
 		}
 
-	
 		public HundeThumbClass(final Hund hund) {
 			this.hund = hund;
 			setCompositionRoot(buildHundeThumb());
@@ -187,13 +186,9 @@ public class MyHundeView extends VerticalLayout implements View {
 
 		@Subscribe
 		public void updateUserName(final DogUpdatedEvent event) {
-		
-			
-			draftTitle.setValue(hund.getRufname() + "<br>"
-					+ hund.getZwingername());
-			
-			
-					
+
+			draftTitle.setValue(hund.getRufname() + "<br>" + hund.getZwingername());
+
 		}
 
 		private Component buildHundeThumb() {
@@ -203,15 +198,13 @@ public class MyHundeView extends VerticalLayout implements View {
 			hundeThumb.setSpacing(true);
 
 			hundeThumb.addStyleName("draft-thumb");
-			Image draft = new Image(null, new ThemeResource(
-					"img/draft-report-thumb.png"));
+			Image draft = new Image(null, new ThemeResource("img/draft-report-thumb.png"));
 			draft.setWidth(160.0f, Unit.PIXELS);
 			draft.setHeight(200.0f, Unit.PIXELS);
 			draft.setDescription("Click to edit");
 			hundeThumb.addComponent(draft);
-			draftTitle = new Label(hund.getRufname() + "<br>"
-					+ hund.getZwingername(), ContentMode.HTML);
-			
+			draftTitle = new Label(hund.getRufname() + "<br>" + hund.getZwingername(), ContentMode.HTML);
+
 			draftTitle.setSizeUndefined();
 			hundeThumb.addComponent(draftTitle);
 
@@ -240,8 +233,7 @@ public class MyHundeView extends VerticalLayout implements View {
 
 				@Override
 				public void layoutClick(final LayoutClickEvent event) {
-					if (event.getButton() == MouseButton.LEFT
-							&& event.getChildComponent() != delete) {
+					if (event.getButton() == MouseButton.LEFT && event.getChildComponent() != delete) {
 
 						HundeDetailWindow.open(hund);
 
@@ -252,6 +244,7 @@ public class MyHundeView extends VerticalLayout implements View {
 			return hundeThumb;
 
 		}
+
 		@Override
 		public void detach() {
 			super.detach();

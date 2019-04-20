@@ -5,7 +5,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import com.app.auth.AuthManager;
-import com.app.bean.MyBean;
 import com.app.service.UserService;
 
 /**

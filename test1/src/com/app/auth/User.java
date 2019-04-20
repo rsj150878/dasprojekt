@@ -1,13 +1,16 @@
 package com.app.auth;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.app.dbio.DBConnection;
+import com.app.dbio.DBConnectionNeu;
 import com.vaadin.v7.data.Item;
 import com.vaadin.v7.data.util.filter.Compare.Equal;
 import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
@@ -17,82 +20,67 @@ import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 public final class User extends AbstractPersonClass {
 
 	public User(String userid, String password) {
-		TableQuery q1 = new TableQuery("user", DBConnection.INSTANCE.getConnectionPool());
-		q1.setVersionColumn("version");
-
-		TableQuery q2 = new TableQuery("person", DBConnection.INSTANCE.getConnectionPool());
-		q2.setVersionColumn("version");
-		Item userItem;
-		Item personItem;
-		SQLContainer personContainer;
-		SQLContainer userContainer;
+		
+		Connection conn = DBConnectionNeu.INSTANCE.getConnection();
 
 		try {
 
-			userContainer = new SQLContainer(q1);
-			userContainer.addContainerFilter(new Equal("email", userid));
+			PreparedStatement userStatement = conn.prepareStatement("select * from user where email = ?");
+			userStatement.setString(1, userid);
 
-			if (userContainer.size() == 0) {
+			ResultSet userResult = userStatement.executeQuery();
+
+			if (!userResult.next()) {
 				throw new UsernameNotFoundException("User Unbekannt");
 			}
 
-			userItem = userContainer.getItem(userContainer.firstItemId());
-
-			if (userItem.getItemProperty("password").getValue().toString().equals(password)) {
+		
+			if (userResult.getString("password").equals(password)) {
 
 			} else {
 			}
 
-			this.role = userItem.getItemProperty("rollen").getValue().toString();
-			personContainer = new SQLContainer(q2);
-			personContainer.addContainerFilter(new Equal("iduser", userItem.getItemProperty("iduser").getValue()));
+			this.role = userResult.getString("rollen");
+			
+			PreparedStatement personStatement = conn.prepareStatement("select * from person where iduser = ?");
+			personStatement.setInt(1, userResult.getInt("iduser"));
+			
+			ResultSet personResult = personStatement.executeQuery();
+			
+			personResult.next();
+			this.idPerson = personResult.getInt("idperson");
 
-			personItem = personContainer.getItem(personContainer.firstItemId());
+			this.email = personResult.getString("email");
+			
+			this.firstName = personResult.getString("vorname");
+			this.lastName = personResult.getString("nachname");
+			this.land = personResult.getString("land");
+			this.strasse = personResult.getString("strasse");
+			this.hausnummer = personResult.getString("hausnummer");
+			this.plz = personResult.getString("plz");
+			this.ort = personResult.getString("ort");
 
-			this.idPerson = Integer.valueOf(personItem.getItemProperty("idperson").getValue().toString());
+			this.idUser = personResult.getInt("iduser");
 
-			this.email = personItem.getItemProperty("email").getValue() == null ? null
-					: personItem.getItemProperty("email").getValue().toString();
-			this.firstName = personItem.getItemProperty("vorname").getValue().toString();
-			this.lastName = personItem.getItemProperty("nachname").getValue().toString();
-			this.land = personItem.getItemProperty("land").getValue().toString();
-			this.strasse = personItem.getItemProperty("strasse").getValue().toString();
-			this.hausnummer = personItem.getItemProperty("hausnummer").getValue().toString();
-			this.plz = personItem.getItemProperty("plz").getValue().toString();
-			this.ort = personItem.getItemProperty("ort").getValue().toString();
+			this.gebdat = personResult.getDate("geb_dat");
 
-			this.idUser = Integer.valueOf(userItem.getItemProperty("iduser").getValue().toString());
+			this.newsletter = personResult.getString("newsletter");
 
-			this.gebdat = (Date) personItem.getItemProperty("geb_dat").getValue();
+			this.newsletter2 = personResult.getString("newsletter2");
+			this.newsletter3 = personResult.getString("newsletter3");
 
-			this.newsletter = personItem.getItemProperty("newsletter").getValue() == null ? "N"
-					: personItem.getItemProperty("newsletter").getValue().toString();
+			this.email2 = personResult.getString("email2");
+			this.email2 = personResult.getString("email3");
 
-			this.newsletter2 = personItem.getItemProperty("newsletter2").getValue() == null ? "N"
-					: personItem.getItemProperty("newsletter2").getValue().toString();
-			this.newsletter3 = personItem.getItemProperty("newsletter3").getValue() == null ? "N"
-					: personItem.getItemProperty("newsletter3").getValue().toString();
+			this.title = personResult.getString("titel");
+			this.male =personResult.getString("geschlecht");
 
-			this.email2 = personItem.getItemProperty("email2").getValue() == null ? null
-					: personItem.getItemProperty("email2").getValue().toString();
-			this.email2 = personItem.getItemProperty("email3").getValue() == null ? null
-					: personItem.getItemProperty("email3").getValue().toString();
+			this.phone = personResult.getString("telnr");
+			this.mobnr = personResult.getString("mobnr");
 
-			this.title = personItem.getItemProperty("titel").getValue() == null ? ""
-					: personItem.getItemProperty("titel").getValue().toString();
-			this.male = personItem.getItemProperty("geschlecht").getValue() == null ? "M"
-					: personItem.getItemProperty("geschlecht").getValue().toString();
+			this.bio = personResult.getString("zusatztext");
 
-			this.phone = personItem.getItemProperty("telnr").getValue() == null ? null
-					: personItem.getItemProperty("telnr").getValue().toString();
-			this.mobnr = personItem.getItemProperty("mobnr").getValue() == null ? null
-					: personItem.getItemProperty("mobnr").getValue().toString();
-
-			this.bio = personItem.getItemProperty("zusatztext").getValue() == null ? null
-					: personItem.getItemProperty("zusatztext").getValue().toString();
-
-			this.website = personItem.getItemProperty("website").getValue() == null ? null
-					: personItem.getItemProperty("website").getValue().toString();
+			this.website = personResult.getString("website");
 
 		} catch (SQLException e) {
 			e.printStackTrace();

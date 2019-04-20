@@ -1,0 +1,29 @@
+@mixin dashboard-mitglieder-view {
+
+  .mitglieder {
+    .viewheader {
+      padding: $view-padding;
+      border-bottom: valo-border($strength: 0.5);
+    }
+ 
+   
+  }
+  
+  .v-grid-cell.link-icon-user .v-button-bar button.v-edit span:before {
+	/*  color: blue;  recolor icon */
+	content: "\f044";
+	/* content-code of FontAwesome that is served by vaadin! */
+}
+
+.v-grid-cell.link-icon-hund .v-button-bar button.v-edit span:before {
+	/* color: blue; recolor icon */
+	/* float: center; */
+	content: "\f281";
+	/* content-code of FontAwesome that is served by vaadin! */
+}
+  
+  .time-only .v-datefield-calendarpanel-header,
+.time-only .v-datefield-calendarpanel-body {
+  display: none;
+}
+}

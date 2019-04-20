@@ -1,7 +1,5 @@
 package com.app.showdata;
 
-import java.util.stream.Stream;
-
 import com.app.enumdatatypes.Rassen;
 
 public class ShowGeschlechtEnde extends ShowKlasse {
@@ -17,7 +15,7 @@ public class ShowGeschlechtEnde extends ShowKlasse {
 
 	public ShowGeschlechtEnde() {
 
-	}
+	}    
 
 	// @Override
 	public String getKatalogNummer() {

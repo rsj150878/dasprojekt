@@ -33,12 +33,6 @@
     	<param-value>jdbc:mysql://profi1.de:3306/test</param-value>
 	</context-param>
 
-	<context-param>
-    	<param-name>DBURLProd</param-name>
-    	<param-value>jdbc:mysql://profi1.de:3306/prod</param-value>
-	</context-param>
-
-
 	<servlet>
 		<servlet-name>HuschuDashboard</servlet-name>
 		<servlet-class>com.app.dashboard.DashboardServlet</servlet-class>
@@ -56,15 +50,6 @@
 		</init-param>
 	</servlet>
 	
-	<servlet>
-		<servlet-name>PaymentConfirmDashboard</servlet-name>
-		<servlet-class>com.app.dashboard.DashboardServlet</servlet-class>
-		<init-param>
-			<param-name>UI</param-name>
-			<param-value>com.app.dashboard.PaymentConfirm</param-value>
-		</init-param>
-	</servlet>
-	
 	<servlet-mapping>
 		<servlet-name>HuschuDashboard</servlet-name>
 		<url-pattern>/*</url-pattern>
@@ -72,16 +57,6 @@
 	<servlet-mapping>
 		<servlet-name>ShowInfoDashboard</servlet-name>
 		<url-pattern>/showinfo/*</url-pattern>
-	</servlet-mapping>
-	
-	<servlet-mapping>
-		<servlet-name>PaymentConfirmDashboard</servlet-name>
-		<url-pattern>/payment/confirm/*</url-pattern>
-	</servlet-mapping>
-	
-	<servlet-mapping>
-		<servlet-name>PaymentConfirmDashboard</servlet-name>
-		<url-pattern>/payment/success/*</url-pattern>
 	</servlet-mapping>
 
 

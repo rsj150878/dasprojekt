@@ -18,8 +18,8 @@ public enum VeranstaltungsStufen {
 
 	STUFE_BH(1, "BH", "Begleithundeprüfung", BHRichterBlatt.class, null), 
 	STUFE_BGH1(2, "BGH1", "Begleithundeprüfung 1", BGH1RichterBlatt.class, VeranstaltungsStationen.BGH1, 1,2,3,4,5), 
-	STUFE_BGH2(3, "BGH2","Begleithundeprüfung 2", null, VeranstaltungsStationen.BGH1, 1,2,3,4,5), 
-	STUFE_BGH3(4, "BGH3","Begleithundeprüfung 3", null, VeranstaltungsStationen.BGH1, 1,2,3,4,5),
+	STUFE_BGH2(3, "BGH2","Begleithundeprüfung 2", null, VeranstaltungsStationen.BGH2, 1,2,3,4,5), 
+	STUFE_BGH3(4, "BGH3","Begleithundeprüfung 3", null, VeranstaltungsStationen.BGH3, 1,2,3,4,5),
 	STUFE_RBP1(5,"RBP1","Retrieverbasisprüfung 1", RBP1RichterBlatt.class, VeranstaltungsStationen.RBP1, 6,7,8,9,10),
 	STUFE_RBP2(6,"RBP2","Retrieverbasisprüfung 2", RBP2RichterBlatt.class, VeranstaltungsStationen.RBP2, 6,7,8,9,10),
 	STUFE_RBP3(7,"RBP3","Retrieverbasisprüfung 3", RBP3RichterBlatt.class, VeranstaltungsStationen.RBP3, 6,7,8,9,10),

@@ -17,7 +17,8 @@ public enum Rassen {
 	PERRO_DE_AGUA_ESPANOL("PAE", "Perro de Agua Espanol", "Perro de Agua Espanol"),
 	LAGOTTO_ROGMANOLO("LGR","Lagotto Rogmanolo", "Lagotto Rogmanolo"),
 	WEIMARANER_KURZHAAR("WK", "Weimaraner Kurzhaar", "Weimaraner"),
-	WEIMARANER_LANGHAAR("WL", "Weimaraner Langhaar", "Weimaraner");
+	WEIMARANER_LANGHAAR("WL", "Weimaraner Langhaar", "Weimaraner"),
+	OESTERREICHISCHER_PINSCHER("OEP", "Österreichischer Pinscher", "Pinscher");
 	
 	
 	private final String RassenLangBezeichnung;

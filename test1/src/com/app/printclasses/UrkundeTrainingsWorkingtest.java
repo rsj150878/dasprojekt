@@ -29,7 +29,7 @@ public class UrkundeTrainingsWorkingtest extends CustomComponent {
 
 	private FileOutputStream fos;
 	/** The original PDF file. */
-	public static final String DATASHEET = "files/URKUNDE_NOESTACH_3_OHNE_Verena.pdf";
+	public static final String DATASHEET = "files/URKUNDE_NOESTACH_4.pdf";
 	public static final String FONT = "files/arialuni.ttf";
 
 	public static final String RESULT = "Urkunde.pdf";
@@ -131,7 +131,7 @@ public class UrkundeTrainingsWorkingtest extends CustomComponent {
 				);
 			}
 
-			fields.get("hundename").setValue(hundContainer.getItem(hundContainer.firstItemId())
+			fields.get("hund").setValue(hundContainer.getItem(hundContainer.firstItemId())
 					.getItemProperty("zwingername").getValue().toString());
 
 			VeranstaltungsStufen defStufe = VeranstaltungsStufen.getBezeichnungForId(

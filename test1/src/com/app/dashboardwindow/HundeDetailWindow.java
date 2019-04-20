@@ -227,7 +227,6 @@ public class HundeDetailWindow extends Window {
 				}
 				Notification success = new Notification("Hundedaten erfolgreich gespeichert");
 				success.setDelayMsec(2000);
-				success.setStyleName("bar success small");
 				success.setPosition(Position.BOTTOM_CENTER);
 				success.show(Page.getCurrent());
 

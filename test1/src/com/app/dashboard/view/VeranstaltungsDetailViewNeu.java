@@ -671,7 +671,7 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent implements Quer
 	protected Integer getGesPunkteForRow(Table anmeldungsTable, int row) {
 
 		Integer result = 0;
-		for (int i = 1; i <= 7; i++) {
+		for (int i = 1; i <= 8; i++) {
 			Property zwProperty = anmeldungsTable.getContainerProperty(row, "uebung" + i);
 			if (!(zwProperty == null)) {
 				System.out.println("zwProperty" + zwProperty.getType());

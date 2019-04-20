@@ -207,6 +207,7 @@ public class DBShowNeu {
 			zw.setRingNummer(ring.getRingNummer());
 			zw.setRichter(ring.getRichter());
 			zw.setMitglied(resultSet.getString("mitglied"));
+			zw.setVeroeffentlichen(resultSet.getBoolean("veroeffentlichen"));
 			resultList.add(zw);
 
 		}
@@ -258,6 +259,8 @@ public class DBShowNeu {
 			zw.setKlasse(zwklasse);
 			zw.setRasse(Rassen.getRasseForKurzBezeichnung(resultSet.getString("rasse")));
 			zw.setMitglied(resultSet.getString("mitglied"));
+			zw.setVeroeffentlichen(resultSet.getBoolean("veroeffentlichen"));
+			
 			
 			resultList.add(zw);
 

@@ -2,6 +2,7 @@ package com.app.printclasses;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -12,7 +13,6 @@ import com.app.service.TemporaryFileDownloadResource;
 import com.app.showdata.Show;
 import com.app.showdata.ShowHund;
 import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -65,10 +65,10 @@ public class ShowPrintBewertungUebersicht extends CustomComponent {
 
 			String fileResultName = show.getSchaubezeichnung() + " "
 					+ new SimpleDateFormat("dd.MM.yyyy").format(show.getSchauDate()) + "  "
-					+ rasse.getRassenLangBezeichnung() +  ".pdf";
+					+ rasse.getRassenLangBezeichnung() + ".pdf";
 			fileResultName = fileResultName.replaceAll(" ", "_");
 
-			PdfDocument pdf = new PdfDocument(new PdfWriter( fileResultName));
+			PdfDocument pdf = new PdfDocument(new PdfWriter(fileResultName));
 
 			// Initialize document
 			Document document = new Document(pdf, PageSize.A4);
@@ -144,17 +144,31 @@ public class ShowPrintBewertungUebersicht extends CustomComponent {
 
 			for (ShowHund hund : hundDerKlassen) {
 
-				Text hundText = new Text(hund.getKatalognumer() + " - " + hund.getShowHundName()).setFont(bold)
-						.setFontSize(14);
 				Div div = new Div().setKeepTogether(true).setPaddingLeft(50).setSpacingRatio(0.5f).setPaddingBottom(20);
+
+				Text hundText = new Text(String.join("",
+						Collections.nCopies((hund.getKatalognumer() + " - " + hund.getShowHundName()).length(), "x")))
+								.setFont(bold).setFontSize(14);
+
 				paragraph1 = new Paragraph(hundText);
-				// paragraph1.setPaddingLeft(50);
 				paragraph1.setMarginBottom(0);
+				if (!hund.getVeroeffentlichen()) {
+					hundText.setBackgroundColor(ColorConstants.BLACK);
+				} else {
+					hundText.setText(hund.getKatalognumer() + " - " + hund.getShowHundName());
+				}
 				div.add(paragraph1);
 
 				Text besitzerText = new Text("Besitzer: ").setFont(bold).setFontSize(hundTextFontSize);
 				paragraph1 = new Paragraph(besitzerText);
-				besitzerText = new Text(hund.getBesitzershow()).setFont(standard).setFontSize(hundTextFontSize);
+				besitzerText = new Text(String.join("", Collections.nCopies(hund.getBesitzershow().length(), "x")))
+						.setFont(standard).setFontSize(hundTextFontSize);
+				if (!hund.getVeroeffentlichen()) {
+					besitzerText.setBackgroundColor(ColorConstants.BLACK);
+				} else {
+					besitzerText.setText(hund.getBesitzershow());
+				}
+
 				paragraph1.add(besitzerText);
 				paragraph1.setMarginBottom(0);
 				paragraph1.setMarginTop(0);
@@ -162,7 +176,14 @@ public class ShowPrintBewertungUebersicht extends CustomComponent {
 
 				Text vaterText = new Text("Vater: ").setFontSize(hundTextFontSize).setFont(bold);
 				paragraph1 = new Paragraph(vaterText);
-				vaterText = new Text(hund.getVater()).setFontSize(hundTextFontSize).setFont(standard);
+
+				vaterText = new Text(String.join("", Collections.nCopies(hund.getVater().length(), "x")))
+						.setFontSize(hundTextFontSize).setFont(standard);
+				if (!hund.getVeroeffentlichen()) {
+					vaterText.setBackgroundColor(ColorConstants.BLACK);
+				} else {
+					vaterText.setText(hund.getVater());
+				}
 				paragraph1.add((vaterText));
 				paragraph1.setMarginBottom(0);
 				paragraph1.setMarginTop(0);
@@ -170,7 +191,14 @@ public class ShowPrintBewertungUebersicht extends CustomComponent {
 
 				Text mutterText = new Text("Mutter: ").setFontSize(hundTextFontSize).setFont(bold);
 				paragraph1 = new Paragraph(mutterText);
-				mutterText = new Text(hund.getMutter()).setFontSize(hundTextFontSize).setFont(standard);
+
+				mutterText = new Text(String.join("", Collections.nCopies(hund.getMutter().length(), "x")))
+						.setFontSize(hundTextFontSize).setFont(standard);
+				if (!hund.getVeroeffentlichen()) {
+					mutterText.setBackgroundColor(ColorConstants.BLACK);
+				} else {
+					mutterText.setText(hund.getMutter());
+				}
 				paragraph1.add(mutterText);
 				paragraph1.setMarginBottom(0);
 				paragraph1.setMarginTop(0);
@@ -178,33 +206,59 @@ public class ShowPrintBewertungUebersicht extends CustomComponent {
 
 				Text zbnrText = new Text("Zuchtbuchnummer: ").setFont(bold).setFontSize(hundTextFontSize);
 				paragraph1 = new Paragraph(zbnrText);
-				zbnrText = new Text(hund.getZuchtbuchnummer()).setFont(standard).setFontSize(hundTextFontSize);
+				zbnrText = new Text(String.join("", Collections.nCopies(hund.getZuchtbuchnummer().length(), "x")))
+						.setFont(standard).setFontSize(hundTextFontSize);
+				if (!hund.getVeroeffentlichen()) {
+					zbnrText.setBackgroundColor(ColorConstants.BLACK);
+				} else {
+					zbnrText.setText(hund.getZuchtbuchnummer());
+				}
 				paragraph1.add(zbnrText);
 				paragraph1.add(new Tab());
 				paragraph1.addTabStops(new TabStop(1000, TabAlignment.RIGHT));
 
 				Text wurfTagText = new Text("Wurftag: ").setFontSize(hundTextFontSize).setFont(bold);
 				paragraph1.add(wurfTagText);
-				wurfTagText = new Text(new SimpleDateFormat("dd.MM.yyyy").format(hund.getWurftag()))
-						.setFontSize(hundTextFontSize).setFont(standard);
+				wurfTagText = new Text(String.join("", Collections.nCopies(10, "x"))).setFontSize(hundTextFontSize)
+						.setFont(standard);
+				if (!hund.getVeroeffentlichen()) {
+					wurfTagText.setBackgroundColor(ColorConstants.BLACK);
+				} else {
+					wurfTagText.setText(new SimpleDateFormat("dd.MM.yyyy").format(hund.getWurftag()));
+				}
 				paragraph1.add(wurfTagText);
 				paragraph1.setMarginBottom(0);
 				paragraph1.setMarginTop(0);
 				div.add(paragraph1);
 
-				Text bewertungText = new Text(
-						hund.getBewertung() == null || hund.getBewertung().isEmpty() ? "\n" : hund.getBewertung())
-								.setFontSize(hundTextFontSize).setFont(standard);
+				Text bewertungText = new Text("\n")
+						.setFontSize(hundTextFontSize).setFont(standard);
 				paragraph1 = new Paragraph(bewertungText);
+
+				if (!hund.getVeroeffentlichen()) {
+					bewertungText.setBackgroundColor(ColorConstants.BLACK);
+				} else {
+					bewertungText.setText(
+							hund.getBewertung() == null || hund.getBewertung().isEmpty() ? "\n" : hund.getBewertung());
+
+				}
 				paragraph1.setBorder(new SolidBorder(.5f));
 				paragraph1.setMarginBottom(0);
 				paragraph1.setMarginTop(0);
 				div.add(paragraph1);
 
-				Text formWertText = new Text("Bewertung: " + getFormwertText(show, hund)).setFontSize(14).setFont(bold)
+				Text formWertText = new Text("Bewertung: ").setFontSize(14).setFont(bold)
 						.setFontColor(ColorConstants.RED);
-				;
 				paragraph1 = new Paragraph(formWertText);
+
+				formWertText = new Text(String.join("", Collections.nCopies(20, "x"))).setFontSize(14).setFont(bold)
+						.setFontColor(ColorConstants.RED);
+				paragraph1 = paragraph1.add(formWertText);
+				if (!hund.getVeroeffentlichen()) {
+					formWertText.setBackgroundColor(ColorConstants.RED);
+				} else {
+					formWertText.setText(getFormwertText(show,hund));
+				}
 				paragraph1.setMarginBottom(0);
 				paragraph1.setMarginTop(0);
 				div.add(paragraph1);

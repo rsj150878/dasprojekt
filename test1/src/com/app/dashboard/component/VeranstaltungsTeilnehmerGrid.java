@@ -312,7 +312,7 @@ public class VeranstaltungsTeilnehmerGrid extends Grid {
 		//getColumn("ges_punkte").setEditable(true);
 		
 		
-		for (int i = 1; i <= 7; i++) {
+		for (int i = 1; i <= 8; i++) {
 //			Integer value = (Integer) forCalcItem.getItemProperty("uebung" + i).getValue();
 
 			if (!(forCalcItem.getItemProperty("uebung" + i).getValue() == null)) {

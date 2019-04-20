@@ -36,6 +36,8 @@ public class ShowHund extends ShowKlasseEnde {
 	private Integer sort_kat_nr;
 	private Rassen rasse;
 	private Integer id_teilnehmer;
+	private Boolean veroeffentlichen;
+	
 	 
 	public String getShowHundName() {
 		return showHundName;
@@ -214,6 +216,12 @@ public class ShowHund extends ShowKlasseEnde {
 	}
 	public void setId_teilnehmer(Integer id_teilnehmer) {
 		this.id_teilnehmer = id_teilnehmer;
+	}
+	public Boolean getVeroeffentlichen() {
+		return veroeffentlichen;
+	}
+	public void setVeroeffentlichen(Boolean veroeffentlichen) {
+		this.veroeffentlichen = veroeffentlichen;
 	}
 	
 

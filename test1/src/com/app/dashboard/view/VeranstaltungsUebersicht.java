@@ -3,13 +3,16 @@ package com.app.dashboard.view;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import com.app.auth.User;
 import com.app.dashboard.event.DashBoardEvent.NeueVeranstaltung;
 import com.app.dashboard.event.DashBoardEvent.ReportsCountUpdatedEvent;
-import com.app.dbio.DBConnection;
-import com.app.enumdatatypes.VeranstaltungsTypen;
 import com.app.dashboard.event.DashBoardEventBus;
+import com.app.dbio.DBConnection;
+import com.app.dbio.DBVeranstaltung;
+import com.app.enumdatatypes.VeranstaltungsTypen;
+import com.app.veranstaltung.Veranstaltung;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
@@ -45,17 +48,15 @@ import com.vaadin.v7.data.util.sqlcontainer.query.QueryDelegate.RowIdChangeEvent
 import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 
 @SuppressWarnings("serial")
-public class VeranstaltungsUebersicht extends TabSheet implements View,
-		CloseHandler, QueryDelegate.RowIdChangeListener,
-		VeranstaltungsDetailViewNeu.VeranstaltungsDetailListener {
+public class VeranstaltungsUebersicht extends TabSheet
+		implements View, CloseHandler, VeranstaltungsDetailViewNeu.VeranstaltungsDetailListener {
 
 	public static final String CONFIRM_DIALOG_ID = "confirm-dialog";
-	private SQLContainer veranstaltungsContainer;
 	private SQLContainer veranstaltungsStufenContainer;
-	private TableQuery q1;
 	private TableQuery q2;
 
-	private RowId veranstaltungsId;
+	private DBVeranstaltung dbVeranstaltung = new DBVeranstaltung();
+	private List<Veranstaltung> veranstaltungsList;
 
 	public VeranstaltungsUebersicht() {
 		setSizeFull();
@@ -65,20 +66,19 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 
 		DashBoardEventBus.register(this);
 
-		q1 = new TableQuery("veranstaltung",
-				DBConnection.INSTANCE.getConnectionPool());
-		q1.setVersionColumn("version");
+		try {
+			veranstaltungsList = dbVeranstaltung.getAllAktiveVeranstaltungen();
 
-		q2 = new TableQuery("veranstaltungs_stufe",
-				DBConnection.INSTANCE.getConnectionPool());
+		} catch (Exception e) {
+			Notification.show("Fehler beim ermitteln der Veranstaltungen");
+			e.printStackTrace();
+
+		}
+		q2 = new TableQuery("veranstaltungs_stufe", DBConnection.INSTANCE.getConnectionPool());
 		q2.setVersionColumn("version");
 
 		try {
-			veranstaltungsContainer = new SQLContainer(q1);
-			veranstaltungsContainer.addOrderBy(new OrderBy("datum", false));
 			veranstaltungsStufenContainer = new SQLContainer(q2);
-
-			veranstaltungsContainer.addRowIdChangeListener(this);
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -87,36 +87,25 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 		addTab(buildDrafts());
 	}
 
-	private Item commit() {
-		Item returnItem = null;
-		try {
-			veranstaltungsContainer.commit();
-			veranstaltungsStufenContainer.commit();
-
-			veranstaltungsContainer.refresh();
-			veranstaltungsStufenContainer.refresh();
-
-			if (veranstaltungsId != null) {
-				veranstaltungsContainer.addContainerFilter(new Equal(
-						"id_veranstaltung", veranstaltungsId.getId()[0]
-								.toString()));
-				returnItem = veranstaltungsContainer
-						.getItem(veranstaltungsContainer.getIdByIndex(0));
-				veranstaltungsContainer.removeAllContainerFilters();
-			}
-
-		} catch (SQLException ee) {
-			ee.printStackTrace();
-		}
-
-		return returnItem;
-	}
-
-	@Override
-	public void rowIdChange(RowIdChangeEvent event) {
-		veranstaltungsId = event.getNewRowId();
-
-	}
+//	private Item commit() {
+//		Item returnItem = null;
+//		try {
+//			veranstaltungsStufenContainer.commit();
+//			veranstaltungsStufenContainer.refresh();
+//
+//			if (veranstaltungsId != null) {
+//				veranstaltungsContainer
+//						.addContainerFilter(new Equal("id_veranstaltung", veranstaltungsId.getId()[0].toString()));
+//				returnItem = veranstaltungsContainer.getItem(veranstaltungsContainer.getIdByIndex(0));
+//				veranstaltungsContainer.removeAllContainerFilters();
+//			}
+//
+//		} catch (SQLException ee) {
+//			ee.printStackTrace();
+//		}
+//
+//		return returnItem;
+//	}
 
 	private Component buildDrafts() {
 
@@ -138,15 +127,16 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 		// allDrafts.addComponent(titleAndDrafts);
 		// allDrafts
 		// .setComponentAlignment(titleAndDrafts, Alignment.MIDDLE_CENTER);
-		
+
 		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 
 		if (user.getRole().contains("admin")
-				//|| (!(view.getRollen() == null) && (user.getRole().contains(view.getRollen())))
-				) {
+		// || (!(view.getRollen() == null) &&
+		// (user.getRole().contains(view.getRollen())))
+		) {
 			allDrafts.addComponent(buildCreateBox());
 		}
-	
+
 		buildDraftsList(allDrafts);
 
 		draftsPanel.setContent(allDrafts);
@@ -160,14 +150,10 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 		drafts.setSpacing(true);
 		drafts.setSizeUndefined();
 
-		System.out.println("veranstaltungsdatum "
-				+ veranstaltungsContainer
-						.getItem(veranstaltungsContainer.getIdByIndex(0))
-						.getItemProperty("datum").getValue().toString());
+		System.out.println(
+				"veranstaltungsdatum " + new SimpleDateFormat("yyyy").format(veranstaltungsList.get(0).getDatum()));
 
-		String year = veranstaltungsContainer
-				.getItem(veranstaltungsContainer.getIdByIndex(0))
-				.getItemProperty("datum").getValue().toString().substring(0, 4);
+		String year = new SimpleDateFormat("yyyy").format(veranstaltungsList.get(0).getDatum());
 
 		Label yearLabel = new Label(year);
 		yearLabel.setSizeUndefined();
@@ -182,17 +168,13 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 
 		yearPanel.setContent(drafts);
 
-		for (Object itemId : veranstaltungsContainer.getItemIds()) {
+		for (Veranstaltung itemId : veranstaltungsList) {
 
-			if (!year.equals(veranstaltungsContainer.getItem(itemId)
-					.getItemProperty("datum").getValue().toString()
-					.substring(0, 4))) {
+			if (!year.equals(new SimpleDateFormat("yyyy").format(itemId.getDatum()))) {
 
 				yearPanel.setContent(drafts);
 
-				year = veranstaltungsContainer.getItem(itemId)
-						.getItemProperty("datum").getValue().toString()
-						.substring(0, 4);
+				year = new SimpleDateFormat("yyyy").format(itemId.getDatum());
 
 				yearLabel = new Label(year);
 				yearLabel.setSizeUndefined();
@@ -211,8 +193,7 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 
 			}
 
-			drafts.addComponent(buildDraftThumb(veranstaltungsContainer
-					.getItem(itemId)));
+			drafts.addComponent(buildDraftThumb(itemId));
 
 		}
 
@@ -221,9 +202,9 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 		return drafts;
 	}
 
-	private Component buildDraftThumb(Item veranstaltungsItem) {
+	private Component buildDraftThumb(Veranstaltung veranstaltungsItem) {
 
-		final Item vaItem = veranstaltungsItem;
+		final Veranstaltung vaItem = veranstaltungsItem;
 
 		VerticalLayout draftThumb = new VerticalLayout();
 		draftThumb.setWidth(160.0f, Unit.PIXELS);
@@ -234,13 +215,10 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("<p align = \"center\"><b>");
-		sb.append(VeranstaltungsTypen.getVeranstaltungsTypForId(
-				Integer.valueOf(vaItem.getItemProperty("typ").getValue()
-						.toString())).getVeranstaltungsTypBezeichnung());
+		sb.append(vaItem.getTyp().getVeranstaltungsTypBezeichnung());
 
 		sb.append("</b><br>");
-		sb.append(new SimpleDateFormat("dd.MM.yyyy").format(vaItem
-				.getItemProperty("datum").getValue()));
+		sb.append(new SimpleDateFormat("dd.MM.yyyy").format(vaItem.getDatum()));
 		sb.append("</p>");
 
 		Label draftTitle = new Label(sb.toString(), ContentMode.HTML);
@@ -261,8 +239,7 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 		draftThumb.addLayoutClickListener(new LayoutClickListener() {
 			@Override
 			public void layoutClick(final LayoutClickEvent event) {
-				if (event.getButton() == MouseButton.LEFT
-						&& event.getChildComponent() != delete) {
+				if (event.getButton() == MouseButton.LEFT && event.getChildComponent() != delete) {
 
 					openReport(vaItem);
 				}
@@ -285,89 +262,69 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 		return createBox;
 	}
 
-	public void openReport(Item toOpenVeranstaltung) {
+	public void openReport(Veranstaltung toOpenVeranstaltung) {
 
-		VeranstaltungsTypen openTyp = VeranstaltungsTypen
-				.getVeranstaltungsTypForId(Integer.valueOf(toOpenVeranstaltung
-						.getItemProperty("typ").getValue().toString()));
+		VeranstaltungsDetailViewNeu detailView = new VeranstaltungsDetailViewNeu(toOpenVeranstaltung.getTyp(),
+				toOpenVeranstaltung, this);
 
-		VeranstaltungsDetailViewNeu detailView = new VeranstaltungsDetailViewNeu(
-				openTyp, toOpenVeranstaltung, this);
+		String title = toOpenVeranstaltung.getTyp().getVeranstaltungsTypBezeichnung();
 
-		String title = openTyp.getVeranstaltungsTypBezeichnung();
-
-		title += " "
-				+ new SimpleDateFormat("dd.MM.yyyy").format(toOpenVeranstaltung
-						.getItemProperty("datum").getValue());
+		title += " " + new SimpleDateFormat("dd.MM.yyyy").format(toOpenVeranstaltung.getDatum());
 
 		addTab(detailView).setClosable(true);
 
-		DashBoardEventBus.post(new ReportsCountUpdatedEvent(
-				getComponentCount() - 1));
+		DashBoardEventBus.post(new ReportsCountUpdatedEvent(getComponentCount() - 1));
 
 		detailView.setTitle(title);
 		setSelectedTab(getComponentCount() - 1);
 
 	}
-
-	@Subscribe
-	public void addReport(NeueVeranstaltung neueVeranstaltung) {
-
-		Item newVeranstaltung = veranstaltungsContainer
-				.getItem(veranstaltungsContainer.addItem());
-		newVeranstaltung.getItemProperty("typ").setValue(
-				neueVeranstaltung.getVeranstaltungsTyp()
-						.getVeranstaltungsTypID());
-
-		newVeranstaltung.getItemProperty("name").setValue("neue Veranstaltung");
-		newVeranstaltung.getItemProperty("richter").setValue("neuer Richter");
-		newVeranstaltung.getItemProperty("veranstalter").setValue(
-				"neuer Richter");
-		newVeranstaltung.getItemProperty("veranstaltungsort").setValue(
-				"neuer Veranstaltungsort");
-		newVeranstaltung.getItemProperty("veranstaltungsleiter").setValue(
-				"neuer Veranstaltungsleiter");
-		newVeranstaltung.getItemProperty("datum").setValue(new Date());
-
-		newVeranstaltung = commit();
-
-		for (Integer stufe : neueVeranstaltung.getVeranstaltungsTyp()
-				.getVeranstaltungsStufen()) {
-			Object zwVeranstaltungsStufe = veranstaltungsStufenContainer
-					.addItem();
-			Item zwVeranstaltungsItem = veranstaltungsStufenContainer
-					.getItemUnfiltered(zwVeranstaltungsStufe);
-			zwVeranstaltungsItem.getItemProperty("id_veranstaltung").setValue(
-					newVeranstaltung.getItemProperty("id_veranstaltung")
-							.getValue());
-			zwVeranstaltungsItem.getItemProperty("stufen_typ").setValue(stufe);
-
-		}
-
-		newVeranstaltung = commit();
-
-		VeranstaltungsDetailViewNeu detailView = new VeranstaltungsDetailViewNeu(
-				neueVeranstaltung.getVeranstaltungsTyp(), newVeranstaltung,
-				this);
-
-		String title = VeranstaltungsTypen.getVeranstaltungsTypForId(
-				Integer.valueOf(newVeranstaltung.getItemProperty("typ")
-						.getValue().toString()))
-				.getVeranstaltungsTypBezeichnung();
-
-		title += " "
-				+ new SimpleDateFormat("dd.MM.yyyy").format(newVeranstaltung
-						.getItemProperty("datum").getValue());
-
-		addTab(detailView).setClosable(true);
-
-		DashBoardEventBus.post(new ReportsCountUpdatedEvent(
-				getComponentCount() - 1));
-
-		detailView.setTitle(title);
-		setSelectedTab(getComponentCount() - 1);
-
-	}
+//
+//	@Subscribe
+//	public void addReport(NeueVeranstaltung neueVeranstaltung) {
+//
+//		Item newVeranstaltung = veranstaltungsContainer.getItem(veranstaltungsContainer.addItem());
+//		newVeranstaltung.getItemProperty("typ")
+//				.setValue(neueVeranstaltung.getVeranstaltungsTyp().getVeranstaltungsTypID());
+//
+//		newVeranstaltung.getItemProperty("name").setValue("neue Veranstaltung");
+//		newVeranstaltung.getItemProperty("richter").setValue("neuer Richter");
+//		newVeranstaltung.getItemProperty("veranstalter").setValue("neuer Richter");
+//		newVeranstaltung.getItemProperty("veranstaltungsort").setValue("neuer Veranstaltungsort");
+//		newVeranstaltung.getItemProperty("veranstaltungsleiter").setValue("neuer Veranstaltungsleiter");
+//		newVeranstaltung.getItemProperty("datum").setValue(new Date());
+//
+//		newVeranstaltung = commit();
+//
+//		for (Integer stufe : neueVeranstaltung.getVeranstaltungsTyp().getVeranstaltungsStufen()) {
+//			Object zwVeranstaltungsStufe = veranstaltungsStufenContainer.addItem();
+//			Item zwVeranstaltungsItem = veranstaltungsStufenContainer.getItemUnfiltered(zwVeranstaltungsStufe);
+//			zwVeranstaltungsItem.getItemProperty("id_veranstaltung")
+//					.setValue(newVeranstaltung.getItemProperty("id_veranstaltung").getValue());
+//			zwVeranstaltungsItem.getItemProperty("stufen_typ").setValue(stufe);
+//
+//		}
+//
+//		newVeranstaltung = commit();
+//
+//		VeranstaltungsDetailViewNeu detailView = new VeranstaltungsDetailViewNeu(
+//				neueVeranstaltung.getVeranstaltungsTyp(), newVeranstaltung, this);
+//
+//		String title = VeranstaltungsTypen
+//				.getVeranstaltungsTypForId(
+//						Integer.valueOf(newVeranstaltung.getItemProperty("typ").getValue().toString()))
+//				.getVeranstaltungsTypBezeichnung();
+//
+//		title += " " + new SimpleDateFormat("dd.MM.yyyy").format(newVeranstaltung.getItemProperty("datum").getValue());
+//
+//		addTab(detailView).setClosable(true);
+//
+//		DashBoardEventBus.post(new ReportsCountUpdatedEvent(getComponentCount() - 1));
+//
+//		detailView.setTitle(title);
+//		setSelectedTab(getComponentCount() - 1);
+//
+//	}
 
 	@Override
 	public void onTabClose(final TabSheet tabsheet, final Component tabContent) {
@@ -377,7 +334,7 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 
 		final Window confirmDialog = new Window("Unsaved Changes");
 		confirmDialog.setId(CONFIRM_DIALOG_ID);
-		confirmDialog.setCloseShortcut(KeyCode.ESCAPE, null);
+		confirmDialog.addCloseShortcut(KeyCode.ESCAPE, null);
 		confirmDialog.setModal(true);
 		confirmDialog.setClosable(false);
 		confirmDialog.setResizable(false);
@@ -399,12 +356,10 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 			public void buttonClick(final ClickEvent event) {
 				confirmDialog.close();
 				VeranstaltungsDetailViewNeu saveComponent = (VeranstaltungsDetailViewNeu) tabContent;
-				saveComponent.commit();
+				//saveComponent.commit();
 				removeComponent(tabContent);
-				DashBoardEventBus.post(new ReportsCountUpdatedEvent(
-						getComponentCount() - 1));
-				Notification.show("Die Veranstaltung wurde gespeichert",
-						Type.TRAY_NOTIFICATION);
+				DashBoardEventBus.post(new ReportsCountUpdatedEvent(getComponentCount() - 1));
+				Notification.show("Die Veranstaltung wurde gespeichert", Type.TRAY_NOTIFICATION);
 			}
 		});
 		ok.addStyleName(ValoTheme.BUTTON_PRIMARY);
@@ -414,8 +369,7 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 			public void buttonClick(final ClickEvent event) {
 				confirmDialog.close();
 				removeComponent(tabContent);
-				DashBoardEventBus.post(new ReportsCountUpdatedEvent(
-						getComponentCount() - 1));
+				DashBoardEventBus.post(new ReportsCountUpdatedEvent(getComponentCount() - 1));
 			}
 		});
 		discard.addStyleName(ValoTheme.BUTTON_DANGER);
@@ -452,7 +406,6 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 		private Button newWesensTest = new Button("Wesenstest");
 		private Button newJungHundePruefung = new Button("JunghundePrüfung");
 
-
 		public PopupTextFieldContent() {
 
 			layout.setSizeUndefined();
@@ -465,8 +418,7 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 
 				@Override
 				public void buttonClick(ClickEvent event) {
-					DashBoardEventBus.post(new NeueVeranstaltung(
-							(VeranstaltungsTypen) event.getButton().getData()));
+					DashBoardEventBus.post(new NeueVeranstaltung((VeranstaltungsTypen) event.getButton().getData()));
 				}
 
 			};
@@ -477,10 +429,10 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 			newRbpmWasser.setData(VeranstaltungsTypen.RBP_2017_WASSER);
 			newRbpmWasser.addClickListener(listener);
 
-//			layout.addComponent(newRbpoWasser);
-//			layout.setComponentAlignment(newRbpoWasser, Alignment.MIDDLE_CENTER);
-//			newRbpoWasser.setData(VeranstaltungsTypen.RBP_O_WASSER);
-//			newRbpoWasser.addClickListener(listener);
+			// layout.addComponent(newRbpoWasser);
+			// layout.setComponentAlignment(newRbpoWasser, Alignment.MIDDLE_CENTER);
+			// newRbpoWasser.setData(VeranstaltungsTypen.RBP_O_WASSER);
+			// newRbpoWasser.addClickListener(listener);
 
 			layout.addComponent(newGap);
 			layout.setComponentAlignment(newGap, Alignment.MIDDLE_CENTER);
@@ -501,12 +453,11 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 			layout.setComponentAlignment(newWesensTest, Alignment.MIDDLE_CENTER);
 			newWesensTest.setData(VeranstaltungsTypen.WESENSTEST);
 			newWesensTest.addClickListener(listener);
-			
+
 			layout.addComponent(newJungHundePruefung);
 			layout.setComponentAlignment(newJungHundePruefung, Alignment.MIDDLE_CENTER);
 			newJungHundePruefung.setData(VeranstaltungsTypen.JUNGHUNDEPRUEFUNG);
 			newJungHundePruefung.addClickListener(listener);
-
 
 			menuPanel.setContent(layout);
 		}
@@ -526,8 +477,7 @@ public class VeranstaltungsUebersicht extends TabSheet implements View,
 	};
 
 	@Override
-	public void titleChanged(final String newTitle,
-			final VeranstaltungsDetailViewNeu editor) {
+	public void titleChanged(final String newTitle, final VeranstaltungsDetailViewNeu editor) {
 		getTab(editor).setCaption(newTitle);
 	}
 

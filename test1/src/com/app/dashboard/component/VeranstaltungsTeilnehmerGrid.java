@@ -1,66 +1,48 @@
 package com.app.dashboard.component;
 
-import java.sql.SQLException;
-import java.util.Locale;
+import java.lang.reflect.Method;
+import java.util.List;
 
+import com.app.auth.Hund;
+import com.app.auth.Person;
 import com.app.dashboard.event.DashBoardEvent.SearchEvent;
-import com.app.dbio.DBConnection;
-import com.app.dbio.HundItemGenerator;
-import com.app.dbio.HundTransactionalContainerWrapper;
-import com.app.dbio.HundTxListener;
+import com.app.dashboard.event.DashBoardEventBus;
+import com.app.dbio.DBHund;
+import com.app.dbio.DBPerson;
+import com.app.dbio.DBVeranstaltung;
 import com.app.enumdatatypes.VeranstaltungsStation;
 import com.app.enumdatatypes.VeranstaltungsStufen;
-import com.app.dashboard.event.DashBoardEventBus;
+import com.app.veranstaltung.VeranstaltungsStufe;
+import com.app.veranstaltung.VeranstaltungsTeilnehmer;
 import com.google.common.eventbus.Subscribe;
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.UserError;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.TextArea;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.renderers.ComponentRenderer;
+import com.vaadin.ui.renderers.TextRenderer;
 import com.vaadin.ui.themes.ValoTheme;
-import com.vaadin.v7.data.Container.Filter;
-import com.vaadin.v7.data.Item;
-import com.vaadin.v7.data.util.GeneratedPropertyContainer;
-import com.vaadin.v7.data.util.PropertyValueGenerator;
-import com.vaadin.v7.data.util.converter.Converter;
-import com.vaadin.v7.data.util.filter.Compare.Equal;
-import com.vaadin.v7.data.util.sqlcontainer.RowId;
-import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.v7.data.util.sqlcontainer.query.QueryDelegate;
-import com.vaadin.v7.data.util.sqlcontainer.query.QueryDelegate.RowIdChangeEvent;
-import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
-import com.vaadin.v7.data.validator.IntegerRangeValidator;
-import com.vaadin.v7.ui.CheckBox;
-import com.vaadin.v7.ui.Grid;
-import com.vaadin.v7.ui.TextArea;
-import com.vaadin.v7.ui.TextField;
-import com.vaadin.v7.ui.renderers.ButtonRenderer;
-import com.vaadin.v7.ui.renderers.ClickableRenderer.RendererClickEvent;
-import com.vaadin.v7.ui.renderers.ClickableRenderer.RendererClickListener;
 
-public class VeranstaltungsTeilnehmerGrid extends Grid {
+public class VeranstaltungsTeilnehmerGrid extends Grid<VeranstaltungsTeilnehmer> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -709896999326786160L;
-	private SQLContainer veranstaltungsTeilnehmerContainer;
-	private TableQuery veranstaltungsTeilnehmerQuery;
-
-	private SQLContainer dogContainer;
-	private TableQuery dogQuery;
-
-	private SQLContainer personContainer;
-	private TableQuery personQuery;
-
-	private Item stufe;
-	private final VeranstaltungsStufen defStufe;
+	private VeranstaltungsStufe stufe;
 	private Integer idHund;
-	private Integer gruppe;
-	private String formWert;
+	
+	private List<VeranstaltungsTeilnehmer> teilnehmerList;
+	private DBVeranstaltung dbVeranstaltung;
 
-	private HundTransactionalContainerWrapper txContainer;
-
-	public VeranstaltungsTeilnehmerGrid(final VeranstaltungsStufen defStufe, Item stufe) {
+	public VeranstaltungsTeilnehmerGrid(final VeranstaltungsStufen defStufe, VeranstaltungsStufe stufe) {
 		super();
 		this.stufe = stufe;
-		this.defStufe = defStufe;
+		dbVeranstaltung = new DBVeranstaltung();
 
 		addStyleName(ValoTheme.TABLE_BORDERLESS);
 		addStyleName(ValoTheme.TABLE_NO_STRIPES);
@@ -69,260 +51,200 @@ public class VeranstaltungsTeilnehmerGrid extends Grid {
 
 		setSizeFull();
 
-		veranstaltungsTeilnehmerQuery = new TableQuery("veranstaltungs_teilnehmer",
-				DBConnection.INSTANCE.getConnectionPool());
-		veranstaltungsTeilnehmerQuery.setVersionColumn("version");
-
-		dogQuery = new TableQuery("hund", DBConnection.INSTANCE.getConnectionPool());
-		personQuery = new TableQuery("person", DBConnection.INSTANCE.getConnectionPool());
-
 		try {
-			veranstaltungsTeilnehmerContainer = new SQLContainer(veranstaltungsTeilnehmerQuery);
-			veranstaltungsTeilnehmerContainer
-					.addContainerFilter(new Equal("id_stufe", stufe.getItemProperty("id_stufe").getValue()));
-			//veranstaltungsTeilnehmerContainer.setAutoCommit(true);
 
-			txContainer = new HundTransactionalContainerWrapper(veranstaltungsTeilnehmerContainer,
-					new TeilnehmerItemGenerator(veranstaltungsTeilnehmerContainer));
-
-			dogContainer = new SQLContainer(dogQuery);
-			personContainer = new SQLContainer(personQuery);
-
-		} catch (SQLException e) {
+			teilnehmerList = dbVeranstaltung.getAlleTeilnehmerZuStufe(stufe.getIdStufe());
+			setItems(teilnehmerList);
+		} catch (Exception e) {
 			Notification.show("fehler beim aufbau der Datencontainer");
 			e.printStackTrace();
 		}
 
-		final GeneratedPropertyContainer cpContainer = new GeneratedPropertyContainer(txContainer);
+		Column<VeranstaltungsTeilnehmer, Person> teilnehmerColumn = addColumn(VeranstaltungsTeilnehmer::getPerson);
+		teilnehmerColumn.setRenderer(person -> person.getLastName() + " " + person.getFirstName(), new TextRenderer());
+		teilnehmerColumn.setCaption("Teilnehmer");
 
-		cpContainer.addGeneratedProperty("teilnehmerperson", new PropertyValueGenerator<String>() {
-			private static final long serialVersionUID = -1636752705984592807L;
+		Column<VeranstaltungsTeilnehmer, Hund> hundColumn = addColumn(VeranstaltungsTeilnehmer::getHund);
+		hundColumn.setRenderer(hund -> hund.getRufname() + " - " + hund.getZwingername(), new TextRenderer());
+		hundColumn.setCaption("Hund");
 
-			@Override
-			public String getValue(Item item, Object itemId, Object propertyId) {
-
-				personContainer.removeAllContainerFilters();
-				personContainer.addContainerFilter(new Equal("idperson", item.getItemProperty("id_person").getValue()));
-				Item personItem = personContainer.getItem(personContainer.getIdByIndex(0));
-				return personItem.getItemProperty("nachname").getValue().toString() + " "
-						+ personItem.getItemProperty("vorname").getValue().toString();
-				// return "asdf";
-			}
-
-			@Override
-			public Class<String> getType() {
-				return String.class;
-			}
+		addComponentColumn(teilnehmer -> {
+			Button delButton = new Button();
+			delButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+			delButton.setIcon(VaadinIcons.TRASH);
+			delButton.addClickListener(evt -> {
+				try {
+					dbVeranstaltung.deleteTeilnehmer(teilnehmer);
+				} catch (Exception e) {
+					Notification.show("es ist ein fehler beim löschen passiert");
+				}
+				teilnehmerList.remove(teilnehmer);
+				getDataProvider().refreshAll();
+			});
+			return delButton;
 		});
 
-		cpContainer.addGeneratedProperty("teilnehmerhund", new PropertyValueGenerator<String>() {
-			private static final long serialVersionUID = -1636752705984592807L;
-
-			@Override
-			public String getValue(Item item, Object itemId, Object propertyId) {
-
-				dogContainer.removeAllContainerFilters();
-				dogContainer.addContainerFilter(new Equal("idhund", item.getItemProperty("id_hund").getValue()));
-				Item dogItem = dogContainer.getItem(dogContainer.getIdByIndex(0));
-				return dogItem.getItemProperty("rufname").getValue().toString() + " - "
-						+ dogItem.getItemProperty("zwingername").getValue().toString();
-			}
-
-			@Override
-			public Class<String> getType() {
-				return String.class;
-			}
-		});
-
-		cpContainer.addGeneratedProperty("delete", new PropertyValueGenerator<String>() {
-			private static final long serialVersionUID = -1636752705984592807L;
-
-			@Override
-			public String getValue(Item item, Object itemId, Object propertyId) {
-
-				return "del";
-			}
-
-			@Override
-			public Class<String> getType() {
-				return String.class;
-			}
-		});
-
-		setContainerDataSource(cpContainer);
-
-		setColumns("teilnehmerperson", "teilnehmerhund", "bezahlt", "bestanden", "delete", "ges_punkte",
-				"startnr", "platzierung","sonderwertung", "hundefuehrer");
-		
+		addColumn(teilnehmer -> {
+			CheckBox bezahlt = new CheckBox();
+			bezahlt.setValue(teilnehmer.getBezahlt().equals("J") ? true : false);
+			bezahlt.addValueChangeListener(evt -> teilnehmer.setBezahlt(bezahlt.getValue() == true ? "J" : "N"));
+			saveTeilnehmer(teilnehmer);
+			return bezahlt;
+		}, new ComponentRenderer()).setCaption("bezahlt");
 		CheckBox bezahlt = new CheckBox();
-		//bezahlt.setConvertedValue("J");
-		getColumn("bezahlt").setEditorField(bezahlt);
-		bezahlt.addValueChangeListener(e -> txContainer.commit());
 
-		bezahlt.setConverter(new StringToBoolean() );
+		addColumn(teilnehmer -> {
+			CheckBox bestanden = new CheckBox();
+			bezahlt.setValue(teilnehmer.getBestanden() == null || teilnehmer.getBestanden().equals("N") ? false : true);
+			bezahlt.addValueChangeListener(evt -> teilnehmer.setBestanden(bestanden.getValue() == true ? "J" : "N"));
+			saveTeilnehmer(teilnehmer);
+			return bestanden;
+		}, new ComponentRenderer()).setCaption("bestanden");
 
-		CheckBox bestanden = new CheckBox();
-		//bezahlt.setConvertedValue("J");
-		getColumn("bestanden").setEditorField(bestanden);
-		bestanden.addValueChangeListener(e -> txContainer.commit());
+		addColumn(teilnehmer -> {
+			TextField hundeFuehrer = new TextField();
+			hundeFuehrer.setValue(teilnehmer.getHundefuehrer() == null ? "" : teilnehmer.getHundefuehrer());
+			hundeFuehrer.addValueChangeListener(evt -> teilnehmer.setHundefuehrer(hundeFuehrer.getValue()));
+			saveTeilnehmer(teilnehmer);
+			return hundeFuehrer;
 
-		bestanden.setConverter(new StringToBoolean() );
-		
-		TextField hundeFuehrer = new TextField();
-		getColumn("hundefuehrer").setEditorField(hundeFuehrer);
-		hundeFuehrer.addValueChangeListener (e-> txContainer.commit());
-		
+		}, new ComponentRenderer()).setCaption("Hundeführer");
+		// hundeFuehrer.addValueChangeListener (e-> txContainer.commit());
+
+		addColumn(teilnehmer -> {
+
+			TextField platzierung = new TextField();
+			platzierung.setValue(teilnehmer.getPlatzierung()== null ? "" :teilnehmer.getPlatzierung().toString());
+			platzierung.addValueChangeListener(evt -> teilnehmer
+					.setPlatzierung(new Integer(platzierung.getValue().isEmpty() ? "" : platzierung.getValue())));
+			saveTeilnehmer(teilnehmer);
+			return platzierung;
+		}, new ComponentRenderer()).setCaption("platzierung").setComparator((t1, t2) -> {
+			return t1.getPlatzierung().compareTo(t2.getPlatzierung());
+		});
+		// platzierung.addValueChangeListener(e -> txContainer.specialCommit() );
+
+		addColumn(teilnehmer -> {
+
+			TextField startnr = new TextField();
+			startnr.setValue(teilnehmer.getStartnr() == null ? "" : teilnehmer.getStartnr().toString());
+			startnr.addValueChangeListener(
+					evt -> teilnehmer.setStartnr(new Integer(startnr.getValue().isEmpty() ? "" : startnr.getValue())));
+			saveTeilnehmer(teilnehmer);
+			return startnr;
+		}, new ComponentRenderer()).setCaption("startnr").setComparator((t1, t2) -> {
+			return t1.getStartnr().compareTo(t2.getStartnr());
+		});
+
 		if (!(defStufe.getStationen() == null)) {
 
-			ReadOnlyField gesPunkte = new ReadOnlyField();
-			getColumn("ges_punkte").setEditorField(gesPunkte);
-			gesPunkte.setEnabled(false);
-			gesPunkte.setReadOnly(true);
-			//getColumn("ges_punkte").setEditable(false);
-			//getColumn("ges_punkte").
-			//getColumn("ges_punkte").s
+			addColumn(VeranstaltungsTeilnehmer::getGesPunkte).setCaption("Gesamtpunkte");
 
 			for (VeranstaltungsStation x : defStufe.getStationen().getStation()) {
 
-				addColumn(x.getUebung());
-
 				if (x.equals(VeranstaltungsStation.WESENSTEST_BEMERKUNG)) {
 
-					final TextArea ue = new TextArea();
-					ue.setColumns(60);
-					getColumn(x.getUebung()).setEditorField(ue);
-					ue.addValueChangeListener(e -> txContainer.commit());
+					TextArea ue = new TextArea();
+					addColumn(VeranstaltungsTeilnehmer::getBemerkung)
+							.setEditorComponent(ue, VeranstaltungsTeilnehmer::setBemerkung).setCaption("Bemerkung");
 
 				} else {
 
-					final TextField ue = new TextField();
-					ue.addValidator(new IntegerRangeValidator(
-							"Punkte müssen zwischen " + x.getMinPunkte() + " und " + x.getMaxPunkte() + " liegen",
-							x.getMinPunkte(), x.getMaxPunkte()));
+					addColumn(teilnehmer -> {
 
-					ue.setNullRepresentation("0");
-					getColumn(x.getUebung()).setEditorField(ue);
-					ue.addValueChangeListener(e -> {
-						rechneGesPunkte();
-						txContainer.specialCommit();
-					});
+						TextField ue = new TextField();
+						try {
+
+							Method sumInstanceMethod = VeranstaltungsTeilnehmer.class
+									.getMethod("get" + x.getUebung().substring(0, 1).toUpperCase()
+											+ x.getUebung().substring(1).toLowerCase());
+
+							Integer wert = (Integer) sumInstanceMethod.invoke(teilnehmer);
+
+							if (wert == null) 
+								wert = new Integer(0);
+							
+							if (wert.intValue() < x.getMinPunkte() || wert.intValue() > x.getMaxPunkte()) {
+								ue.setComponentError(new UserError("Punkte müssen zwischen " + x.getMinPunkte()
+										+ " und " + x.getMaxPunkte() + " liegen"));
+							} else {
+								ue.setComponentError(null);
+							}
+							ue.setValue(wert.toString());
+							ue.addValueChangeListener(evt -> {
+								try {
+									Method setMethod = VeranstaltungsTeilnehmer.class
+											.getMethod("set" + x.getUebung().substring(0, 1).toUpperCase()
+													+ x.getUebung().substring(1).toLowerCase(), Integer.class);
+
+									Integer wertSet = new Integer(ue.getValue().isEmpty() ? "" : ue.getValue());
+
+									if (wertSet.intValue() < x.getMinPunkte()
+											|| wertSet.intValue() > x.getMaxPunkte()) {
+										ue.setComponentError(new UserError("Punkte müssen zwischen " + x.getMinPunkte()
+												+ " und " + x.getMaxPunkte() + " liegen"));
+									} else {
+										ue.setComponentError(null);
+									}
+
+									setMethod.invoke(teilnehmer, wertSet);
+									rechneGesPunkte(teilnehmer);
+									saveTeilnehmer(teilnehmer);
+
+									getDataProvider().refreshAll();
+
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							});
+
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
+						return ue;
+					}, new ComponentRenderer()).setCaption(x.getUebung());
+
+					// getColumn(x.getUebung()).setEditorField(ue);
+					// ue.addValueChangeListener(e -> {
+					// //rechneGesPunkte();
+					// //txContainer.specialCommit();
+					// });
 				}
 			}
 		} else {
-			TextField gesPunkte = new TextField();
-			getColumn("ges_punkte").setEditorField(gesPunkte);
-			gesPunkte.addValueChangeListener(e -> txContainer.specialCommit() );
-			
-		
+			// PunkteField gesPunkte = new PunkteField(0,999);
+			// addColumn(VeranstaltungsTeilnehmer::getGesPunkte).setCaption("Gesamtpunkte").setEditorComponent(gesPunkte,
+			// x -> { x);
+			addColumn(teilnehmer -> {
+				TextField integerField = new TextField();
+				integerField.setValue(teilnehmer.getGesPunkte()==null? "" : teilnehmer.getGesPunkte().toString());
+				integerField
+						.addValueChangeListener(evt -> teilnehmer.setGesPunkte(new Integer(integerField.getValue())));
+				saveTeilnehmer(teilnehmer);
+				return integerField;
+			}, new ComponentRenderer()).setCaption("gesamtpunkte").setComparator((t1, t2) -> {
+				return t1.getGesPunkte().compareTo(t2.getGesPunkte());
+			});
 
 		}
-		
-		TextField platzierung = new TextField();
-		getColumn("platzierung").setEditorField(platzierung);
-		platzierung.addValueChangeListener(e -> txContainer.specialCommit() );
-
-		TextField startnr = new TextField();
-		getColumn("startnr").setEditorField(startnr);
-		startnr.addValueChangeListener(e -> txContainer.specialCommit() );
-
-
-		// getColumn("").getEditorField().setp
-
-		getColumn("delete").setRenderer(new ButtonRenderer(new RendererClickListener() {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = -5189664162539062746L;
-
-			@Override
-			public void click(RendererClickEvent event) {
-				//cpContainer.removeItem(event.getItemId());
-				System.out.println("item-id " + event.getItemId());
-				try {
-					txContainer.removeItem(event.getItemId());
-					txContainer.specialCommit();
-					//veranstaltungsTeilnehmerContainer.commit();
-				} catch (Exception e) {
-					Notification.show("fehler beim speichern");
-					e.printStackTrace();
-
-				}
-
-			}
-		}));
-
-		setEditorEnabled(true);
-		setEditorBuffered(false);
-
-		// notifications
-		txContainer.addTxListener(new HundTxListener() {
-			@Override
-			public void transactionStarted(boolean implicit) {
-				
-			}
-
-			@Override
-			public void transactionCommitted() {
-				// In unbuffered mode, all editor changes are always
-				// propagated to container,
-				// this just closes the editor
-				cancelEditor();
-				try {
-					veranstaltungsTeilnehmerContainer.commit();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-				// showTrayNotification("Changes committed");
-			}
-
-			@Override
-			public void specialCommitted() {
-				// In unbuffered mode, all editor changes are always
-				// propagated to container,
-				// this just closes the editor
-				try {
-					veranstaltungsTeilnehmerContainer.commit();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-				// showTrayNotification("Changes committed");
-			}
-			@Override
-			public void transactionRolledBack() {
-				cancelEditor();
-				// commit.setEnabled(false);
-				// reset.setEnabled(false);
-				// showTrayNotification("Changes rolled back");
-			}
-		});
 
 	}
 
-	private void rechneGesPunkte() {
-		System.out.println("getEditedItemId " + getEditedItemId());
-		Item forCalcItem = txContainer.getItem(getEditedItemId());
-		Integer result = 0;
-		
-	
-		if (forCalcItem == null) {
-			return;
+	private void saveTeilnehmer(VeranstaltungsTeilnehmer teilnehmer) {
+		try {
+			dbVeranstaltung.saveTeilnehmer(teilnehmer);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		//getColumn("ges_punkte").setEditable(true);
-		
-		
-		for (int i = 1; i <= 8; i++) {
-//			Integer value = (Integer) forCalcItem.getItemProperty("uebung" + i).getValue();
+	}
 
-			if (!(forCalcItem.getItemProperty("uebung" + i).getValue() == null)) {
-				result += (Integer) forCalcItem.getItemProperty("uebung" + i).getValue();
-			}
-		}
-		//getColumn("ges_punkte").setEditable(false);
-		
+	private void rechneGesPunkte(VeranstaltungsTeilnehmer teilnehmer) {
 
-		forCalcItem.getItemProperty("ges_punkte").setValue(result);
+		Integer result = teilnehmer.getUebung1() + teilnehmer.getUebung2() + teilnehmer.getUebung3()
+				+ teilnehmer.getUebung4() + teilnehmer.getUebung5() + teilnehmer.getUebung6() + teilnehmer.getUebung7()
+				+ teilnehmer.getUebung8();
+		teilnehmer.setGesPunkte(result);
 
 	}
 
@@ -332,128 +254,29 @@ public class VeranstaltungsTeilnehmerGrid extends Grid {
 		if (!(event.getDogIdResult() == null)) {
 			idHund = event.getDogIdResult();
 			System.out.println("idhund " + idHund);
-			txContainer.addItem();
-
-		}
-	}
-
-	public void meldeHundId(Integer hundId, Integer gruppe, String formWert) {
-		idHund = hundId;
-		this.gruppe = gruppe;
-		this.formWert = formWert;
-		txContainer.addItem();
-
-	}
-	
-	public class StringToBoolean implements Converter<Boolean, String> {
-	    private static final long serialVersionUID = 1L;
-
-	    @Override
-	    public String convertToModel(Boolean value, Class<? extends String> targetType, Locale locale)
-	            throws com.vaadin.v7.data.util.converter.Converter.ConversionException {
-	        if (value == true) {
-	            return "J";
-	        } else {
-	            return null;
-	        }
-	    }
-
-	    @Override
-	    public Boolean convertToPresentation(String value, Class<? extends Boolean> targetType, Locale locale)
-	            throws com.vaadin.v7.data.util.converter.Converter.ConversionException {
-	        if (value == null || value.equals("N")) {
-	            return false;
-	        } else {
-	            return true;
-	        }
-	    }
-
-	    @Override
-	    public Class<String> getModelType() {
-	        return String.class;
-	    }
-
-	    @Override
-	    public Class<Boolean> getPresentationType() {
-	        return Boolean.class;
-	    }
-	}
-
-	
-	public class ReadOnlyField extends TextField
-	{
-	    public ReadOnlyField()
-	    {
-	        super();
-	        this.setReadOnly(true);
-	    }
-
-	    @Override
-	    public void setEnabled(boolean enabled)
-	    {
-	        // always set to disabled state
-	        super.setEnabled(false);
-	    }
-	}
-
-	private class TeilnehmerItemGenerator implements HundItemGenerator, QueryDelegate.RowIdChangeListener {
-		private SQLContainer veranstaltungsTeilnehmerContainer;
-		private RowId teilnehmerId;
-	
-		public TeilnehmerItemGenerator(SQLContainer veranstaltungsTeilnehmerContainer) {
-			this.veranstaltungsTeilnehmerContainer = veranstaltungsTeilnehmerContainer;
-		}
-
-		@Override
-		public Item createNewItem(Object itemId) {
-
-			Filter eq = new Equal("id_teilnehmer", itemId);
-			veranstaltungsTeilnehmerContainer.addContainerFilter(eq);
-			Item newItem = veranstaltungsTeilnehmerContainer.getItem(veranstaltungsTeilnehmerContainer.firstItemId());
-			veranstaltungsTeilnehmerContainer.removeContainerFilter(eq);
-			System.out.println("itemid " + itemId.toString());
-			System.out.println("item " + newItem);
-			return newItem;
-		}
-
-		@Override
-		public Object createNewItemId() {
-			//veranstaltungs
-			veranstaltungsTeilnehmerContainer.addRowIdChangeListener(this);
-			Object id = veranstaltungsTeilnehmerContainer.addItem();
-			Item newItem = veranstaltungsTeilnehmerContainer.getItemUnfiltered(id);
-			newItem.getItemProperty("id_hund").setValue(idHund);
-			newItem.getItemProperty("id_stufe").setValue(stufe.getItemProperty("id_stufe").getValue());
-			newItem.getItemProperty("id_veranstaltung").setValue(stufe.getItemProperty("id_veranstaltung").getValue());
-
-			dogContainer.removeAllContainerFilters();
-			System.out.println("idhund 2 " + idHund);
-			dogContainer.addContainerFilter(new Equal("idhund", idHund));
-			Item dogItem = dogContainer.getItem(dogContainer.getIdByIndex(0));
-
-			System.out.println("id perosn " + dogItem.getItemProperty("idperson").getValue().toString());
-			newItem.getItemProperty("id_person").setValue(dogItem.getItemProperty("idperson").getValue());
-			newItem.getItemProperty("bezahlt").setValue("N");
-			newItem.getItemProperty("bestanden").setValue("N");
-			newItem.getItemProperty("formwert").setValue(formWert);
-			newItem.getItemProperty("gruppe").setValue(gruppe);
-			newItem.getItemProperty("platzierung").setValue(0);
-			newItem.getItemProperty("startnr").setValue(0);;
-
+			DBHund dbHund = new DBHund();
+			DBPerson dbPerson = new DBPerson();
 			try {
-				veranstaltungsTeilnehmerContainer.commit();
+				Hund hund = dbHund.getHundForHundId(idHund);
+				Person person = dbPerson.getPersonForId(hund.getIdperson());
+				VeranstaltungsTeilnehmer neuerTeilnehmer = new VeranstaltungsTeilnehmer();
+				
+				neuerTeilnehmer.setPerson(person);
+				neuerTeilnehmer.setHund(hund);
+				neuerTeilnehmer.setIdHund(idHund);
+				neuerTeilnehmer.setIdPerson(hund.getIdperson());
+				neuerTeilnehmer.setIdVeranstaltung(stufe.getIdVeranstaltung());
+				neuerTeilnehmer.setIdStufe(stufe.getIdStufe());
+				neuerTeilnehmer.setBezahlt("N");
+				dbVeranstaltung.saveTeilnehmer(neuerTeilnehmer);
+				
+				teilnehmerList.add(neuerTeilnehmer);
+				getDataProvider().refreshAll();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
-			return teilnehmerId.getId()[0];
 		}
-
-		@Override
-		public void rowIdChange(RowIdChangeEvent arg0) {
-			teilnehmerId = arg0.getNewRowId();
-		}
-
 	}
 
 }

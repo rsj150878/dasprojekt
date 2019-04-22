@@ -1,13 +1,17 @@
 package com.app.veranstaltung;
 
+import java.util.Date;
+
+import com.app.enumdatatypes.VeranstaltungsStufen;
+
 public class VeranstaltungsStufe {
 	private Integer idStufe;
 	private String VeranstaltungsLeiter;
-	private Integer stufenTyp;
+	private VeranstaltungsStufen stufenTyp;
 	private String richter;
 	private Integer idVeranstaltung;
 	private Integer version;
-	private String datum;
+	private Date datum;
 	
 	public Integer getIdStufe() {
 		return idStufe;
@@ -21,10 +25,10 @@ public class VeranstaltungsStufe {
 	public void setVeranstaltungsLeiter(String veranstaltungsLeiter) {
 		VeranstaltungsLeiter = veranstaltungsLeiter;
 	}
-	public Integer getStufenTyp() {
+	public VeranstaltungsStufen getStufenTyp() {
 		return stufenTyp;
 	}
-	public void setStufenTyp(Integer stufenTyp) {
+	public void setStufenTyp(VeranstaltungsStufen stufenTyp) {
 		this.stufenTyp = stufenTyp;
 	}
 	public String getRichter() {
@@ -45,10 +49,10 @@ public class VeranstaltungsStufe {
 	public void setVersion(Integer version) {
 		this.version = version;
 	}
-	public String getDatum() {
+	public Date getDatum() {
 		return datum;
 	}
-	public void setDatum(String datum) {
+	public void setDatum(Date datum) {
 		this.datum = datum;
 	}
 	

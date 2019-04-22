@@ -1,5 +1,8 @@
 package com.app.veranstaltung;
 
+import com.app.auth.Hund;
+import com.app.auth.Person;
+
 public class VeranstaltungsTeilnehmer {
 
 	private Integer idTeilnehmer;
@@ -27,6 +30,22 @@ public class VeranstaltungsTeilnehmer {
 	private String formwert;
 	private Integer platzierung;
 	private Integer startnr;
+	
+	private Hund hund;
+	private Person person;
+	
+	public Hund getHund() {
+		return hund;
+	}
+	public void setHund(Hund hund) {
+		this.hund = hund;
+	}
+	public Person getPerson() {
+		return person;
+	}
+	public void setPerson(Person person) {
+		this.person = person;
+	}
 	public Integer getIdTeilnehmer() {
 		return idTeilnehmer;
 	}

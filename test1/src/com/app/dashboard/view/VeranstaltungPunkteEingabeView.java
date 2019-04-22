@@ -130,9 +130,8 @@ public class VeranstaltungPunkteEingabeView extends Panel implements View {
 						infoField2.setValue(teilnehmer.getGesPunkte().toString());
 						VeranstaltungsStufe stufe = db.getStufeZuId(teilnehmer.getIdStufe());
 
-						VeranstaltungsStufen zw = VeranstaltungsStufen.getBezeichnungForId(stufe.getStufenTyp());
-						if (zw.getStationen() != null) {
-							List<VeranstaltungsStation> stationList = Arrays.asList(zw.getStationen().getStation());
+						if (stufe.getStufenTyp().getStationen() != null) {
+							List<VeranstaltungsStation> stationList = Arrays.asList(stufe.getStufenTyp().getStationen().getStation());
 							station.setItems(stationList);
 
 						}

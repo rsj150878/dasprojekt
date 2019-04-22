@@ -87,5 +87,37 @@ public class DBHund {
 		}
 
 	}
+	
+	public Hund getHundForHundId(Integer idHund) throws Exception {
+		
+		Connection conn = DBConnectionNeu.INSTANCE.getConnection();
+		PreparedStatement st;
+		st = conn.prepareStatement("select * from hund where idHund = ?");
+		st.setInt(1, idHund);
+
+		Hund hund = null;
+
+		ResultSet hundResult = st.executeQuery();
+		if (hundResult.next()) {
+			hund = new Hund();
+
+			hund.setZwingername(hundResult.getString("zwingername"));
+			hund.setRufname(hundResult.getString("rufname"));
+			hund.setWurfdatum(hundResult.getDate("wurfdatum"));
+			hund.setRasse(hundResult.getString("rasse"));
+			hund.setChipnummer(hundResult.getString("chipnummer"));
+			hund.setBhdatum(hundResult.getDate("bhdatum"));
+			hund.setFarbe(hundResult.getString("farbe"));
+			hund.setZuechter(hundResult.getString("zuechter"));
+			hund.setGeschlecht(hundResult.getString("geschlecht"));
+			hund.setZuchtbuchnummer(hundResult.getString("zuchtbuchnummer"));
+			hund.setIdhund(hundResult.getInt("idhund"));
+			hund.setIdperson(hundResult.getInt("idPerson"));
+		}
+
+		return hund;
+
+	}
+
 
 }

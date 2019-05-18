@@ -9,8 +9,12 @@ import java.util.Map;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
-import com.app.dbio.DBConnection;
+import com.app.dbio.DBHund;
+import com.app.dbio.DBPerson;
+import com.app.dbio.DBVeranstaltung;
 import com.app.service.TemporaryFileDownloadResource;
+import com.app.veranstaltung.Veranstaltung;
+import com.app.veranstaltung.VeranstaltungsStufe;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfPageFormCopier;
 import com.itextpdf.forms.fields.PdfFormField;
@@ -24,7 +28,6 @@ import com.vaadin.v7.data.Item;
 import com.vaadin.v7.data.util.filter.Compare.Equal;
 import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
 import com.vaadin.v7.data.util.sqlcontainer.query.OrderBy;
-import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 
 public class RBP3RichterBlatt extends CustomComponent {
 
@@ -35,34 +38,18 @@ public class RBP3RichterBlatt extends CustomComponent {
 	public static final String RESULT = "RichterBlatt.pdf";
 
 	private AbsoluteLayout mainLayout;
-	private TableQuery q3;
-	private TableQuery q4;
-	private TableQuery q5;
+	
+	private DBVeranstaltung dbVa;
+	private DBHund dbHund;
+	private DBPerson dbPerson;
+	
+	public RBP3RichterBlatt(Veranstaltung veranstaltung, VeranstaltungsStufe veranstaltungsStufe) {
 
-	private SQLContainer personContainer;
-	private SQLContainer hundContainer;
-	private SQLContainer teilnehmerContainer;
-
-	public RBP3RichterBlatt(Item veranstaltung, Item veranstaltungsStufe) {
-
-		q3 = new TableQuery("veranstaltungs_teilnehmer", DBConnection.INSTANCE.getConnectionPool());
-		q3.setVersionColumn("version");
-
-		q4 = new TableQuery("person", DBConnection.INSTANCE.getConnectionPool());
-		q4.setVersionColumn("version");
-
-		q5 = new TableQuery("hund", DBConnection.INSTANCE.getConnectionPool());
-		q5.setVersionColumn("version");
-
+		dbVa = new DBVeranstaltung();
+		dbHund = new DBHund();
+		dbPerson = new DBPerson();
+	
 		try {
-
-			personContainer = new SQLContainer(q4);
-			hundContainer = new SQLContainer(q5);
-			teilnehmerContainer = new SQLContainer(q3);
-
-			teilnehmerContainer.addContainerFilter(
-					new Equal("id_stufe", veranstaltungsStufe.getItemProperty("id_stufe").getValue()));
-			teilnehmerContainer.addOrderBy(new OrderBy("startnr", true));
 
 			mainLayout = new AbsoluteLayout();
 			mainLayout.setWidth("100%");
@@ -85,7 +72,7 @@ public class RBP3RichterBlatt extends CustomComponent {
 		}
 	}
 
-	private void bauPdf(Item veranstaltung, Item veranstaltungsStufe) throws Exception {
+	private void bauPdf(Veranstaltung veranstaltung, VeranstaltungsStufe veranstaltungsStufe) throws Exception {
 
 		PdfDocument pdfDoc = new PdfDocument(new PdfWriter(RESULT));
 		pdfDoc.initializeOutlines();

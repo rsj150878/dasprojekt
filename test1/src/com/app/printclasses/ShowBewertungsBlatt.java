@@ -2,7 +2,6 @@ package com.app.printclasses;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Map;
 
@@ -22,9 +21,12 @@ import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.CustomComponent;
 
 public class ShowBewertungsBlatt extends CustomComponent {
-	private PdfReader reader;
+	
 
-	private FileOutputStream fos;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8769572414405768707L;
 	/** The original PDF file. */
 	public static final String DATASHEET = "files/BEWERTUNGSBLATT_FORM.pdf";
 	public static final String DATASHEET_IHA = "files/BEWERTUNGSBLATT_IHA.pdf";

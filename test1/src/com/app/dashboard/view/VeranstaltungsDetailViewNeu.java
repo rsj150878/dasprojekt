@@ -14,6 +14,8 @@ import com.app.enumdatatypes.DokumentGehoertZuType;
 import com.app.enumdatatypes.VeranstaltungsStufen;
 import com.app.enumdatatypes.VeranstaltungsTypen;
 import com.app.filestorage.HundeDokumenteImporter;
+import com.app.printclasses.BewertungsListeNeu;
+import com.app.printclasses.Urkunde;
 import com.app.showdata.ShowHund;
 import com.app.showdata.ShowRing;
 import com.app.veranstaltung.Veranstaltung;
@@ -86,14 +88,12 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent {
 	public VeranstaltungsDetailViewNeu(VeranstaltungsTypen typ, Veranstaltung currentVeranstaltungsItem,
 			VeranstaltungsDetailListener listener) {
 
-		// TODO add user code here
-
 		this.currentVeranstaltungsItem = currentVeranstaltungsItem;
 		this.listener = listener;
 		this.defTyp = typ;
 		vaBinder = new Binder<Veranstaltung>(Veranstaltung.class);
 		db = new DBVeranstaltung();
-		
+
 		buildMainLayout();
 
 		Panel mainPanel = new Panel();
@@ -108,10 +108,9 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent {
 
 	private void buildMainLayout() {
 
-	
 		try {
 			stufenList = db.getStufenZuVaId(currentVeranstaltungsItem.getId_veranstaltung());
-	
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -142,19 +141,29 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent {
 		secondLineLayout.setHeight("100%");
 
 		nameVeranstaltung = new TextField("Veranstaltungsname");
+		nameVeranstaltung.addValueChangeListener(evt -> {
+			if (evt.isUserOriginated())
+				saveVeranstaltung();
+		});
 		vaBinder.forField(nameVeranstaltung).bind(Veranstaltung::getName, Veranstaltung::setName);
 
 		secondLineLayout.addComponent(nameVeranstaltung, 0, 0);
 
 		datumVeranstaltung = new DateField("Datum der Veranstaltung");
+		datumVeranstaltung.setDateFormat("dd.MM.yyyy");
+
 		vaBinder.forField(datumVeranstaltung).withConverter(new LocalDateToDateConverter(ZoneId.systemDefault()))
 				.bind(Veranstaltung::getDatum, Veranstaltung::setDatum);
 
 		datumVeranstaltung.addValueChangeListener(evt -> {
 
-			String title = currentVeranstaltungsItem.getTyp().getVeranstaltungsTypBezeichnung();
-			title += " " + new SimpleDateFormat("dd.MM.yyyy").format(currentVeranstaltungsItem.getDatum());
-			setTitle(title);
+			if (evt.isUserOriginated()) {
+				String title = currentVeranstaltungsItem.getTyp().getVeranstaltungsTypBezeichnung();
+				title += " " + new SimpleDateFormat("dd.MM.yyyy").format(currentVeranstaltungsItem.getDatum());
+				setTitle(title);
+				saveVeranstaltung();
+
+			}
 
 		}
 
@@ -164,43 +173,75 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent {
 
 		nameRichter = new TextField("Name Richter");
 		nameRichter.setMaxLength(45);
+		nameRichter.addValueChangeListener(evt -> {
+			if (evt.isUserOriginated())
+				saveVeranstaltung();
+		});
 		vaBinder.forField(nameRichter).bind(Veranstaltung::getRichter, Veranstaltung::setRichter);
 		secondLineLayout.addComponent(nameRichter, 2, 0);
 
 		veranstalter = new TextField("Veranstalter");
 		veranstalter.setMaxLength(45);
+		veranstalter.addValueChangeListener(evt -> {
+			if (evt.isUserOriginated())
+				saveVeranstaltung();
+		});
 		vaBinder.forField(veranstalter).bind(Veranstaltung::getVeranstalter, Veranstaltung::setVeranstalter);
 		secondLineLayout.addComponent(veranstalter, 3, 0);
 
 		veranstaltungsOrt = new TextField("Veranstaltungsort");
 		veranstaltungsOrt.setMaxLength(45);
+		veranstaltungsOrt.addValueChangeListener(evt -> {
+			if (evt.isUserOriginated())
+				saveVeranstaltung();
+		});
 		vaBinder.forField(veranstaltungsOrt).bind(Veranstaltung::getVeranstaltungsort,
 				Veranstaltung::setVeranstaltungsort);
 		secondLineLayout.addComponent(veranstaltungsOrt, 4, 0);
 
 		nameVeranstaltungsLeiter = new TextField("Veranstaltungs-/Prüfungsleiter");
 		nameVeranstaltungsLeiter.setMaxLength(45);
+		nameVeranstaltungsLeiter.addValueChangeListener(evt -> {
+			if (evt.isUserOriginated())
+				saveVeranstaltung();
+		});
 		vaBinder.forField(nameVeranstaltungsLeiter).bind(Veranstaltung::getVeranstaltungsleiter,
 				Veranstaltung::setVeranstaltungsleiter);
 		secondLineLayout.addComponent(nameVeranstaltungsLeiter, 0, 1);
 
 		strasseLeiter = new TextField("Strasse Prüfungsleiter");
 		strasseLeiter.setMaxLength(45);
+		strasseLeiter.addValueChangeListener(evt -> {
+			if (evt.isUserOriginated())
+				saveVeranstaltung();
+		});
 		vaBinder.forField(strasseLeiter).bind(Veranstaltung::getStrasse_leiter, Veranstaltung::setStrasse_leiter);
 		secondLineLayout.addComponent(strasseLeiter, 1, 1);
 
 		plzLeiter = new TextField("PLZ Prüfungsleiter");
 		plzLeiter.setMaxLength(45);
+		plzLeiter.addValueChangeListener(evt -> {
+			if (evt.isUserOriginated())
+				saveVeranstaltung();
+		});
 		vaBinder.forField(plzLeiter).bind(Veranstaltung::getPlz_leiter, Veranstaltung::setPlz_leiter);
 		secondLineLayout.addComponent(plzLeiter, 2, 1);
 
 		ortLeiter = new TextField("Ort Prüfungsleiter");
 		ortLeiter.setMaxLength(45);
+		ortLeiter.addValueChangeListener(evt -> {
+			if (evt.isUserOriginated())
+				saveVeranstaltung();
+		});
 		vaBinder.forField(ortLeiter).bind(Veranstaltung::getOrt_leiter, Veranstaltung::setOrt_leiter);
 		secondLineLayout.addComponent(ortLeiter, 3, 1);
 
 		telnrLeiter = new TextField("Telefon Prüfungsleiter");
 		telnrLeiter.setMaxLength(45);
+		telnrLeiter.addValueChangeListener(evt -> {
+			if (evt.isUserOriginated())
+				saveVeranstaltung();
+		});
 		vaBinder.forField(telnrLeiter).bind(Veranstaltung::getTel_nr_leiter, Veranstaltung::setTel_nr_leiter);
 		secondLineLayout.addComponent(telnrLeiter, 4, 1);
 		secondLine.setContent(secondLineLayout);
@@ -215,9 +256,9 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent {
 				secondLineLayout.removeComponent(currentPrintComponent);
 			}
 
-//			BewertungsListeNeu bewertungsListe = new BewertungsListeNeu(currentVeranstaltungsItem);
-//			secondLineLayout.addComponent(bewertungsListe);
-//			currentPrintComponent = bewertungsListe;
+			BewertungsListeNeu bewertungsListe = new BewertungsListeNeu(currentVeranstaltungsItem);
+			secondLineLayout.addComponent(bewertungsListe);
+			currentPrintComponent = bewertungsListe;
 		}
 
 		);
@@ -265,10 +306,11 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent {
 				if (!(currentPrintComponent == null)) {
 					secondLineLayout.removeComponent(currentPrintComponent);
 				}
-//
-//				StarterListe starterListe = new StarterListe(currentVeranstaltungsItem, false);
-//				secondLineLayout.addComponent(starterListe);
-//				currentPrintComponent = starterListe;
+				//
+				// StarterListe starterListe = new StarterListe(currentVeranstaltungsItem,
+				// false);
+				// secondLineLayout.addComponent(starterListe);
+				// currentPrintComponent = starterListe;
 			}
 
 		});
@@ -284,10 +326,11 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent {
 				if (!(currentPrintComponent == null)) {
 					secondLineLayout.removeComponent(currentPrintComponent);
 				}
-//
-//				StarterListe starterListe = new StarterListe(currentVeranstaltungsItem, true);
-//				secondLineLayout.addComponent(starterListe);
-//				currentPrintComponent = starterListe;
+				//
+				// StarterListe starterListe = new StarterListe(currentVeranstaltungsItem,
+				// true);
+				// secondLineLayout.addComponent(starterListe);
+				// currentPrintComponent = starterListe;
 			}
 
 		});
@@ -306,10 +349,11 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent {
 					if (!(currentPrintComponent == null)) {
 						secondLineLayout.removeComponent(currentPrintComponent);
 					}
-//
-//					JungHundePruefung2017 urkunde = new JungHundePruefung2017(currentVeranstaltungsItem, true);
-//					secondLineLayout.addComponent(urkunde);
-//					currentPrintComponent = urkunde;
+					//
+					// JungHundePruefung2017 urkunde = new
+					// JungHundePruefung2017(currentVeranstaltungsItem, true);
+					// secondLineLayout.addComponent(urkunde);
+					// currentPrintComponent = urkunde;
 				}
 
 			});
@@ -326,9 +370,10 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent {
 						secondLineLayout.removeComponent(currentPrintComponent);
 					}
 
-//					JungHundePruefung2017 urkunde = new JungHundePruefung2017(currentVeranstaltungsItem, false);
-//					secondLineLayout.addComponent(urkunde);
-//					currentPrintComponent = urkunde;
+					// JungHundePruefung2017 urkunde = new
+					// JungHundePruefung2017(currentVeranstaltungsItem, false);
+					// secondLineLayout.addComponent(urkunde);
+					// currentPrintComponent = urkunde;
 				}
 
 			});
@@ -338,6 +383,17 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent {
 		}
 
 		return secondLine;
+	}
+
+	public void saveVeranstaltung() {
+		try {
+			vaBinder.writeBean(currentVeranstaltungsItem);
+			this.db.saveVeranstaltung(currentVeranstaltungsItem);
+
+		} catch (Exception e) {
+			Notification.show("Fehler beim speichern");
+			e.printStackTrace();
+		}
 	}
 
 	public void setTitle(String title) {
@@ -350,12 +406,9 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent {
 
 		for (VeranstaltungsStufe zw : stufenList) {
 
-			AnmeldungsPanel myAnmeldungsPanel = new AnmeldungsPanel(zw.getStufenTyp(),
-					currentVeranstaltungsItem, zw);
+			AnmeldungsPanel myAnmeldungsPanel = new AnmeldungsPanel(zw.getStufenTyp(), currentVeranstaltungsItem, zw);
 
-			stufenSheet
-					.addTab(myAnmeldungsPanel,
-							zw.getStufenTyp().getBezeichnung());
+			stufenSheet.addTab(myAnmeldungsPanel, zw.getStufenTyp().getBezeichnung());
 			stufenSheet.addSelectedTabChangeListener(new SelectedTabChangeListener() {
 
 				@Override
@@ -380,28 +433,6 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent {
 
 		return stufenSheet;
 	}
-
-//	public void commit() {
-//		try {
-//			veranstaltungsContainer.commit();
-//			veranstaltungsStufenContainer.commit();
-//
-//			veranstaltungsContainer.refresh();
-//			veranstaltungsStufenContainer.refresh();
-//
-//			if (veranstaltungsId != null) {
-//				veranstaltungsContainer
-//						.addContainerFilter(new Equal("id_veranstaltung", veranstaltungsId.getId()[0].toString()));
-//				currentVeranstaltungsItem = veranstaltungsContainer.getItem(veranstaltungsContainer.getIdByIndex(0));
-//				veranstaltungsContainer.removeAllContainerFilters();
-//			}
-//
-//			veranstaltungsTeilnehmer.commit();
-//
-//		} catch (SQLException ee) {
-//			ee.printStackTrace();
-//		}
-//	}
 
 	public class AnmeldungsPanel extends CustomComponent {
 		Veranstaltung veranstaltung;
@@ -431,15 +462,9 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent {
 			neuerTeilnehmer.setCaption("neuer Teilnehmer");
 			neuerTeilnehmer.addStyleName(ValoTheme.BUTTON_SMALL);
 
-			neuerTeilnehmer.addClickListener(new ClickListener() {
-
-				@Override
-				public void buttonClick(ClickEvent event) {
-					DashBoardEventBus.register(anmeldungsGrid);
-					SearchWindow.open();
-
-				}
-
+			neuerTeilnehmer.addClickListener(evt -> {
+				DashBoardEventBus.register(anmeldungsGrid);
+				SearchWindow.open();
 			});
 
 			buttonLeiste.addComponent(neuerTeilnehmer);
@@ -448,31 +473,26 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent {
 			printRichterBlattButton.setCaption("Richterblatt");
 			printRichterBlattButton.addStyleName(ValoTheme.BUTTON_SMALL);
 
-			printRichterBlattButton.addClickListener(new ClickListener() {
+			printRichterBlattButton.addClickListener(evt -> {
+				if (!(currentPrintComponent == null)) {
+					anmeldungsPanelLayout.removeComponent(currentPrintComponent);
+				}
 
-				@Override
-				public void buttonClick(ClickEvent event) {
-					if (!(currentPrintComponent == null)) {
-						anmeldungsPanelLayout.removeComponent(currentPrintComponent);
+				Class<? extends CustomComponent> printClass = defStufe.getRichterBlatt();
+
+				if (!(printClass == null)) {
+					try {
+						Component printObject = printClass
+								.getConstructor(Veranstaltung.class, VeranstaltungsStufe.class)
+								.newInstance(veranstaltung, veranstaltungsStufe);
+						anmeldungsPanelLayout.addComponent(printObject);
+						currentPrintComponent = printObject;
+					} catch (Exception e) {
+						e.printStackTrace();
+						Notification.show("fehler beim laden der Druckklasse");
 					}
-
-					Class<? extends CustomComponent> printClass = defStufe.getRichterBlatt();
-
-					if (!(printClass == null)) {
-						try {
-							Component printObject = printClass
-									.getConstructor(Veranstaltung.class, VeranstaltungsStufe.class)
-									.newInstance(veranstaltung, veranstaltungsStufe);
-							anmeldungsPanelLayout.addComponent(printObject);
-							currentPrintComponent = printObject;
-						} catch (Exception e) {
-							e.printStackTrace();
-							Notification.show("fehler beim laden der Druckklasse");
-						}
-					} else {
-						Notification.show("kein Richterblatt hinterlegt");
-					}
-
+				} else {
+					Notification.show("kein Richterblatt hinterlegt");
 				}
 
 			});
@@ -496,21 +516,23 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent {
 							|| defStufe.equals(VeranstaltungsStufen.TRAININGS_WT_EINSTEIGER)
 							|| defStufe.equals(VeranstaltungsStufen.TRAININGS_WT_LEICHT)
 							|| defStufe.equals(VeranstaltungsStufen.TRAININGS_WT_MITTEL)) {
-//						UrkundeTrainingsWorkingtest urkunde = new UrkundeTrainingsWorkingtest(veranstaltung,
-//								veranstaltungsStufe);
-//						anmeldungsPanelLayout.addComponent(urkunde);
-//						currentPrintComponent = urkunde;
+						// UrkundeTrainingsWorkingtest urkunde = new
+						// UrkundeTrainingsWorkingtest(veranstaltung,
+						// veranstaltungsStufe);
+						// anmeldungsPanelLayout.addComponent(urkunde);
+						// currentPrintComponent = urkunde;
 
 					} else if (defStufe.equals(VeranstaltungsStufen.WESENSTEST_GRUPPE_ALLGEMEIN)) {
-//						WesentestBewertungsblatt urkunde = new WesentestBewertungsblatt(veranstaltung,
-//								veranstaltungsStufe);
-//						anmeldungsPanelLayout.addComponent(urkunde);
-//						currentPrintComponent = urkunde;
+						// WesentestBewertungsblatt urkunde = new
+						// WesentestBewertungsblatt(veranstaltung,
+						// veranstaltungsStufe);
+						// anmeldungsPanelLayout.addComponent(urkunde);
+						// currentPrintComponent = urkunde;
 
 					} else {
-//						Urkunde urkunde = new Urkunde(veranstaltung, veranstaltungsStufe);
-//						anmeldungsPanelLayout.addComponent(urkunde);
-//						currentPrintComponent = urkunde;
+						Urkunde urkunde = new Urkunde(veranstaltung, veranstaltungsStufe);
+						anmeldungsPanelLayout.addComponent(urkunde);
+						currentPrintComponent = urkunde;
 
 					}
 
@@ -535,9 +557,10 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent {
 							|| defStufe.equals(VeranstaltungsStufen.STUFE_BGH2)
 							|| defStufe.equals(VeranstaltungsStufen.STUFE_BGH3)) {
 
-//						BHMeldeBlatt meldeBlatt = new BHMeldeBlatt(veranstaltung, veranstaltungsStufe);
-//						anmeldungsPanelLayout.addComponent(meldeBlatt);
-//						currentPrintComponent = meldeBlatt;
+						// BHMeldeBlatt meldeBlatt = new BHMeldeBlatt(veranstaltung,
+						// veranstaltungsStufe);
+						// anmeldungsPanelLayout.addComponent(meldeBlatt);
+						// currentPrintComponent = meldeBlatt;
 					} else if (defStufe.equals(VeranstaltungsStufen.STUFE_RBP1)
 							|| defStufe.equals(VeranstaltungsStufen.STUFE_RBP2)
 							|| defStufe.equals(VeranstaltungsStufen.STUFE_RBP3)
@@ -549,9 +572,10 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent {
 							|| defStufe.equals(VeranstaltungsStufen.STUFE_GAP3)) {
 
 					} else if (defStufe.equals(VeranstaltungsStufen.WESENSTEST_GRUPPE_ALLGEMEIN)) {
-//						WesentestFormwert meldeBlatt = new WesentestFormwert(veranstaltung, veranstaltungsStufe);
-//						anmeldungsPanelLayout.addComponent(meldeBlatt);
-//						currentPrintComponent = meldeBlatt;
+						// WesentestFormwert meldeBlatt = new WesentestFormwert(veranstaltung,
+						// veranstaltungsStufe);
+						// anmeldungsPanelLayout.addComponent(meldeBlatt);
+						// currentPrintComponent = meldeBlatt;
 
 					}
 
@@ -593,106 +617,112 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent {
 
 	private void uebertrageToShow() {
 
-//		DBShowNeu db = new DBShowNeu();
-//
-//		TableQuery q3;
-//
-//		SQLContainer teilnehmerContainer;
-//
-//		try {
-//
-//			q3 = new TableQuery("veranstaltungs_teilnehmer", DBConnection.INSTANCE.getConnectionPool());
-//			q3.setVersionColumn("version");
-//
-//			teilnehmerContainer = new SQLContainer(q3);
-//
-//			Show show = db.getShowForVeranstaltung(Integer
-//					.valueOf(currentVeranstaltungsItem.getItemProperty("id_veranstaltung").getValue().toString()));
-//			System.out.println("id: " + show.getIdSchau());
-//			show.setSchaubezeichnung(defTyp.getVeranstaltungsTypBezeichnung() + " "
-//					+ currentVeranstaltungsItem.getItemProperty("veranstaltungsort").getValue().toString());
-//			show.setSchauTyp(defTyp.getShowTyp());
-//			show.setSchauDate(new SimpleDateFormat("yyyy-MM-dd")
-//					.parse(currentVeranstaltungsItem.getItemProperty("datum").getValue().toString()));
-//			show.setSchauKuerzel("");
-//
-//			db.updateShow(show);
-//
-//			ShowRing ring = db.getShowRing(show.getIdSchau(), "1");
-//
-//			teilnehmerContainer = new SQLContainer(q3);
-//
-//			teilnehmerContainer.addContainerFilter(new Equal("id_veranstaltung",
-//					currentVeranstaltungsItem.getItemProperty("id_veranstaltung").getValue()));
-//
-//			Integer i = 1;
-//			for (Object id : teilnehmerContainer.getItemIds()) {
-//				ShowHund hund = db.getShowHundForVeranstaltung(show.getIdSchau(), ring, Integer.valueOf(
-//						teilnehmerContainer.getItem(id).getItemProperty("id_teilnehmer").getValue().toString()));
-//				//baueShowHund(hund, ring, teilnehmerContainer.getItem(id));
-//				hund.setKatalognumer(i.toString());
-//				hund.setSort_kat_nr(i);
-//				db.updateShowHund(hund);
-//				i++;
-//
-//			}
-//
-//		} catch (Exception e) {
-//			Notification.show("fehler beim Übertragen");
-//			e.printStackTrace();
-//		}
+		// DBShowNeu db = new DBShowNeu();
+		//
+		// TableQuery q3;
+		//
+		// SQLContainer teilnehmerContainer;
+		//
+		// try {
+		//
+		// q3 = new TableQuery("veranstaltungs_teilnehmer",
+		// DBConnection.INSTANCE.getConnectionPool());
+		// q3.setVersionColumn("version");
+		//
+		// teilnehmerContainer = new SQLContainer(q3);
+		//
+		// Show show = db.getShowForVeranstaltung(Integer
+		// .valueOf(currentVeranstaltungsItem.getItemProperty("id_veranstaltung").getValue().toString()));
+		// System.out.println("id: " + show.getIdSchau());
+		// show.setSchaubezeichnung(defTyp.getVeranstaltungsTypBezeichnung() + " "
+		// +
+		// currentVeranstaltungsItem.getItemProperty("veranstaltungsort").getValue().toString());
+		// show.setSchauTyp(defTyp.getShowTyp());
+		// show.setSchauDate(new SimpleDateFormat("yyyy-MM-dd")
+		// .parse(currentVeranstaltungsItem.getItemProperty("datum").getValue().toString()));
+		// show.setSchauKuerzel("");
+		//
+		// db.updateShow(show);
+		//
+		// ShowRing ring = db.getShowRing(show.getIdSchau(), "1");
+		//
+		// teilnehmerContainer = new SQLContainer(q3);
+		//
+		// teilnehmerContainer.addContainerFilter(new Equal("id_veranstaltung",
+		// currentVeranstaltungsItem.getItemProperty("id_veranstaltung").getValue()));
+		//
+		// Integer i = 1;
+		// for (Object id : teilnehmerContainer.getItemIds()) {
+		// ShowHund hund = db.getShowHundForVeranstaltung(show.getIdSchau(), ring,
+		// Integer.valueOf(
+		// teilnehmerContainer.getItem(id).getItemProperty("id_teilnehmer").getValue().toString()));
+		// //baueShowHund(hund, ring, teilnehmerContainer.getItem(id));
+		// hund.setKatalognumer(i.toString());
+		// hund.setSort_kat_nr(i);
+		// db.updateShowHund(hund);
+		// i++;
+		//
+		// }
+		//
+		// } catch (Exception e) {
+		// Notification.show("fehler beim Übertragen");
+		// e.printStackTrace();
+		// }
 
 	}
 
 	private void baueShowHund(ShowHund hund, ShowRing ring, VeranstaltungsTeilnehmer teilnehmerItem) throws Exception {
-//
-//		TableQuery q4;
-//		TableQuery q5;
-//
-//		q4 = new TableQuery("person", DBConnection.INSTANCE.getConnectionPool());
-//		q4.setVersionColumn("version");
-//
-//		q5 = new TableQuery("hund", DBConnection.INSTANCE.getConnectionPool());
-//		q5.setVersionColumn("version");
-//
-//		SQLContainer personContainer;
-//		SQLContainer hundContainer;
-//
-//		personContainer = new SQLContainer(q4);
-//		hundContainer = new SQLContainer(q5);
-//
-//		hundContainer.addContainerFilter(new Equal("idhund", teilnehmerItem.getItemProperty("id_hund").getValue()));
-//
-//		personContainer
-//				.addContainerFilter(new Equal("idperson", teilnehmerItem.getItemProperty("id_person").getValue()));
-//
-//		hund.setChipnummer(
-//				hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("chipnummer").getValue().toString());
-//
-//		hund.setWurftag(new SimpleDateFormat("yyyy-MM-dd").parse(
-//				hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("wurfdatum").getValue().toString()));
-//
-//		hund.setZuchtbuchnummer(hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("zuchtbuchnummer")
-//				.getValue().toString());
-//
-//		hund.setGeschlecht(
-//				hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("geschlecht").getValue().toString());
-//
-//		hund.setRasse(Rassen.getRasseForKurzBezeichnung(
-//				hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("rasse").getValue().toString()));
-//
-//		hund.setShowHundName(hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("zwingername")
-//				.getValue().toString());
-//
-//		hund.setBesitzershow(
-//				personContainer.getItem(personContainer.firstItemId()).getItemProperty("nachname").getValue().toString()
-//						+ " " + personContainer.getItem(personContainer.firstItemId()).getItemProperty("vorname")
-//								.getValue().toString());
-//		hund.setRingId(ring.getRingId());
-//		hund.setVater("");
-//		hund.setMutter("");
-//		hundContainer.removeAllContainerFilters();
-//		personContainer.removeAllContainerFilters();
+		//
+		// TableQuery q4;
+		// TableQuery q5;
+		//
+		// q4 = new TableQuery("person", DBConnection.INSTANCE.getConnectionPool());
+		// q4.setVersionColumn("version");
+		//
+		// q5 = new TableQuery("hund", DBConnection.INSTANCE.getConnectionPool());
+		// q5.setVersionColumn("version");
+		//
+		// SQLContainer personContainer;
+		// SQLContainer hundContainer;
+		//
+		// personContainer = new SQLContainer(q4);
+		// hundContainer = new SQLContainer(q5);
+		//
+		// hundContainer.addContainerFilter(new Equal("idhund",
+		// teilnehmerItem.getItemProperty("id_hund").getValue()));
+		//
+		// personContainer
+		// .addContainerFilter(new Equal("idperson",
+		// teilnehmerItem.getItemProperty("id_person").getValue()));
+		//
+		// hund.setChipnummer(
+		// hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("chipnummer").getValue().toString());
+		//
+		// hund.setWurftag(new SimpleDateFormat("yyyy-MM-dd").parse(
+		// hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("wurfdatum").getValue().toString()));
+		//
+		// hund.setZuchtbuchnummer(hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("zuchtbuchnummer")
+		// .getValue().toString());
+		//
+		// hund.setGeschlecht(
+		// hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("geschlecht").getValue().toString());
+		//
+		// hund.setRasse(Rassen.getRasseForKurzBezeichnung(
+		// hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("rasse").getValue().toString()));
+		//
+		// hund.setShowHundName(hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("zwingername")
+		// .getValue().toString());
+		//
+		// hund.setBesitzershow(
+		// personContainer.getItem(personContainer.firstItemId()).getItemProperty("nachname").getValue().toString()
+		// + " " +
+		// personContainer.getItem(personContainer.firstItemId()).getItemProperty("vorname")
+		// .getValue().toString());
+		// hund.setRingId(ring.getRingId());
+		// hund.setVater("");
+		// hund.setMutter("");
+		// hundContainer.removeAllContainerFilters();
+		// personContainer.removeAllContainerFilters();
 
 	}
 

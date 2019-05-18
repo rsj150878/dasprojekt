@@ -262,4 +262,61 @@ public class DBVeranstaltung {
 
 	}
 
+	public void saveVeranstaltung(Veranstaltung saveItem) throws Exception {
+		Connection conn = DBConnectionNeu.INSTANCE.getConnection();
+
+		PreparedStatement st = null;
+
+		if (saveItem.getId_veranstaltung() == null) {
+			st = conn.prepareStatement(
+					"insert into veranstaltung (version, name, datum, richter, veranstaltungsleiter, typ, veranstalter,  "
+							+ "veranstaltungsort, plz_leiter, ort_leiter, strasse_leiter, tel_nr_leiter, idschau) values (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+			st.setInt(1, 0);
+			st.setString(2,  saveItem.getName());
+			st.setDate(3, saveItem.getDatum() != null ? new java.sql.Date(saveItem.getDatum().getTime()) : null);
+
+			st.setString(4,saveItem.getRichter());
+			st.setString(5,saveItem.getVeranstaltungsleiter());
+			st.setInt(6,saveItem.getTyp().getVeranstaltungsTypID());
+			st.setString(7,  saveItem.getVeranstalter());
+			st.setString(8, saveItem.getVeranstaltungsort());
+			st.setString(9, saveItem.getPlz_leiter());
+			st.setString(10,saveItem.getOrt_leiter());
+			st.setString(11,  saveItem.getStrasse_leiter());
+			st.setString(12, saveItem.getTel_nr_leiter());
+			st.setInt(13, saveItem.getIdschau());
+		} else {
+			
+			st = conn.prepareStatement(
+					"update veranstaltung  set name = ?, datum = ?, richter =?, veranstaltungsleiter =?, typ =?, veranstalter =?,  "
+							+ "veranstaltungsort = ?, plz_leiter = ?, ort_leiter = ?, strasse_leiter =?, tel_nr_leiter =?, idschau=? " +
+							" where id_veranstaltung = ?");
+			
+			st.setString(1,  saveItem.getName());
+			st.setDate(2, saveItem.getDatum() != null ? new java.sql.Date(saveItem.getDatum().getTime()) : null);
+
+			st.setString(3,saveItem.getRichter());
+			st.setString(4,saveItem.getVeranstaltungsleiter());
+			st.setInt(5,saveItem.getTyp().getVeranstaltungsTypID());
+			st.setString(6,  saveItem.getVeranstalter());
+			st.setString(7, saveItem.getVeranstaltungsort());
+			st.setString(8, saveItem.getPlz_leiter());
+			st.setString(9,saveItem.getOrt_leiter());
+			st.setString(10,  saveItem.getStrasse_leiter());
+			st.setString(11, saveItem.getTel_nr_leiter());
+			st.setInt(12, saveItem.getIdschau());
+			
+			st.setInt(13, saveItem.getId_veranstaltung());
+			
+		}
+
+		st.executeUpdate();
+
+		ResultSet keySet = st.getGeneratedKeys();
+		if (keySet.next()) {
+			saveItem.setId_veranstaltung(keySet.getInt(1));
+		}
+
+	}
+
 }

@@ -2,19 +2,21 @@ package com.app.printclasses;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.text.SimpleDateFormat;
+import java.util.List;
 
-import com.app.dbio.DBConnection;
+import com.app.auth.Hund;
+import com.app.auth.Person;
+import com.app.dbio.DBHund;
+import com.app.dbio.DBPerson;
+import com.app.dbio.DBVeranstaltung;
 import com.app.enumdatatypes.VeranstaltungsStufen;
 import com.app.service.TemporaryFileDownloadResource;
+import com.app.veranstaltung.Veranstaltung;
+import com.app.veranstaltung.VeranstaltungsStufe;
+import com.app.veranstaltung.VeranstaltungsTeilnehmer;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.CustomComponent;
-import com.vaadin.v7.data.Item;
-import com.vaadin.v7.data.util.filter.Compare.Equal;
-import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.v7.data.util.sqlcontainer.query.OrderBy;
-import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 
 import jxl.Workbook;
 import jxl.write.DateFormat;
@@ -28,47 +30,29 @@ import jxl.write.WritableWorkbook;
 
 public class BewertungsListeNeu extends CustomComponent {
 
-	private AbsoluteLayout mainLayout;
-	private TableQuery q3;
-	private TableQuery q4;
-	private TableQuery q5;
-	private TableQuery q1;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8416619752436456154L;
 
-	private SQLContainer veranstaltungsStufenContainer;
-	private SQLContainer personContainer;
-	private SQLContainer hundContainer;
-	private SQLContainer teilnehmerContainer;
+	private AbsoluteLayout mainLayout;
+	
+	private DBVeranstaltung dbVa;
+	private DBPerson dbPerson;
+	private DBHund dbHund;
 
 	private static String RESULT = "BewertungsListeOERC.xls";
 
-	public BewertungsListeNeu(Item veranstaltung) {
+	public BewertungsListeNeu(Veranstaltung veranstaltung) {
 
-		q3 = new TableQuery("veranstaltungs_teilnehmer",
-				DBConnection.INSTANCE.getConnectionPool());
-		q3.setVersionColumn("version");
-
-		q4 = new TableQuery("person", DBConnection.INSTANCE.getConnectionPool());
-		q4.setVersionColumn("version");
-
-		q5 = new TableQuery("hund", DBConnection.INSTANCE.getConnectionPool());
-		q5.setVersionColumn("version");
-
-		q1 = new TableQuery("veranstaltungs_stufe",
-				DBConnection.INSTANCE.getConnectionPool());
-		q1.setVersionColumn("version");
-
+	
 		try {
 
-			personContainer = new SQLContainer(q4);
-			hundContainer = new SQLContainer(q5);
-			teilnehmerContainer = new SQLContainer(q3);
-			veranstaltungsStufenContainer = new SQLContainer(q1);
+			dbVa = new DBVeranstaltung();
+			dbPerson = new DBPerson();
+			dbHund = new DBHund();
 
-			teilnehmerContainer.addContainerFilter(new Equal(
-					"id_veranstaltung", veranstaltung.getItemProperty(
-							"id_veranstaltung").getValue()));
-			
-			teilnehmerContainer.addOrderBy(new OrderBy("startnr", true));
+			List<VeranstaltungsStufe> stufen = dbVa.getStufenZuVaId(veranstaltung.getId_veranstaltung());
 
 			mainLayout = new AbsoluteLayout();
 			mainLayout.setWidth("100%");
@@ -78,160 +62,101 @@ public class BewertungsListeNeu extends CustomComponent {
 			File outputFile = new File(RESULT);
 
 			WritableWorkbook workbook = Workbook.createWorkbook(outputFile);
-			
 
 			WritableSheet sheet = workbook.createSheet("Bewertungsliste", 0);
 
 			int i = 0;
-			for (Object zw : teilnehmerContainer.getItemIds()) {
+			for (VeranstaltungsStufe zw : stufen) {
 
-				System.out.println(zw);
+				List<VeranstaltungsTeilnehmer> teilnehmer = dbVa.getAlleTeilnehmerZuStufe(zw.getIdStufe());
 
-				veranstaltungsStufenContainer.addContainerFilter(new Equal(
-						"id_stufe", teilnehmerContainer.getItem(zw)
-								.getItemProperty("id_stufe").getValue()));
+				for (VeranstaltungsTeilnehmer zwi : teilnehmer) {
+					System.out.println(zw);
 
-				VeranstaltungsStufen ob = VeranstaltungsStufen
-						.getBezeichnungForId(Integer
-								.valueOf(veranstaltungsStufenContainer
-										.getItem(
-												veranstaltungsStufenContainer
-														.getIdByIndex(0))
-										.getItemProperty("stufen_typ")
-										.getValue().toString()));
-				veranstaltungsStufenContainer.removeAllContainerFilters();
-				Label label = new Label(0, i, ob.getBezeichnung());
-				sheet.addCell(label);
+					Person person = dbPerson.getPersonForId(zwi.getIdPerson());
+					Hund hund = dbHund.getHundForHundId(zwi.getIdHund());
 
-				System.out.println(teilnehmerContainer.getItem(zw)
-						.getItemProperty("id_hund").getValue().toString());
+					Label label = new Label(0, i, zw.getStufenTyp().getBezeichnung());
+					sheet.addCell(label);
 
-				hundContainer.addContainerFilter(new Equal("idhund",
-						teilnehmerContainer.getItem(zw)
-								.getItemProperty("id_hund").getValue()));
+					Label hundeName = new Label(1, i, hund.getZwingername());
+					sheet.addCell(hundeName);
 
-				personContainer.addContainerFilter(new Equal("idperson",
-						teilnehmerContainer.getItem(zw)
-								.getItemProperty("id_person").getValue()));
+					DateFormat df = new DateFormat("dd.MM.yyyy");
+					WritableCellFormat cf1 = new WritableCellFormat(df);
 
-				Label hundeName = new Label(1, i, hundContainer
-						.getItem(hundContainer.firstItemId())
-						.getItemProperty("zwingername").getValue().toString());
-				sheet.addCell(hundeName);
+					DateTime dt = new DateTime(2, i, hund.getWurfdatum(), cf1);
 
-				DateFormat df = new DateFormat("dd.MM.yyyy");
-				WritableCellFormat cf1 = new WritableCellFormat(df);
+					sheet.addCell(dt);
 
-				DateTime dt = new DateTime(2, i, new SimpleDateFormat(
-						"yyyy-MM-dd").parse(hundContainer
-						.getItem(hundContainer.firstItemId())
-						.getItemProperty("wurfdatum").getValue().toString()),
-						cf1);
+					Label rasse = new Label(3, i, hund.getRasse());
+					sheet.addCell(rasse);
 
-				sheet.addCell(dt);
+					Label geschlecht = new Label(4, i, hund.getGeschlecht());
 
-				Label rasse = new Label(3, i, hundContainer
-						.getItem(hundContainer.firstItemId())
-						.getItemProperty("rasse").getValue().toString());
-				sheet.addCell(rasse);
+					sheet.addCell(geschlecht);
 
-				Label geschlecht = new Label(4, i, hundContainer
-						.getItem(hundContainer.firstItemId())
-						.getItemProperty("geschlecht").getValue().toString());
-			
-				sheet.addCell(geschlecht);
+					NumberFormat chipNrFormat = new NumberFormat("000 000 000 000 000");
+					WritableCellFormat chipCell = new WritableCellFormat(chipNrFormat);
 
-				NumberFormat chipNrFormat = new NumberFormat(
-						"000 000 000 000 000");
-				WritableCellFormat chipCell = new WritableCellFormat(
-						chipNrFormat);
-				
-				Number n = new Number(5, i, Double.valueOf(hundContainer
-						.getItem(hundContainer.firstItemId())
-						.getItemProperty("chipnummer").getValue().toString()).doubleValue(),
-						chipCell);
-				sheet.addCell(n);
+					Number n = new Number(5, i, Double.valueOf(hund.getChipnummer()), chipCell);
+					sheet.addCell(n);
 
-				String hundeFuehrer = "";
-				if (!(teilnehmerContainer.getItem(zw)
-						.getItemProperty("hundefuehrer").getValue() == null)) {
+					String hundeFuehrer = "";
+					if (!(zwi.getHundefuehrer() == null) && !(zwi.getHundefuehrer().isEmpty())) {
 
-					hundeFuehrer = teilnehmerContainer.getItem(zw)
-							.getItemProperty("hundefuehrer").getValue()
-							.toString();
-				} else {
-					hundeFuehrer = personContainer
-							.getItem(personContainer.firstItemId())
-							.getItemProperty("nachname").getValue().toString()
-							+ " "
-							+ personContainer
-									.getItem(personContainer.firstItemId())
-									.getItemProperty("vorname").getValue()
-									.toString();
-				}
-				Label hundeFuehrerCell = new Label(6, i, hundeFuehrer);
-				sheet.addCell(hundeFuehrerCell);
+						hundeFuehrer = zwi.getHundefuehrer();
+					} else {
+						hundeFuehrer = person.getLastName() + " " + person.getFirstName();
+					}
+					Label hundeFuehrerCell = new Label(6, i, hundeFuehrer);
+					sheet.addCell(hundeFuehrerCell);
 
-				NumberFormat punktFormat = new NumberFormat("##0");
-				WritableCellFormat punktCell = new WritableCellFormat(
-						punktFormat);
+					NumberFormat punktFormat = new NumberFormat("##0");
+					WritableCellFormat punktCell = new WritableCellFormat(punktFormat);
 
-				Label unbefangenheitsprobe = new Label(7, i,
-						teilnehmerContainer.getItem(zw)
-								.getItemProperty("bestanden").getValue()
-								.toString().equals("J") ? "B" : "NB");
-				sheet.addCell(unbefangenheitsprobe);
+					Label unbefangenheitsprobe = new Label(7, i, (zwi.getBestanden() != null && zwi.getBestanden().equals("J")) ? "B" : "NB");
+					sheet.addCell(unbefangenheitsprobe);
 
-				if (ob.equals(VeranstaltungsStufen.STUFE_BH)) {
+					if (zw.getStufenTyp().equals(VeranstaltungsStufen.STUFE_BH)) {
 
-					String bestandenString = "";
-					if (teilnehmerContainer.getItem(zw)
-							.getItemProperty("bestanden").getValue().toString()
-							.equals(("J"))) {
-						bestandenString = "best.";
+						String bestandenString = "";
+						if (zwi.getBestanden() != null && zwi.getBestanden()
+								.equals(("J"))) {
+							bestandenString = "best.";
+
+						} else {
+							bestandenString = "n.best.";
+						}
+
+						Label bestanden = new Label(8, i, bestandenString);
+						sheet.addCell(bestanden);
 
 					} else {
-						bestandenString = "n.best.";
-					}
+						Number punkte = null;
+						if (zwi.getGesPunkte() != null) {
+							punkte = new Number(8, i, zwi.getGesPunkte(), punktCell);
+						} else {
+							punkte = new Number(8, i, 0, punktCell);
 
-					Label bestanden = new Label(8, i, bestandenString);
-					sheet.addCell(bestanden);
-					
-					
-				} else {
-					Number punkte = null;
-					if (teilnehmerContainer.getItem(zw)
-							.getItemProperty("ges_punkte").getValue() != null) {
-						punkte = new Number(8, i,
-								Integer.valueOf(teilnehmerContainer.getItem(zw)
-										.getItemProperty("ges_punkte")
-										.getValue().toString()), punktCell);
-					} else {
-						punkte = new Number(8, i, 0, punktCell);
+						}
+						sheet.addCell(punkte);
 
 					}
-					sheet.addCell(punkte);
 
+					Label email = new Label(9, i, person.getEmail());
+
+					sheet.addCell(email);
+
+					i++;
 				}
-				
-				Label email = new Label(9,i,personContainer
-						.getItem(personContainer.firstItemId())
-						.getItemProperty("email").getValue().toString());
-
-				sheet.addCell(email);
-
-				hundContainer.removeAllContainerFilters();
-				personContainer.removeAllContainerFilters();
-				i++;
-
 			}
 
 			workbook.write();
 			workbook.close();
 			TemporaryFileDownloadResource s = null;
 			try {
-				s = new TemporaryFileDownloadResource(RESULT,
-						"application/vnd.ms-excel", outputFile);
+				s = new TemporaryFileDownloadResource(RESULT, "application/vnd.ms-excel", outputFile);
 			} catch (final FileNotFoundException e) {
 
 			}

@@ -74,16 +74,7 @@ public class VeranstaltungsUebersicht extends TabSheet
 			e.printStackTrace();
 
 		}
-		q2 = new TableQuery("veranstaltungs_stufe", DBConnection.INSTANCE.getConnectionPool());
-		q2.setVersionColumn("version");
-
-		try {
-			veranstaltungsStufenContainer = new SQLContainer(q2);
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
+		
 		addTab(buildDrafts());
 	}
 

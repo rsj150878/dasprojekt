@@ -3,19 +3,26 @@ package com.app.printclasses;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
-import com.app.dbio.DBConnection;
+import com.app.auth.Hund;
+import com.app.auth.Person;
+import com.app.dbio.DBHund;
 import com.app.dbio.DBHundDokumente;
+import com.app.dbio.DBPerson;
+import com.app.dbio.DBVeranstaltung;
 import com.app.enumdatatypes.DokumentGehoertZuType;
 import com.app.enumdatatypes.Rassen;
 import com.app.enumdatatypes.VeranstaltungsStufen;
 import com.app.filestorage.HundeDokumente;
 import com.app.service.TemporaryFileDownloadResource;
+import com.app.veranstaltung.Veranstaltung;
+import com.app.veranstaltung.VeranstaltungsStufe;
+import com.app.veranstaltung.VeranstaltungsTeilnehmer;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfPageFormCopier;
 import com.itextpdf.forms.fields.PdfFormField;
@@ -25,15 +32,13 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.CustomComponent;
-import com.vaadin.v7.data.Item;
-import com.vaadin.v7.data.util.filter.Compare.Equal;
-import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 
 public class Urkunde extends CustomComponent {
-	private PdfReader reader;
-
-	private FileOutputStream fos;
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8250020065563827808L;
 	/** The original PDF file. */
 	public static final String DATASHEET = "files/Urkunde allgemein_FORMULAR1.pdf";
 	public static final String FONT = "files/arialuni.ttf";
@@ -41,33 +46,21 @@ public class Urkunde extends CustomComponent {
 	public static final String RESULT = "Urkunde.pdf";
 
 	private AbsoluteLayout mainLayout;
-	private TableQuery q3;
-	private TableQuery q4;
-	private TableQuery q5;
+	
+	private DBVeranstaltung dbVa;
+	private DBHund dbHund;
+	private DBPerson dbPerson;
 
-	private SQLContainer personContainer;
-	private SQLContainer hundContainer;
-	private SQLContainer teilnehmerContainer;
-
-	public Urkunde(Item veranstaltung, Item veranstaltungsStufe) {
-		q3 = new TableQuery("veranstaltungs_teilnehmer", DBConnection.INSTANCE.getConnectionPool());
-		q3.setVersionColumn("version");
-
-		q4 = new TableQuery("person", DBConnection.INSTANCE.getConnectionPool());
-		q4.setVersionColumn("version");
-
-		q5 = new TableQuery("hund", DBConnection.INSTANCE.getConnectionPool());
-		q5.setVersionColumn("version");
-
+	public Urkunde(Veranstaltung veranstaltung, VeranstaltungsStufe veranstaltungsStufe) {
+		
+		
+		dbVa = new DBVeranstaltung();
+		dbHund = new DBHund();
+		dbPerson = new DBPerson();
+		
 		try {
 
-			personContainer = new SQLContainer(q4);
-			hundContainer = new SQLContainer(q5);
-			teilnehmerContainer = new SQLContainer(q3);
-
-			teilnehmerContainer.addContainerFilter(
-					new Equal("id_stufe", veranstaltungsStufe.getItemProperty("id_stufe").getValue()));
-
+			
 			mainLayout = new AbsoluteLayout();
 			mainLayout.setWidth("100%");
 			mainLayout.setHeight("100%");
@@ -92,7 +85,7 @@ public class Urkunde extends CustomComponent {
 		}
 	}
 
-	private void bauPdf(Item veranstaltung, Item veranstaltungsStufe) throws Exception {
+	private void bauPdf(Veranstaltung veranstaltung, VeranstaltungsStufe veranstaltungsStufe) throws Exception {
 
 		PdfDocument pdfDoc = new PdfDocument(new PdfWriter(RESULT));
 		pdfDoc.initializeOutlines();
@@ -101,19 +94,23 @@ public class Urkunde extends CustomComponent {
 		PdfDocument pdfInnerDoc;
 		Map<String, PdfFormField> fields;
 		PdfAcroForm form;
+		
+		
 		HundeDokumente doc = new HundeDokumente();
+		
 		DBHundDokumente dbHundDoc = new DBHundDokumente();
-		doc = dbHundDoc.getHundDokumentForId(DokumentGehoertZuType.VERANSTALTUNG,
-				new Integer(veranstaltung.getItemProperty("id_veranstaltung").getValue().toString()));
+		doc = dbHundDoc.getHundDokumentForId(DokumentGehoertZuType.VERANSTALTUNG,veranstaltung.getId_veranstaltung());
+		
+		List<VeranstaltungsTeilnehmer> teilnehmer = dbVa.getAlleTeilnehmerZuStufe(veranstaltungsStufe.getIdStufe());
 
-		for (Object id : teilnehmerContainer.getItemIds()) {
+		for (VeranstaltungsTeilnehmer zw:teilnehmer) {
 
-			Item teilnehmerItem = teilnehmerContainer.getItem(id);
 			// create a PDF in memory
 			baos = new ByteArrayOutputStream();
 
-			System.out.println("idhund: " + teilnehmerItem.getItemProperty("id_hund").getValue());
-
+			Hund hund = dbHund.getHundForHundId(zw.getIdHund());
+			Person person = dbPerson.getPersonForId(zw.getIdPerson());
+			
 			if (doc == null ) {
 				pdfInnerDoc = new PdfDocument(new PdfReader(DATASHEET), new PdfWriter(baos));
 					
@@ -122,44 +119,33 @@ public class Urkunde extends CustomComponent {
 			}
 			form = PdfAcroForm.getAcroForm(pdfInnerDoc, true);
 			fields = form.getFormFields();
-			hundContainer.addContainerFilter(new Equal("idhund", teilnehmerItem.getItemProperty("id_hund").getValue()));
+		
 
-			personContainer
-					.addContainerFilter(new Equal("idperson", teilnehmerItem.getItemProperty("id_person").getValue()));
-
-			if (teilnehmerItem.getItemProperty("hundefuehrer").getValue() != null
-					&& !teilnehmerItem.getItemProperty("hundefuehrer").getValue().toString().isEmpty()
-					&& teilnehmerItem.getItemProperty("hundefuehrer").getValue().toString().length() > 0) {
+			if (zw.getHundefuehrer() != null
+					&& !zw.getHundefuehrer().isEmpty()
+					&& zw.getHundefuehrer().length() > 0) {
 
 				fields.get("HUNDEFÜHRER/IN")
-						.setValue(teilnehmerItem.getItemProperty("hundefuehrer").getValue().toString());
+						.setValue(zw.getHundefuehrer());
 			} else {
 				fields.get("HUNDEFÜHRER/IN")
-						.setValue(personContainer.getItem(personContainer.firstItemId()).getItemProperty("nachname")
-								.getValue().toString() + " "
-								+ personContainer.getItem(personContainer.firstItemId()).getItemProperty("vorname")
-										.getValue().toString()
+						.setValue(person.getLastName() + " " + person.getFirstName());
 
-				);
+				
 			}
 
-			fields.get("CHIP-NR").setValue(hundContainer.getItem(hundContainer.firstItemId())
-					.getItemProperty("chipnummer").getValue().toString());
+			fields.get("CHIP-NR").setValue(hund.getChipnummer());
 
 			SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd.MM.yyyy");
-			fields.get("GEWORFEN AM").setValue(dateFormat1.format(
-					hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("wurfdatum").getValue()));
-			if (!(hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("zuchtbuchnummer")
-					.getValue() == null)) {
+			fields.get("GEWORFEN AM").setValue(dateFormat1.format(hund.getWurfdatum()));
+			
+			if (!(hund.getZuchtbuchnummer() == null)) {
 
-				fields.get("ÖHZB-NR").setValue(hundContainer.getItem(hundContainer.firstItemId())
-						.getItemProperty("zuchtbuchnummer").getValue().toString());
+				fields.get("ÖHZB-NR").setValue(hund.getZuchtbuchnummer());
 			}
 
-			if (!(hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("geschlecht")
-					.getValue() == null)) {
-				if (new String("R").equals(hundContainer.getItem(hundContainer.firstItemId())
-						.getItemProperty("geschlecht").getValue().toString())) {
+			if (!(hund.getGeschlecht() == null)) {
+				if (new String("R").equals(hund.getGeschlecht())) {
 					fields.get("RÜDE").setValue("Ja");
 
 				} else {
@@ -169,27 +155,25 @@ public class Urkunde extends CustomComponent {
 			}
 
 			fields.get("RASSE").setValue(Rassen.getUrkundenBezeichnungFuerKurzBezeichnung(
-					hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("rasse").getValue().toString()));
+					hund.getRasse()));
 
-			fields.get("NAME DES HUNDES").setValue(hundContainer.getItem(hundContainer.firstItemId())
-					.getItemProperty("zwingername").getValue().toString());
+			fields.get("NAME DES HUNDES").setValue(hund.getZwingername());
 
-			fields.get("ORT/DATUM").setValue(veranstaltung.getItemProperty("veranstaltungsort").getValue().toString()
-					+ " " + dateFormat1.format(veranstaltung.getItemProperty("datum").getValue()));
+			fields.get("ORT/DATUM").setValue(veranstaltung.getVeranstaltungsort()
+					+ " " + dateFormat1.format(veranstaltung.getDatum()));
 
 			fields.get("VERANSTALTER/AUSBILDUNGSSTÄTTE")
-					.setValue(veranstaltung.getItemProperty("veranstalter").getValue().toString());
-			VeranstaltungsStufen defStufe = VeranstaltungsStufen.getBezeichnungForId(
-					new Integer(veranstaltungsStufe.getItemProperty("stufen_typ").getValue().toString()));
+					.setValue(veranstaltung.getVeranstalter());
+			VeranstaltungsStufen defStufe = veranstaltungsStufe.getStufenTyp();
 
 			fields.get("PRÜFUNG").setValue(defStufe.getLangBezeichnung());
 
 			fields.get("ZEILE 3").setValue("");
 			fields.get("ZEILE 1").setValue(defStufe.getLangBezeichnung());
 
-			if (teilnehmerItem.getItemProperty("bestanden").getValue() != null) {
+			if (zw.getBestanden() != null) {
 
-				if ("N".equals(teilnehmerItem.getItemProperty("bestanden").getValue().toString())) {
+				if ("N".equals(zw.getBestanden())) {
 					fields.get("ZEILE 2").setValue("leider nicht bestanden");
 				} else if (defStufe == VeranstaltungsStufen.STUFE_BH) {
 					fields.get("ZEILE 2").setValue("erfolgreich bestanden");
@@ -207,16 +191,13 @@ public class Urkunde extends CustomComponent {
 
 				) {
 					fields.get("ZEILE 2").setValue("erfolgreich mit "
-							+ teilnehmerItem.getItemProperty("ges_punkte").getValue().toString() + " Punkten und "
+							+ zw.getGesPunkte().toString() + " Punkten und "
 							+ defStufe.getBewertung(
-									new Integer(teilnehmerItem.getItemProperty("ges_punkte").getValue().toString())));
+									zw.getGesPunkte()));
 					fields.get("ZEILE 3").setValue("bestanden");
 
 				}
 			}
-
-			hundContainer.removeAllContainerFilters();
-			personContainer.removeAllContainerFilters();
 
 			form.flattenFields();
 			pdfInnerDoc.close();

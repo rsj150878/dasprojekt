@@ -5,16 +5,20 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
+import com.app.auth.Hund;
+import com.app.auth.Person;
 import com.app.dbio.DBHund;
 import com.app.dbio.DBPerson;
 import com.app.dbio.DBVeranstaltung;
 import com.app.service.TemporaryFileDownloadResource;
 import com.app.veranstaltung.Veranstaltung;
 import com.app.veranstaltung.VeranstaltungsStufe;
+import com.app.veranstaltung.VeranstaltungsTeilnehmer;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfPageFormCopier;
 import com.itextpdf.forms.fields.PdfFormField;
@@ -24,31 +28,31 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.CustomComponent;
-import com.vaadin.v7.data.Item;
-import com.vaadin.v7.data.util.filter.Compare.Equal;
-import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.v7.data.util.sqlcontainer.query.OrderBy;
 
 public class RBP3RichterBlatt extends CustomComponent {
 
-		/** The original PDF file. */
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4752060854175553729L;
+	/** The original PDF file. */
 	public static final String DATASHEET = "files/RBP_Richterblatt_RBP3_FORMULAR.pdf";
 	public static final String FONT = "files/arialuni.ttf";
 
 	public static final String RESULT = "RichterBlatt.pdf";
 
 	private AbsoluteLayout mainLayout;
-	
+
 	private DBVeranstaltung dbVa;
 	private DBHund dbHund;
 	private DBPerson dbPerson;
-	
+
 	public RBP3RichterBlatt(Veranstaltung veranstaltung, VeranstaltungsStufe veranstaltungsStufe) {
 
 		dbVa = new DBVeranstaltung();
 		dbHund = new DBHund();
 		dbPerson = new DBPerson();
-	
+
 		try {
 
 			mainLayout = new AbsoluteLayout();
@@ -81,54 +85,43 @@ public class RBP3RichterBlatt extends CustomComponent {
 		PdfDocument pdfInnerDoc;
 		Map<String, PdfFormField> fields;
 		PdfAcroForm form;
-		for (Object id : teilnehmerContainer.getItemIds()) {
 
-			Item teilnehmerItem = teilnehmerContainer.getItem(id);
+		List<VeranstaltungsTeilnehmer> teilnehmer = dbVa.getAlleTeilnehmerZuStufe(veranstaltungsStufe.getIdStufe());
+
+		for (VeranstaltungsTeilnehmer zw : teilnehmer) {
+
 			// create a PDF in memory
 			baos = new ByteArrayOutputStream();
 			pdfInnerDoc = new PdfDocument(new PdfReader(DATASHEET), new PdfWriter(baos));
 			form = PdfAcroForm.getAcroForm(pdfInnerDoc, true);
 			fields = form.getFormFields();
 
-			hundContainer.addContainerFilter(new Equal("idhund", teilnehmerItem.getItemProperty("id_hund").getValue()));
-
-			personContainer
-					.addContainerFilter(new Equal("idperson", teilnehmerItem.getItemProperty("id_person").getValue()));
+			Hund hund = dbHund.getHundForHundId(zw.getIdHund());
+			Person person = dbPerson.getPersonForId(zw.getIdPerson());
 
 			SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd.MM.yyyy");
-			fields.get("Datum").setValue( dateFormat1.format(veranstaltung.getItemProperty("datum").getValue()));
+			fields.get("Datum").setValue(dateFormat1.format(veranstaltung.getDatum()));
 
-			fields.get("Hund").setValue( hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("zwingername")
-					.getValue().toString());
+			fields.get("Hund").setValue(hund.getZwingername());
 
-			fields.get("Wurftag").setValue( dateFormat1.format(
-					hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("wurfdatum").getValue()));
+			fields.get("Wurftag").setValue(dateFormat1.format(hund.getWurfdatum()));
 
-			fields.get("Chip- oder Tätonr.:").setValue( hundContainer.getItem(hundContainer.firstItemId())
-					.getItemProperty("chipnummer").getValue().toString());
+			fields.get("Chip- oder Tätonr.:").setValue(hund.getChipnummer());
 
-			if (teilnehmerItem.getItemProperty("hundefuehrer").getValue() != null) {
+			if (zw.getHundefuehrer() != null && !zw.getHundefuehrer().isEmpty() && zw.getHundefuehrer().length() > 0) {
 
-				fields.get("HF").setValue( teilnehmerItem.getItemProperty("hundefuehrer").getValue().toString());
+				fields.get("HF").setValue(zw.getHundefuehrer());
 			} else {
-				fields.get("HF").setValue(
-						personContainer.getItem(personContainer.firstItemId()).getItemProperty("nachname").getValue()
-								.toString() + " "
-								+ personContainer.getItem(personContainer.firstItemId()).getItemProperty("vorname")
-										.getValue().toString()
+				fields.get("HF").setValue(person.getLastName() + " " + person.getFirstName()
 
 				);
 			}
 
-			fields.get("Geschlecht").setValue( hundContainer.getItem(hundContainer.firstItemId())
-					.getItemProperty("geschlecht").getValue().toString());
+			fields.get("Geschlecht").setValue(hund.getGeschlecht());
 
-			fields.get("Ort").setValue( veranstaltung.getItemProperty("veranstaltungsort").getValue().toString());
+			fields.get("Ort").setValue(veranstaltung.getVeranstaltungsort());
 
-			fields.get("startnr").setValue(teilnehmerItem.getItemProperty("startnr").getValue().toString());
-
-			hundContainer.removeAllContainerFilters();
-			personContainer.removeAllContainerFilters();
+			fields.get("startnr").setValue(zw.getStartnr().toString());
 
 			form.flattenFields();
 			pdfInnerDoc.close();

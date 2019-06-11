@@ -3,11 +3,18 @@ package com.app.printclasses;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
-import com.app.dbio.DBConnection;
+import com.app.auth.Hund;
+import com.app.auth.Person;
+import com.app.dbio.DBHund;
+import com.app.dbio.DBPerson;
+import com.app.dbio.DBVeranstaltung;
 import com.app.enumdatatypes.VeranstaltungsStufen;
-import com.app.enumdatatypes.VeranstaltungsTypen;
 import com.app.service.TemporaryFileDownloadResource;
+import com.app.veranstaltung.Veranstaltung;
+import com.app.veranstaltung.VeranstaltungsStufe;
+import com.app.veranstaltung.VeranstaltungsTeilnehmer;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
@@ -29,52 +36,30 @@ import com.itextpdf.layout.renderer.DrawContext;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.CustomComponent;
-import com.vaadin.v7.data.Item;
 import com.vaadin.v7.data.util.filter.Compare.Equal;
-import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.v7.data.util.sqlcontainer.query.OrderBy;
-import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 
 public class StarterListe extends CustomComponent {
 
-	private AbsoluteLayout mainLayout;
-	private TableQuery q3;
-	private TableQuery q4;
-	private TableQuery q5;
-	private TableQuery q1;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -712524145795603983L;
 
-	private SQLContainer veranstaltungsStufenContainer;
-	private SQLContainer personContainer;
-	private SQLContainer hundContainer;
-	private SQLContainer teilnehmerContainer;
+	private AbsoluteLayout mainLayout;
 
 	private static String RESULT = "Starterliste.pdf";
 
-	public StarterListe(Item veranstaltung, boolean isInternListe) {
+	private DBVeranstaltung dbVa;
+	private DBHund dbHund;
+	private DBPerson dbPerson;
 
-		q3 = new TableQuery("veranstaltungs_teilnehmer", DBConnection.INSTANCE.getConnectionPool());
-		q3.setVersionColumn("version");
+	public StarterListe(Veranstaltung veranstaltung, boolean isInternListe) {
 
-		q4 = new TableQuery("person", DBConnection.INSTANCE.getConnectionPool());
-		q4.setVersionColumn("version");
-
-		q5 = new TableQuery("hund", DBConnection.INSTANCE.getConnectionPool());
-		q5.setVersionColumn("version");
-
-		q1 = new TableQuery("veranstaltungs_stufe", DBConnection.INSTANCE.getConnectionPool());
-		q1.setVersionColumn("version");
+		dbVa = new DBVeranstaltung();
+		dbHund = new DBHund();
+		dbPerson = new DBPerson();
 
 		try {
-
-			personContainer = new SQLContainer(q4);
-			hundContainer = new SQLContainer(q5);
-			teilnehmerContainer = new SQLContainer(q3);
-			veranstaltungsStufenContainer = new SQLContainer(q1);
-
-			teilnehmerContainer.addContainerFilter(
-					new Equal("id_veranstaltung", veranstaltung.getItemProperty("id_veranstaltung").getValue()));
-
-			teilnehmerContainer.addOrderBy(new OrderBy("startnr", true));
 
 			mainLayout = new AbsoluteLayout();
 			mainLayout.setWidth("100%");
@@ -90,20 +75,16 @@ public class StarterListe extends CustomComponent {
 
 			SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd.MM.yyyy");
 
-			String titleString = "Starterliste "
-					+ VeranstaltungsTypen
-							.getVeranstaltungsTypForId(
-									Integer.valueOf(veranstaltung.getItemProperty("typ").getValue().toString()))
-							.getVeranstaltungsTypBezeichnung()
-					+ " " + dateFormat1.format(veranstaltung.getItemProperty("datum").getValue());
+			String titleString = "Starterliste " + veranstaltung.getTyp().getVeranstaltungsTypBezeichnung() + " "
+					+ dateFormat1.format(veranstaltung.getDatum());
 
 			Text title = new Text(titleString).setFont(bold);
 			Paragraph p = new Paragraph().add(title).setFontSize(18);
 			document.add(p).setHorizontalAlignment(HorizontalAlignment.CENTER);
-			
+
 			p = new Paragraph().add("").setFontSize(18);
 			document.add(p);
-			
+
 			Table table;
 			if (isInternListe) {
 				table = new Table(UnitValue.createPercentArray(new float[] { 3, 2, 14, 9, 2 })).useAllAvailableWidth();
@@ -119,52 +100,35 @@ public class StarterListe extends CustomComponent {
 
 			table.getHeader().setBold();
 
-			for (Object zw : teilnehmerContainer.getItemIds()) {
+			List<VeranstaltungsTeilnehmer> teilnehmer = dbVa
+					.getAlleTeilnehmerZuVeranstaltung(veranstaltung.getId_veranstaltung());
 
-				table.addCell(teilnehmerContainer.getItem(zw).getItemProperty("startnr").getValue().toString());
+			for (VeranstaltungsTeilnehmer zw : teilnehmer) {
+				Hund hund = dbHund.getHundForHundId(zw.getIdHund());
+				Person person = dbPerson.getPersonForId(zw.getIdPerson());
+				VeranstaltungsStufe stufe = dbVa.getStufeZuId(zw.getIdStufe());
 
-				veranstaltungsStufenContainer.addContainerFilter(
-						new Equal("id_stufe", teilnehmerContainer.getItem(zw).getItemProperty("id_stufe").getValue()));
+				table.addCell(zw.getStartnr().toString());
 
-				VeranstaltungsStufen ob = VeranstaltungsStufen.getBezeichnungForId(Integer
-						.valueOf(veranstaltungsStufenContainer.getItem(veranstaltungsStufenContainer.getIdByIndex(0))
-								.getItemProperty("stufen_typ").getValue().toString()));
-				veranstaltungsStufenContainer.removeAllContainerFilters();
-				table.addCell(ob.getBezeichnung());
-
-				System.out.println(teilnehmerContainer.getItem(zw).getItemProperty("id_hund").getValue().toString());
-
-				hundContainer.addContainerFilter(
-						new Equal("idhund", teilnehmerContainer.getItem(zw).getItemProperty("id_hund").getValue()));
-
-				personContainer.addContainerFilter(
-						new Equal("idperson", teilnehmerContainer.getItem(zw).getItemProperty("id_person").getValue()));
+				table.addCell(stufe.getStufenTyp().getBezeichnung());
 
 				String hundeFuehrer = "";
-				if (!(teilnehmerContainer.getItem(zw).getItemProperty("hundefuehrer").getValue() == null)) {
+				if (!(zw.getHundefuehrer() == null)) {
 
-					hundeFuehrer = teilnehmerContainer.getItem(zw).getItemProperty("hundefuehrer").getValue()
-							.toString();
+					hundeFuehrer = zw.getHundefuehrer();
 				} else {
-					hundeFuehrer = personContainer.getItem(personContainer.firstItemId()).getItemProperty("nachname")
-							.getValue().toString() + " "
-							+ personContainer.getItem(personContainer.firstItemId()).getItemProperty("vorname")
-									.getValue().toString();
+					hundeFuehrer = person.getLastName() + " " + person.getFirstName();
 				}
 				table.addCell(hundeFuehrer);
 
-				table.addCell(hundContainer.getItem(hundContainer.firstItemId()).getItemProperty("zwingername")
-						.getValue().toString());
+				table.addCell(hund.getZwingername());
 
 				if (isInternListe) {
 
 					Cell cell = new Cell().add(new Paragraph(""));
-					cell.setNextRenderer(new BezahltRenderer(cell,
-							teilnehmerContainer.getItem(zw).getItemProperty("bezahlt").getValue().toString()));
+					cell.setNextRenderer(new BezahltRenderer(cell, zw.getBezahlt()));
 					table.addCell(cell);
 				}
-				hundContainer.removeAllContainerFilters();
-				personContainer.removeAllContainerFilters();
 
 			}
 
@@ -194,10 +158,10 @@ public class StarterListe extends CustomComponent {
 			this.bezahlt = bezahlt;
 		}
 
-//		@Override
-//		public CellRenderer getNextRenderer() {
-//			return new BezahltRenderer(getModelElement(), bezahlt);
-//		}
+		// @Override
+		// public CellRenderer getNextRenderer() {
+		// return new BezahltRenderer(getModelElement(), bezahlt);
+		// }
 
 		@Override
 		public void drawBackground(DrawContext drawContext) {

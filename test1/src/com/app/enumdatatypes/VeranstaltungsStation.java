@@ -69,6 +69,15 @@ public enum VeranstaltungsStation {
 	BGH3_UE6 (59, 6,"uebung6", 0, 15),
 	BGH3_UE7 (60, 7,"uebung7", 0, 10),
 	BGH3_UE8 (61, 8,"uebung8", 0, 10),
+	TRAIN_WT_UE1(62,1,"uebung1",0,20),
+	TRAIN_WT_UE2(63,2,"uebung2",0,20),
+	TRAIN_WT_UE3(64,3,"uebung3",0,20),
+	TRAIN_WT_UE4(65,4,"uebung4",0,20),
+	TRAIN_WT_UE5(66,5,"uebung5",0,20),
+	TRAIN_WT_UE6(67,6,"uebung6",0,20),
+	TRAIN_WT_UE7(68,7,"uebung7",0,20),
+	TRAIN_WT_UE8(69,8,"uebung8",0,20),
+	
 
 	;
 	

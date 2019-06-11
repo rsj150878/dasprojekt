@@ -28,8 +28,9 @@ public enum VeranstaltungsStufen {
 	STUFE_GAP1(10,"GAP1","Gehorsam- und Apportierprüfung 1", GAP1RichterBlatt.class, VeranstaltungsStationen.GAP1, 11,12,13,14,15),
 	STUFE_GAP2(11,"GAP2","Gehorsam- und Apportierprüfung 2", GAP2RichterBlatt.class, VeranstaltungsStationen.GAP2, 11,12,13,14,15),
 	STUFE_GAP3(12,"GAP3","Gehorsam- und Apportierprüfung 3", GAP3RichterBlatt.class, VeranstaltungsStationen.GAP3, 11,12,13,14,15),
-	TRAININGS_WT_ANFAENGER(13, "Anfänger", "Anfänger", null, null, BewertungEnum.TRAINING_WT_BESTANDEN.id),
-	TRAININGS_WT_FORTGESCHRITTEN(14, "Fortgeschritten", "Fortgeschritten", null, null, BewertungEnum.TRAINING_WT_BESTANDEN.id),
+	TRAININGS_WT_ANFAENGER(13, "Anfänger", "Anfänger", null, VeranstaltungsStationen.TRAIN_WT_ANFAENGER, BewertungEnum.TRAINING_WT_BESTANDEN.id),
+	TRAININGS_WT_FORTGESCHRITTEN(14, "Fortgeschritten", "Fortgeschritten", null, VeranstaltungsStationen.TRAIN_WT_FORTGESCHRITTEN
+		, BewertungEnum.TRAINING_WT_BESTANDEN.id),
 	WESENSTEST_GRUPPE_ALLGEMEIN(15, "Wesenstest Allgemein", "WesenstestAllgemein", null, VeranstaltungsStationen.WESENSTEST, 17, 18),
 	WESENSTEST_GRUPPE_1(16, "Wesenstest Gruppe 1", "Wesenstest Gruppe 1", null, VeranstaltungsStationen.WESENSTEST, 17, 18),
 	WESENSTEST_GRUPPE_2(17, "Wesenstest Gruppe 2", "Wesenstest Gruppe 2", null, VeranstaltungsStationen.WESENSTEST, 17, 18),
@@ -39,12 +40,15 @@ public enum VeranstaltungsStufen {
 	WESENSTEST_GRUPPE_6(21, "Wesenstest Gruppe 6", "Wesenstest Gruppe 6", null, VeranstaltungsStationen.WESENSTEST, 17, 18),
 	STUFE_RBP2_2017(22,"RBP2","Retrieverbasisprüfung 2", RBP22017RichterBlatt.class, VeranstaltungsStationen.RBP2_2017, 6,7,8,9,10),
 	STUFE_RBP3_2017(23,"RBP3","Retrieverbasisprüfung 3", RBP32017RichterBlatt.class, VeranstaltungsStationen.RBP3_2017, 6,7,8,9,10),
-	TRAININGS_WT_EINSTEIGER(24, "Einsteiger", "Einstieger", null, null, BewertungEnum.TRAINING_WT_BESTANDEN.id),
+	TRAININGS_WT_EINSTEIGER(24, "Einsteiger", "Einsteiger", null, null, BewertungEnum.TRAINING_WT_BESTANDEN.id),
 	TRAININGS_WT_LEICHT(25, "Fortgeschritten", "Fortgeschritten", null, null, BewertungEnum.TRAINING_WT_BESTANDEN.id),
 	TRAININGS_WT_MITTEL(26, "Advanced", "Advanced", null, null, BewertungEnum.TRAINING_WT_BESTANDEN.id),
 	JUNGHUNDEPRUEFUNG(27, "Junghundepruefung", "Junghundepruefung", null, null, BewertungEnum.TRAINING_WT_BESTANDEN.id),
 	
-	
+//	TRAININGS_WT_EINSTEIGER(24, "Einsteiger", "Einsteiger", null, VeranstaltungsStationen.TRAIN_WT_EINSTEIGER, BewertungEnum.TRAINING_WT_BESTANDEN.id),
+//	TRAININGS_WT_LEICHT(25, "Fortgeschritten", "Fortgeschritten", null, VeranstaltungsStationen.TRAIN_WT_LEICHT, BewertungEnum.TRAINING_WT_BESTANDEN.id),
+//	TRAININGS_WT_MITTEL(26, "Advanced", "Advanced", null, VeranstaltungsStationen.TRAIN_WT_MITTEL, BewertungEnum.TRAINING_WT_BESTANDEN.id),
+//	
 
 	;
 	;

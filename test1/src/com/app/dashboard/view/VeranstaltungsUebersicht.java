@@ -1,6 +1,5 @@
 package com.app.dashboard.view;
 
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -9,10 +8,11 @@ import com.app.auth.User;
 import com.app.dashboard.event.DashBoardEvent.NeueVeranstaltung;
 import com.app.dashboard.event.DashBoardEvent.ReportsCountUpdatedEvent;
 import com.app.dashboard.event.DashBoardEventBus;
-import com.app.dbio.DBConnection;
 import com.app.dbio.DBVeranstaltung;
+import com.app.enumdatatypes.VeranstaltungsStufen;
 import com.app.enumdatatypes.VeranstaltungsTypen;
 import com.app.veranstaltung.Veranstaltung;
+import com.app.veranstaltung.VeranstaltungsStufe;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
@@ -38,22 +38,12 @@ import com.vaadin.ui.TabSheet.CloseHandler;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
-import com.vaadin.v7.data.Item;
-import com.vaadin.v7.data.util.filter.Compare.Equal;
-import com.vaadin.v7.data.util.sqlcontainer.RowId;
-import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.v7.data.util.sqlcontainer.query.OrderBy;
-import com.vaadin.v7.data.util.sqlcontainer.query.QueryDelegate;
-import com.vaadin.v7.data.util.sqlcontainer.query.QueryDelegate.RowIdChangeEvent;
-import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 
 @SuppressWarnings("serial")
 public class VeranstaltungsUebersicht extends TabSheet
 		implements View, CloseHandler, VeranstaltungsDetailViewNeu.VeranstaltungsDetailListener {
 
 	public static final String CONFIRM_DIALOG_ID = "confirm-dialog";
-	private SQLContainer veranstaltungsStufenContainer;
-	private TableQuery q2;
 
 	private DBVeranstaltung dbVeranstaltung = new DBVeranstaltung();
 	private List<Veranstaltung> veranstaltungsList;
@@ -74,29 +64,31 @@ public class VeranstaltungsUebersicht extends TabSheet
 			e.printStackTrace();
 
 		}
-		
+
 		addTab(buildDrafts());
 	}
 
-//	private Item commit() {
-//		Item returnItem = null;
-//		try {
-//			veranstaltungsStufenContainer.commit();
-//			veranstaltungsStufenContainer.refresh();
-//
-//			if (veranstaltungsId != null) {
-//				veranstaltungsContainer
-//						.addContainerFilter(new Equal("id_veranstaltung", veranstaltungsId.getId()[0].toString()));
-//				returnItem = veranstaltungsContainer.getItem(veranstaltungsContainer.getIdByIndex(0));
-//				veranstaltungsContainer.removeAllContainerFilters();
-//			}
-//
-//		} catch (SQLException ee) {
-//			ee.printStackTrace();
-//		}
-//
-//		return returnItem;
-//	}
+	// private Item commit() {
+	// Item returnItem = null;
+	// try {
+	// veranstaltungsStufenContainer.commit();
+	// veranstaltungsStufenContainer.refresh();
+	//
+	// if (veranstaltungsId != null) {
+	// veranstaltungsContainer
+	// .addContainerFilter(new Equal("id_veranstaltung",
+	// veranstaltungsId.getId()[0].toString()));
+	// returnItem =
+	// veranstaltungsContainer.getItem(veranstaltungsContainer.getIdByIndex(0));
+	// veranstaltungsContainer.removeAllContainerFilters();
+	// }
+	//
+	// } catch (SQLException ee) {
+	// ee.printStackTrace();
+	// }
+	//
+	// return returnItem;
+	// }
 
 	private Component buildDrafts() {
 
@@ -270,52 +262,51 @@ public class VeranstaltungsUebersicht extends TabSheet
 		setSelectedTab(getComponentCount() - 1);
 
 	}
-//
-//	@Subscribe
-//	public void addReport(NeueVeranstaltung neueVeranstaltung) {
-//
-//		Item newVeranstaltung = veranstaltungsContainer.getItem(veranstaltungsContainer.addItem());
-//		newVeranstaltung.getItemProperty("typ")
-//				.setValue(neueVeranstaltung.getVeranstaltungsTyp().getVeranstaltungsTypID());
-//
-//		newVeranstaltung.getItemProperty("name").setValue("neue Veranstaltung");
-//		newVeranstaltung.getItemProperty("richter").setValue("neuer Richter");
-//		newVeranstaltung.getItemProperty("veranstalter").setValue("neuer Richter");
-//		newVeranstaltung.getItemProperty("veranstaltungsort").setValue("neuer Veranstaltungsort");
-//		newVeranstaltung.getItemProperty("veranstaltungsleiter").setValue("neuer Veranstaltungsleiter");
-//		newVeranstaltung.getItemProperty("datum").setValue(new Date());
-//
-//		newVeranstaltung = commit();
-//
-//		for (Integer stufe : neueVeranstaltung.getVeranstaltungsTyp().getVeranstaltungsStufen()) {
-//			Object zwVeranstaltungsStufe = veranstaltungsStufenContainer.addItem();
-//			Item zwVeranstaltungsItem = veranstaltungsStufenContainer.getItemUnfiltered(zwVeranstaltungsStufe);
-//			zwVeranstaltungsItem.getItemProperty("id_veranstaltung")
-//					.setValue(newVeranstaltung.getItemProperty("id_veranstaltung").getValue());
-//			zwVeranstaltungsItem.getItemProperty("stufen_typ").setValue(stufe);
-//
-//		}
-//
-//		newVeranstaltung = commit();
-//
-//		VeranstaltungsDetailViewNeu detailView = new VeranstaltungsDetailViewNeu(
-//				neueVeranstaltung.getVeranstaltungsTyp(), newVeranstaltung, this);
-//
-//		String title = VeranstaltungsTypen
-//				.getVeranstaltungsTypForId(
-//						Integer.valueOf(newVeranstaltung.getItemProperty("typ").getValue().toString()))
-//				.getVeranstaltungsTypBezeichnung();
-//
-//		title += " " + new SimpleDateFormat("dd.MM.yyyy").format(newVeranstaltung.getItemProperty("datum").getValue());
-//
-//		addTab(detailView).setClosable(true);
-//
-//		DashBoardEventBus.post(new ReportsCountUpdatedEvent(getComponentCount() - 1));
-//
-//		detailView.setTitle(title);
-//		setSelectedTab(getComponentCount() - 1);
-//
-//	}
+
+	@Subscribe
+	public void addReport(NeueVeranstaltung neueVeranstaltung) {
+
+		Veranstaltung newVeranstaltung = new Veranstaltung();
+		newVeranstaltung.setTyp(neueVeranstaltung.getVeranstaltungsTyp());
+
+		newVeranstaltung.setName("neue Veranstaltung");
+		newVeranstaltung.setRichter("neuer Richter");
+		newVeranstaltung.setVeranstalter("neuer Richter");
+		newVeranstaltung.setVeranstaltungsort("neuer Veranstaltungsort");
+		newVeranstaltung.setVeranstaltungsleiter("neuer Veranstaltungsleiter");
+		newVeranstaltung.setDatum(new Date());
+
+		try {
+			dbVeranstaltung.saveVeranstaltung(newVeranstaltung);
+
+			for (Integer stufe : neueVeranstaltung.getVeranstaltungsTyp().getVeranstaltungsStufen()) {
+				VeranstaltungsStufe zwVeranstaltungsStufe = new VeranstaltungsStufe();
+
+				zwVeranstaltungsStufe.setIdVeranstaltung(newVeranstaltung.getId_veranstaltung());
+				zwVeranstaltungsStufe.setStufenTyp(VeranstaltungsStufen.getBezeichnungForId(stufe));
+				dbVeranstaltung.saveVeranstaltungStufe(zwVeranstaltungsStufe);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			Notification.show("fehler beim erstellen der Veranstaltung");
+		}
+
+		
+		VeranstaltungsDetailViewNeu detailView = new VeranstaltungsDetailViewNeu(
+				neueVeranstaltung.getVeranstaltungsTyp(), newVeranstaltung, this);
+
+		String title = newVeranstaltung.getTyp().getVeranstaltungsTypBezeichnung();
+
+		title += " " + new SimpleDateFormat("dd.MM.yyyy").format(newVeranstaltung.getDatum());
+
+		addTab(detailView).setClosable(true);
+
+		DashBoardEventBus.post(new ReportsCountUpdatedEvent(getComponentCount() - 1));
+
+		detailView.setTitle(title);
+		setSelectedTab(getComponentCount() - 1);
+
+	}
 
 	@Override
 	public void onTabClose(final TabSheet tabsheet, final Component tabContent) {
@@ -347,7 +338,7 @@ public class VeranstaltungsUebersicht extends TabSheet
 			public void buttonClick(final ClickEvent event) {
 				confirmDialog.close();
 				VeranstaltungsDetailViewNeu saveComponent = (VeranstaltungsDetailViewNeu) tabContent;
-				//saveComponent.commit();
+				// saveComponent.commit();
 				removeComponent(tabContent);
 				DashBoardEventBus.post(new ReportsCountUpdatedEvent(getComponentCount() - 1));
 				Notification.show("Die Veranstaltung wurde gespeichert", Type.TRAY_NOTIFICATION);
@@ -421,7 +412,8 @@ public class VeranstaltungsUebersicht extends TabSheet
 			newRbpmWasser.addClickListener(listener);
 
 			// layout.addComponent(newRbpoWasser);
-			// layout.setComponentAlignment(newRbpoWasser, Alignment.MIDDLE_CENTER);
+			// layout.setComponentAlignment(newRbpoWasser,
+			// Alignment.MIDDLE_CENTER);
 			// newRbpoWasser.setData(VeranstaltungsTypen.RBP_O_WASSER);
 			// newRbpoWasser.addClickListener(listener);
 

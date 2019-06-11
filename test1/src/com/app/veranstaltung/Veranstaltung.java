@@ -1,6 +1,7 @@
 package com.app.veranstaltung;
 
 import java.util.Date;
+import java.util.List;
 
 import com.app.enumdatatypes.VeranstaltungsTypen;
 
@@ -20,6 +21,15 @@ public class Veranstaltung {
 	private String strasse_leiter;
 	private String tel_nr_leiter;
 	private Integer idschau;
+	
+	private List<VeranstaltungsRichter> vaRichter;
+	
+	public List<VeranstaltungsRichter> getVaRichter() {
+		return vaRichter;
+	}
+	public void setVaRichter(List<VeranstaltungsRichter> vaRichter) {
+		this.vaRichter = vaRichter;
+	}
 	public Integer getId_veranstaltung() {
 		return id_veranstaltung;
 	}

@@ -55,7 +55,7 @@ public class DBHund {
 			upd.setString(4, hund.getGeschlecht());
 			upd.setString(5, hund.getRasse());
 			upd.setString(6, hund.getRufname());
-			upd.setDate(7, new java.sql.Date(hund.getWurfdatum().getTime()));
+			upd.setDate(7, hund.getWurfdatum() != null ? new java.sql.Date(hund.getWurfdatum().getTime()) : null);
 			upd.setString(8, hund.getZuchtbuchnummer());
 			upd.setString(9, hund.getZuechter());
 			upd.setString(10, hund.getZwingername());

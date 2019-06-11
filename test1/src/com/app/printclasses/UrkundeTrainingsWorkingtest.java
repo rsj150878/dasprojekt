@@ -34,9 +34,9 @@ public class UrkundeTrainingsWorkingtest extends CustomComponent {
 	 */
 	private static final long serialVersionUID = 1734597059594829717L;
 	/** The original PDF file. */
-	public static final String DATASHEET = "files/URKUNDE_NOESTACH_4.pdf";
+	public static final String DATASHEET = "files/URKUNDE NOESTACH_FRUEHJAHR2019.pdf";
 	public static final String FONT = "files/arialuni.ttf";
-
+	
 	public static final String RESULT = "Urkunde.pdf";
 
 	private AbsoluteLayout mainLayout;
@@ -124,7 +124,7 @@ public class UrkundeTrainingsWorkingtest extends CustomComponent {
 					text = zw.getPlatzierung() + ". Platz";
 
 					if (!(zw.getSonderWertung() == null)) {
-						text = text + " mit Judges Choice";
+						text = text + " mit Bewerters Choice";
 					}
 
 					PdfFormField rangField = fields.get("rang");

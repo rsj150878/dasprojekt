@@ -12,6 +12,7 @@ import com.app.dbio.DBPerson;
 import com.app.dbio.DBVeranstaltung;
 import com.app.enumdatatypes.VeranstaltungsStation;
 import com.app.enumdatatypes.VeranstaltungsStufen;
+import com.app.printclasses.UrkundeTrainingsWorkingtest;
 import com.app.veranstaltung.VeranstaltungsStufe;
 import com.app.veranstaltung.VeranstaltungsTeilnehmer;
 import com.google.common.eventbus.Subscribe;
@@ -35,7 +36,7 @@ public class VeranstaltungsTeilnehmerGrid extends Grid<VeranstaltungsTeilnehmer>
 	private static final long serialVersionUID = -709896999326786160L;
 	private VeranstaltungsStufe stufe;
 	private Integer idHund;
-	
+
 	private List<VeranstaltungsTeilnehmer> teilnehmerList;
 	private DBVeranstaltung dbVeranstaltung;
 
@@ -87,8 +88,11 @@ public class VeranstaltungsTeilnehmerGrid extends Grid<VeranstaltungsTeilnehmer>
 		addColumn(teilnehmer -> {
 			CheckBox bezahlt = new CheckBox();
 			bezahlt.setValue(teilnehmer.getBezahlt().equals("J") ? true : false);
-			bezahlt.addValueChangeListener(evt -> teilnehmer.setBezahlt(bezahlt.getValue() == true ? "J" : "N"));
-			saveTeilnehmer(teilnehmer);
+			bezahlt.addValueChangeListener(evt -> {
+
+				teilnehmer.setBezahlt(bezahlt.getValue() == true ? "J" : "N");
+				saveTeilnehmer(teilnehmer);
+			});
 			return bezahlt;
 		}, new ComponentRenderer()).setCaption("bezahlt");
 		CheckBox bezahlt = new CheckBox();
@@ -96,16 +100,21 @@ public class VeranstaltungsTeilnehmerGrid extends Grid<VeranstaltungsTeilnehmer>
 		addColumn(teilnehmer -> {
 			CheckBox bestanden = new CheckBox();
 			bezahlt.setValue(teilnehmer.getBestanden() == null || teilnehmer.getBestanden().equals("N") ? false : true);
-			bezahlt.addValueChangeListener(evt -> teilnehmer.setBestanden(bestanden.getValue() == true ? "J" : "N"));
-			saveTeilnehmer(teilnehmer);
+			bezahlt.addValueChangeListener(evt -> {
+
+				teilnehmer.setBestanden(bestanden.getValue() == true ? "J" : "N");
+				saveTeilnehmer(teilnehmer);
+			});
 			return bestanden;
 		}, new ComponentRenderer()).setCaption("bestanden");
 
 		addColumn(teilnehmer -> {
 			TextField hundeFuehrer = new TextField();
 			hundeFuehrer.setValue(teilnehmer.getHundefuehrer() == null ? "" : teilnehmer.getHundefuehrer());
-			hundeFuehrer.addValueChangeListener(evt -> teilnehmer.setHundefuehrer(hundeFuehrer.getValue()));
-			saveTeilnehmer(teilnehmer);
+			hundeFuehrer.addValueChangeListener(evt -> {
+				teilnehmer.setHundefuehrer(hundeFuehrer.getValue());
+				saveTeilnehmer(teilnehmer);
+			});
 			return hundeFuehrer;
 
 		}, new ComponentRenderer()).setCaption("Hundeführer");
@@ -114,23 +123,26 @@ public class VeranstaltungsTeilnehmerGrid extends Grid<VeranstaltungsTeilnehmer>
 		addColumn(teilnehmer -> {
 
 			TextField platzierung = new TextField();
-			platzierung.setValue(teilnehmer.getPlatzierung()== null ? "" :teilnehmer.getPlatzierung().toString());
-			platzierung.addValueChangeListener(evt -> teilnehmer
-					.setPlatzierung(new Integer(platzierung.getValue().isEmpty() ? "" : platzierung.getValue())));
-			saveTeilnehmer(teilnehmer);
+			platzierung.setValue(teilnehmer.getPlatzierung() == null ? "" : teilnehmer.getPlatzierung().toString());
+			platzierung.addValueChangeListener(evt -> {
+				teilnehmer.setPlatzierung(new Integer(platzierung.getValue().isEmpty() ? "" : platzierung.getValue()));
+				saveTeilnehmer(teilnehmer);
+			});
 			return platzierung;
 		}, new ComponentRenderer()).setCaption("platzierung").setComparator((t1, t2) -> {
 			return t1.getPlatzierung().compareTo(t2.getPlatzierung());
 		});
-		// platzierung.addValueChangeListener(e -> txContainer.specialCommit() );
+		// platzierung.addValueChangeListener(e -> txContainer.specialCommit()
+		// );
 
 		addColumn(teilnehmer -> {
 
 			TextField startnr = new TextField();
 			startnr.setValue(teilnehmer.getStartnr() == null ? "" : teilnehmer.getStartnr().toString());
-			startnr.addValueChangeListener(
-					evt -> teilnehmer.setStartnr(new Integer(startnr.getValue().isEmpty() ? "" : startnr.getValue())));
-			saveTeilnehmer(teilnehmer);
+			startnr.addValueChangeListener(evt -> {
+				teilnehmer.setStartnr(new Integer(startnr.getValue().isEmpty() ? "" : startnr.getValue()));
+				saveTeilnehmer(teilnehmer);
+			});
 			return startnr;
 		}, new ComponentRenderer()).setCaption("startnr").setComparator((t1, t2) -> {
 			return t1.getStartnr().compareTo(t2.getStartnr());
@@ -161,9 +173,9 @@ public class VeranstaltungsTeilnehmerGrid extends Grid<VeranstaltungsTeilnehmer>
 
 							Integer wert = (Integer) sumInstanceMethod.invoke(teilnehmer);
 
-							if (wert == null) 
+							if (wert == null)
 								wert = new Integer(0);
-							
+
 							if (wert.intValue() < x.getMinPunkte() || wert.intValue() > x.getMaxPunkte()) {
 								ue.setComponentError(new UserError("Punkte müssen zwischen " + x.getMinPunkte()
 										+ " und " + x.getMaxPunkte() + " liegen"));
@@ -218,15 +230,34 @@ public class VeranstaltungsTeilnehmerGrid extends Grid<VeranstaltungsTeilnehmer>
 			// x -> { x);
 			addColumn(teilnehmer -> {
 				TextField integerField = new TextField();
-				integerField.setValue(teilnehmer.getGesPunkte()==null? "" : teilnehmer.getGesPunkte().toString());
-				integerField
-						.addValueChangeListener(evt -> teilnehmer.setGesPunkte(new Integer(integerField.getValue())));
-				saveTeilnehmer(teilnehmer);
+				integerField.setValue(teilnehmer.getGesPunkte() == null ? "" : teilnehmer.getGesPunkte().toString());
+				integerField.addValueChangeListener(evt -> {
+					teilnehmer.setGesPunkte(
+							new Integer(integerField.getValue().equals("") ? "0" : integerField.getValue()));
+					saveTeilnehmer(teilnehmer);
+				});
 				return integerField;
 			}, new ComponentRenderer()).setCaption("gesamtpunkte").setComparator((t1, t2) -> {
 				return t1.getGesPunkte().compareTo(t2.getGesPunkte());
 			});
 
+		}
+
+		if (defStufe.equals(VeranstaltungsStufen.TRAININGS_WT_ANFAENGER)
+				|| defStufe.equals(VeranstaltungsStufen.TRAININGS_WT_FORTGESCHRITTEN)
+				|| defStufe.equals(VeranstaltungsStufen.TRAININGS_WT_EINSTEIGER)
+				|| defStufe.equals(VeranstaltungsStufen.TRAININGS_WT_LEICHT)
+				|| defStufe.equals(VeranstaltungsStufen.TRAININGS_WT_MITTEL)) {
+			addColumn(teilnehmer -> {
+				TextField sonderWertung = new TextField();
+				sonderWertung.setValue(teilnehmer.getSonderWertung() == null ? "" : teilnehmer.getSonderWertung());
+				sonderWertung.addValueChangeListener(evt -> {
+
+					teilnehmer.setSonderWertung(sonderWertung.getValue());
+					saveTeilnehmer(teilnehmer);
+				});
+				return sonderWertung;
+			}, new ComponentRenderer()).setCaption("sonderWertung");
 		}
 
 	}
@@ -260,7 +291,7 @@ public class VeranstaltungsTeilnehmerGrid extends Grid<VeranstaltungsTeilnehmer>
 				Hund hund = dbHund.getHundForHundId(idHund);
 				Person person = dbPerson.getPersonForId(hund.getIdperson());
 				VeranstaltungsTeilnehmer neuerTeilnehmer = new VeranstaltungsTeilnehmer();
-				
+
 				neuerTeilnehmer.setPerson(person);
 				neuerTeilnehmer.setHund(hund);
 				neuerTeilnehmer.setIdHund(idHund);
@@ -268,8 +299,11 @@ public class VeranstaltungsTeilnehmerGrid extends Grid<VeranstaltungsTeilnehmer>
 				neuerTeilnehmer.setIdVeranstaltung(stufe.getIdVeranstaltung());
 				neuerTeilnehmer.setIdStufe(stufe.getIdStufe());
 				neuerTeilnehmer.setBezahlt("N");
+
+				neuerTeilnehmer.setPlatzierung(0);
+				neuerTeilnehmer.setStartnr(0);
 				dbVeranstaltung.saveTeilnehmer(neuerTeilnehmer);
-				
+
 				teilnehmerList.add(neuerTeilnehmer);
 				getDataProvider().refreshAll();
 			} catch (Exception e) {

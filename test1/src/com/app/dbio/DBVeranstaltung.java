@@ -214,7 +214,7 @@ public class DBVeranstaltung {
 		PreparedStatement st;
 		st = conn.prepareStatement("select * from veranstaltungs_teilnehmer "
 				// + "where datum >= curdate() "
-				+ "where id_stufe = ? ");
+				+ "where id_stufe = ? order by platzierung asc, startnr asc");
 
 		st.setInt(1, idStufe);
 
@@ -331,7 +331,8 @@ public class DBVeranstaltung {
 							+ "veranstaltungsort, plz_leiter, ort_leiter, strasse_leiter, tel_nr_leiter) values (?,?,?,?,?,?,?,?,?,?,?,?)");
 			st.setInt(1, 0);
 			st.setString(2, saveItem.getName());
-			st.setDate(3, saveItem.getDatum() != null ? new java.sql.Date(saveItem.getDatum().getTime()) : null);
+			//st.setDate(3, saveItem.getDatum() != null ? new java.sql.Date(saveItem.getDatum().getTime()) : null);
+			st.setObject(3, saveItem.getDatum(),Types.DATE);
 
 			st.setString(4, saveItem.getRichter());
 			st.setString(5, saveItem.getVeranstaltungsleiter());
@@ -352,7 +353,7 @@ public class DBVeranstaltung {
 							+ " where id_veranstaltung = ?");
 
 			st.setString(1, saveItem.getName());
-			st.setDate(2, saveItem.getDatum() != null ? new java.sql.Date(saveItem.getDatum().getTime()) : null);
+			st.setObject(2, saveItem.getDatum(),Types.DATE);
 
 			st.setString(3, saveItem.getRichter());
 			st.setString(4, saveItem.getVeranstaltungsleiter());
@@ -363,9 +364,9 @@ public class DBVeranstaltung {
 			st.setString(9, saveItem.getOrt_leiter());
 			st.setString(10, saveItem.getStrasse_leiter());
 			st.setString(11, saveItem.getTel_nr_leiter());
-			st.setInt(12, saveItem.getIdschau());
+			st.setObject(12, saveItem.getIdschau(),Types.INTEGER);
 
-			st.setInt(13, saveItem.getId_veranstaltung());
+			st.setObject(13, saveItem.getId_veranstaltung(),Types.INTEGER);
 
 		}
 

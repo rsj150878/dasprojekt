@@ -178,6 +178,14 @@ public class Urkunde extends CustomComponent {
 				} else if (defStufe == VeranstaltungsStufen.STUFE_BH) {
 					fields.get("ZEILE 2").setValue("erfolgreich bestanden");
 
+				} else if (defStufe == VeranstaltungsStufen.STUFE_BH_VT
+						|| defStufe == VeranstaltungsStufen.STUFE_IBH_VT) {
+					if ("J".equals(zw.getBestanden())) {
+						fields.get("ZEILE 2").setValue("bestanden");
+					} else if ("A".equals(zw.getBestanden())) {
+						fields.get("ZEILE 2").setValue("mit Auszeichnung bestanden");
+						}
+
 				} else if (defStufe == VeranstaltungsStufen.STUFE_BGH1 || defStufe == VeranstaltungsStufen.STUFE_BGH2
 						|| defStufe == VeranstaltungsStufen.STUFE_BGH3
 						|| defStufe == VeranstaltungsStufen.STUFE_RBP4_O_WASSER
@@ -188,6 +196,9 @@ public class Urkunde extends CustomComponent {
 
 						|| defStufe == VeranstaltungsStufen.STUFE_RBP2_2017
 						|| defStufe == VeranstaltungsStufen.STUFE_RBP3_2017
+						|| defStufe == VeranstaltungsStufen.STUFE_IBGH1
+						|| defStufe == VeranstaltungsStufen.STUFE_IBGH2
+						|| defStufe == VeranstaltungsStufen.STUFE_IBGH3
 
 				) {
 					fields.get("ZEILE 2").setValue("erfolgreich mit "

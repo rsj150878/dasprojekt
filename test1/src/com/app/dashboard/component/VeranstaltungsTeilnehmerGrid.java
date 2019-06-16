@@ -2,6 +2,7 @@ package com.app.dashboard.component;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Optional;
 
 import com.app.auth.Hund;
 import com.app.auth.Person;
@@ -10,20 +11,25 @@ import com.app.dashboard.event.DashBoardEventBus;
 import com.app.dbio.DBHund;
 import com.app.dbio.DBPerson;
 import com.app.dbio.DBVeranstaltung;
+import com.app.enumdatatypes.BestandenDataType;
 import com.app.enumdatatypes.VeranstaltungsStation;
 import com.app.enumdatatypes.VeranstaltungsStufen;
-import com.app.printclasses.UrkundeTrainingsWorkingtest;
 import com.app.veranstaltung.VeranstaltungsStufe;
 import com.app.veranstaltung.VeranstaltungsTeilnehmer;
 import com.google.common.eventbus.Subscribe;
+import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.UserError;
+import com.vaadin.shared.ui.dnd.DropEffect;
+import com.vaadin.shared.ui.dnd.EffectAllowed;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.components.grid.GridDragSource;
 import com.vaadin.ui.renderers.ComponentRenderer;
 import com.vaadin.ui.renderers.TextRenderer;
 import com.vaadin.ui.themes.ValoTheme;
@@ -40,6 +46,8 @@ public class VeranstaltungsTeilnehmerGrid extends Grid<VeranstaltungsTeilnehmer>
 	private List<VeranstaltungsTeilnehmer> teilnehmerList;
 	private DBVeranstaltung dbVeranstaltung;
 
+	private List<VeranstaltungsTeilnehmer> draggedItems = null;
+	
 	public VeranstaltungsTeilnehmerGrid(final VeranstaltungsStufen defStufe, VeranstaltungsStufe stufe) {
 		super();
 		this.stufe = stufe;
@@ -95,18 +103,22 @@ public class VeranstaltungsTeilnehmerGrid extends Grid<VeranstaltungsTeilnehmer>
 			});
 			return bezahlt;
 		}, new ComponentRenderer()).setCaption("bezahlt");
-		CheckBox bezahlt = new CheckBox();
 
 		addColumn(teilnehmer -> {
-			CheckBox bestanden = new CheckBox();
-			bezahlt.setValue(teilnehmer.getBestanden() == null || teilnehmer.getBestanden().equals("N") ? false : true);
-			bezahlt.addValueChangeListener(evt -> {
+			NativeSelect<BestandenDataType> bestanden = new NativeSelect<>();
+			bestanden.setItems(BestandenDataType.values());
+			bestanden.setItemCaptionGenerator(BestandenDataType::getBezeichnung);
+			bestanden.setValue(BestandenDataType.getBestandenDataTypeForDb(teilnehmer.getBestanden()));
 
-				teilnehmer.setBestanden(bestanden.getValue() == true ? "J" : "N");
+			bestanden.addValueChangeListener(evt -> {
+
+				teilnehmer.setBestanden(bestanden.getValue().dbWert);
 				saveTeilnehmer(teilnehmer);
 			});
+
+			bestanden.setEmptySelectionAllowed(false);
 			return bestanden;
-		}, new ComponentRenderer()).setCaption("bestanden");
+		}, new ComponentRenderer()).setCaption("bestanden").setWidth(200);
 
 		addColumn(teilnehmer -> {
 			TextField hundeFuehrer = new TextField();
@@ -260,6 +272,36 @@ public class VeranstaltungsTeilnehmerGrid extends Grid<VeranstaltungsTeilnehmer>
 			}, new ComponentRenderer()).setCaption("sonderWertung");
 		}
 
+		this.recalculateColumnWidths();
+
+		GridDragSource<VeranstaltungsTeilnehmer> dragSource = new GridDragSource<>(this);
+		dragSource.setEffectAllowed(EffectAllowed.MOVE);
+
+		// dragSource.setDragDataGenerator("text", teilnehmer -> {
+		// return teilnehmer.getHundefuehrer() == null ||
+		// teilnehmer.getHundefuehrer().isEmpty()
+		// ? teilnehmer.getPerson().getLastName() + " " +
+		// teilnehmer.getPerson().getFirstName()
+		// : teilnehmer.getHundefuehrer() + "\n" +
+		// teilnehmer.getHund().getZwingername();
+		//
+		// });
+
+		dragSource.addGridDragStartListener(event ->
+		// Keep reference to the dragged items
+		draggedItems = event.getDraggedItems());
+		
+		dragSource.addGridDragEndListener(event -> {
+		    // If drop was successful, remove dragged items from source Grid
+		    if (event.getDropEffect() == DropEffect.MOVE) {
+		        ((ListDataProvider<VeranstaltungsTeilnehmer>) getDataProvider()).getItems()
+		                .removeAll(draggedItems);
+		        getDataProvider().refreshAll();
+
+		        // Remove reference to dragged items
+		        draggedItems = null;
+		    }
+		});
 	}
 
 	private void saveTeilnehmer(VeranstaltungsTeilnehmer teilnehmer) {
@@ -272,9 +314,14 @@ public class VeranstaltungsTeilnehmerGrid extends Grid<VeranstaltungsTeilnehmer>
 
 	private void rechneGesPunkte(VeranstaltungsTeilnehmer teilnehmer) {
 
-		Integer result = teilnehmer.getUebung1() + teilnehmer.getUebung2() + teilnehmer.getUebung3()
-				+ teilnehmer.getUebung4() + teilnehmer.getUebung5() + teilnehmer.getUebung6() + teilnehmer.getUebung7()
-				+ teilnehmer.getUebung8();
+		Integer result = Optional.ofNullable(teilnehmer.getUebung1()).orElse(Integer.valueOf(0))
+				+ Optional.ofNullable(teilnehmer.getUebung2()).orElse(Integer.valueOf(0))
+				+ Optional.ofNullable(teilnehmer.getUebung3()).orElse(Integer.valueOf(0))
+				+ Optional.ofNullable(teilnehmer.getUebung4()).orElse(Integer.valueOf(0))
+				+ Optional.ofNullable(teilnehmer.getUebung5()).orElse(Integer.valueOf(0))
+				+ Optional.ofNullable(teilnehmer.getUebung6()).orElse(Integer.valueOf(0))
+				+ Optional.ofNullable(teilnehmer.getUebung7()).orElse(Integer.valueOf(0))
+				+ Optional.ofNullable(teilnehmer.getUebung8()).orElse(Integer.valueOf(0));
 		teilnehmer.setGesPunkte(result);
 
 	}

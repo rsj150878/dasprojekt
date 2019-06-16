@@ -381,13 +381,6 @@ public class VeranstaltungsUebersicht extends TabSheet
 		private final VerticalLayout layout = new VerticalLayout();
 		private final Label titel = new Label("Veranstaltungstypauswahl");
 
-		private Button newRbpmWasser = new Button("RBP");
-		private Button newGap = new Button("GAP");
-		private Button newBgh = new Button("BH/BGH");
-		private Button newWt = new Button("Train-Wt");
-		private Button newWesensTest = new Button("Wesenstest");
-		private Button newJungHundePruefung = new Button("JunghundePrüfung");
-
 		public PopupTextFieldContent() {
 
 			layout.setSizeUndefined();
@@ -406,42 +399,17 @@ public class VeranstaltungsUebersicht extends TabSheet
 			};
 
 			layout.setComponentAlignment(titel, Alignment.MIDDLE_CENTER);
-			layout.addComponent(newRbpmWasser);
-			layout.setComponentAlignment(newRbpmWasser, Alignment.MIDDLE_CENTER);
-			newRbpmWasser.setData(VeranstaltungsTypen.RBP_2017_WASSER);
-			newRbpmWasser.addClickListener(listener);
-
-			// layout.addComponent(newRbpoWasser);
-			// layout.setComponentAlignment(newRbpoWasser,
-			// Alignment.MIDDLE_CENTER);
-			// newRbpoWasser.setData(VeranstaltungsTypen.RBP_O_WASSER);
-			// newRbpoWasser.addClickListener(listener);
-
-			layout.addComponent(newGap);
-			layout.setComponentAlignment(newGap, Alignment.MIDDLE_CENTER);
-			newGap.setData(VeranstaltungsTypen.GAP_PRÜFUNG);
-			newGap.addClickListener(listener);
-
-			layout.addComponent(newBgh);
-			layout.setComponentAlignment(newBgh, Alignment.MIDDLE_CENTER);
-			newBgh.setData(VeranstaltungsTypen.BH_BGH_PRÜFUNG);
-			newBgh.addClickListener(listener);
-
-			layout.addComponent(newWt);
-			layout.setComponentAlignment(newWt, Alignment.MIDDLE_CENTER);
-			newWt.setData(VeranstaltungsTypen.TRAIN_WT_2017);
-			newWt.addClickListener(listener);
-
-			layout.addComponent(newWesensTest);
-			layout.setComponentAlignment(newWesensTest, Alignment.MIDDLE_CENTER);
-			newWesensTest.setData(VeranstaltungsTypen.WESENSTEST);
-			newWesensTest.addClickListener(listener);
-
-			layout.addComponent(newJungHundePruefung);
-			layout.setComponentAlignment(newJungHundePruefung, Alignment.MIDDLE_CENTER);
-			newJungHundePruefung.setData(VeranstaltungsTypen.JUNGHUNDEPRUEFUNG);
-			newJungHundePruefung.addClickListener(listener);
-
+		
+			for (VeranstaltungsTypen x:VeranstaltungsTypen.values()) {
+				if (x.getIsAktiv()) {
+					Button newVa = new Button (x.getVeranstaltungsTypBezeichnung());
+					layout.addComponent(newVa);
+					layout.setComponentAlignment(newVa, Alignment.MIDDLE_CENTER);
+					newVa.setData(x);
+					newVa.addClickListener(listener);
+				}
+			}
+			
 			menuPanel.setContent(layout);
 		}
 

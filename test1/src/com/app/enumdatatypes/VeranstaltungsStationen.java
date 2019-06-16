@@ -111,6 +111,40 @@ public enum VeranstaltungsStationen {
 			VeranstaltungsStation.TRAIN_WT_UE6,
 			VeranstaltungsStation.TRAIN_WT_UE7,
 			VeranstaltungsStation.TRAIN_WT_UE8),
+	BH_VT(
+			19,
+			VeranstaltungsStation.BH_VT_UE1,
+			VeranstaltungsStation.BH_VT_UE2,
+			VeranstaltungsStation.BH_VT_UE3,
+			VeranstaltungsStation.BH_VT_UE4,
+			VeranstaltungsStation.BH_VT_UE5,
+			VeranstaltungsStation.BH_VT_UE6),
+	IBGH1(
+			20,
+			VeranstaltungsStation.IBGH1_UE1,
+			VeranstaltungsStation.IBGH1_UE2,
+			VeranstaltungsStation.IBGH1_UE3,
+			VeranstaltungsStation.IBGH1_UE4,
+			VeranstaltungsStation.IBGH1_UE5),
+	IBGH2(
+			21,
+			VeranstaltungsStation.IBGH2_UE1,
+			VeranstaltungsStation.IBGH2_UE2,
+			VeranstaltungsStation.IBGH2_UE3,
+			VeranstaltungsStation.IBGH2_UE4,
+			VeranstaltungsStation.IBGH2_UE5,
+			VeranstaltungsStation.IBGH2_UE6,
+			VeranstaltungsStation.IBGH2_UE7),
+	IBGH3(
+			22,
+			VeranstaltungsStation.IBGH3_UE1,
+			VeranstaltungsStation.IBGH3_UE2,
+			VeranstaltungsStation.IBGH3_UE3,
+			VeranstaltungsStation.IBGH3_UE4,
+			VeranstaltungsStation.IBGH3_UE5,
+			VeranstaltungsStation.IBGH3_UE6,
+			VeranstaltungsStation.IBGH3_UE7,
+			VeranstaltungsStation.IBGH3_UE8			),
 
 	;
 

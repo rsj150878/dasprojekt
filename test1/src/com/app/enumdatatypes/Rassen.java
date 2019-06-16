@@ -18,7 +18,8 @@ public enum Rassen {
 	LAGOTTO_ROGMANOLO("LGR","Lagotto Rogmanolo", "Lagotto Rogmanolo"),
 	WEIMARANER_KURZHAAR("WK", "Weimaraner Kurzhaar", "Weimaraner"),
 	WEIMARANER_LANGHAAR("WL", "Weimaraner Langhaar", "Weimaraner"),
-	OESTERREICHISCHER_PINSCHER("OEP", "Österreichischer Pinscher", "Pinscher");
+	OESTERREICHISCHER_PINSCHER("OEP", "Österreichischer Pinscher", "Pinscher"),
+	AUSTRALIAN_LABRADOODLE("ALD", "Australian Labradoodle", "Australian Labradoodle");
 	
 	
 	private final String RassenLangBezeichnung;

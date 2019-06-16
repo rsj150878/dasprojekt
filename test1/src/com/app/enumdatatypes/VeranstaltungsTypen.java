@@ -2,7 +2,7 @@ package com.app.enumdatatypes;
 
 public enum VeranstaltungsTypen {
 
-	BH_BGH_PRÜFUNG(1, "BH-BGH-Prüfung", Boolean.TRUE, null,1, 2, 3, 4),
+	BH_BGH_PRÜFUNG(1, "BH-BGH-Prüfung", Boolean.FALSE, null,1, 2, 3, 4),
 	RBP_O_WASSER(2,"RBP ohne Wasser" ,Boolean.FALSE,null,5,6,7,8),
 	RBP_M_WASSER(3,"RBP mit Wasser", Boolean.FALSE,null,5,6,7,9),
 	GAP_PRÜFUNG(4,"GAP", Boolean.TRUE,null,10,11,12),
@@ -11,6 +11,7 @@ public enum VeranstaltungsTypen {
 	RBP_2017_WASSER(7,"RBP" ,Boolean.TRUE,null, 5,22,23,8),
 	TRAIN_WT_2017(8, "Trainings-Working-Test", Boolean.TRUE,null, 24,25,26),
 	JUNGHUNDEPRUEFUNG(9, "Junghundepruefung", Boolean.TRUE, null, 27),
+	BH_BGH_PRÜFUNG_2019(10, "BH-IBGH-Prüfung", Boolean.TRUE, null,28, 29, 30, 31, 32),
 
 	
 ;

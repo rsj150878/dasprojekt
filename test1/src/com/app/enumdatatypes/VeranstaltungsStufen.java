@@ -2,9 +2,14 @@ package com.app.enumdatatypes;
 
 import com.app.printclasses.BGH1RichterBlatt;
 import com.app.printclasses.BHRichterBlatt;
+import com.app.printclasses.BhVtRichterBlatt;
 import com.app.printclasses.GAP1RichterBlatt;
 import com.app.printclasses.GAP2RichterBlatt;
 import com.app.printclasses.GAP3RichterBlatt;
+import com.app.printclasses.IBgh1RichterBlatt;
+import com.app.printclasses.IBgh2RichterBlatt;
+import com.app.printclasses.IBgh3RichterBlatt;
+import com.app.printclasses.IBghRichterBlatt;
 import com.app.printclasses.RBP1RichterBlatt;
 import com.app.printclasses.RBP22017RichterBlatt;
 import com.app.printclasses.RBP2RichterBlatt;
@@ -48,6 +53,13 @@ public enum VeranstaltungsStufen {
 //	TRAININGS_WT_EINSTEIGER(24, "Einsteiger", "Einsteiger", null, VeranstaltungsStationen.TRAIN_WT_EINSTEIGER, BewertungEnum.TRAINING_WT_BESTANDEN.id),
 //	TRAININGS_WT_LEICHT(25, "Fortgeschritten", "Fortgeschritten", null, VeranstaltungsStationen.TRAIN_WT_LEICHT, BewertungEnum.TRAINING_WT_BESTANDEN.id),
 //	TRAININGS_WT_MITTEL(26, "Advanced", "Advanced", null, VeranstaltungsStationen.TRAIN_WT_MITTEL, BewertungEnum.TRAINING_WT_BESTANDEN.id),
+	
+	STUFE_BH_VT(28, "BHVT", "BH VT", BhVtRichterBlatt.class, null), 
+	STUFE_IBH_VT(29, "IBGH", "IBGH", IBghRichterBlatt.class, null), 
+	STUFE_IBGH1(30, "IBGH1", "IBGH 1", IBgh1RichterBlatt.class, VeranstaltungsStationen.IBGH1, 1,2,3,4,5), 
+	STUFE_IBGH2(31, "IBGH2","IBGH 2", IBgh2RichterBlatt.class, VeranstaltungsStationen.IBGH2, 1,2,3,4,5), 
+	STUFE_IBGH3(32, "IBGH3","IBGH 3", IBgh3RichterBlatt.class, VeranstaltungsStationen.IBGH3, 1,2,3,4,5),
+	
 //	
 
 	;

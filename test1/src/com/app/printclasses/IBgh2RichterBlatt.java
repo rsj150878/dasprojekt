@@ -37,7 +37,7 @@ public class IBgh2RichterBlatt extends CustomComponent {
 	private static final long serialVersionUID = -5610861175293387273L;
 
 	/** The original PDF file. */
-	public static final String DATASHEET = "files/BH_VT.pdf";
+	public static final String DATASHEET = "files/IBGH-2.pdf";
 	public static final String FONT = "files/arialuni.ttf";
 
 	public static final String RESULT = "IBGH-2.pdf";

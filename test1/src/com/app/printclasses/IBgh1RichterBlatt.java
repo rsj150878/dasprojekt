@@ -37,7 +37,7 @@ public class IBgh1RichterBlatt extends CustomComponent {
 	private static final long serialVersionUID = -5610861175293387273L;
 
 	/** The original PDF file. */
-	public static final String DATASHEET = "files/BH_VT.pdf";
+	public static final String DATASHEET = "files/IBGH-1.pdf";
 	public static final String FONT = "files/arialuni.ttf";
 
 	public static final String RESULT = "IBGH-1.pdf";
@@ -100,21 +100,21 @@ public class IBgh1RichterBlatt extends CustomComponent {
 			Person person = dbPerson.getPersonForId(zw.getIdPerson());
 
 			SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd.MM.yyyy");
+			fields.get("veranstaltungstag").setValue(dateFormat1.format(veranstaltung.getDatum()));
 
-			fields.get("va_datum").setValue(dateFormat1.format(veranstaltung.getDatum()));
-			fields.get("datum_2").setValue(dateFormat1.format(veranstaltung.getDatum()));
+			fields.get("veranstaltungstag_2").setValue(dateFormat1.format(veranstaltung.getDatum()));
 
-			fields.get("va_ort").setValue(veranstaltung.getVeranstaltungsort());
-			fields.get("va_ort_2").setValue(veranstaltung.getVeranstaltungsort());
+			fields.get("veranstaltungsort").setValue(veranstaltung.getVeranstaltungsort());
+			fields.get("veranstaltungsort_2").setValue(veranstaltung.getVeranstaltungsort());
 
 			fields.get("veranstalter").setValue(veranstaltung.getVeranstalter());
 			
 			fields.get("pruefungsleiter").setValue(veranstaltung.getVeranstaltungsleiter());
 			fields.get("leistungsrichter").setValue(veranstaltung.getRichter());
 			
-			fields.get("hund").setValue(hund.getZwingername());
+			fields.get("hundename").setValue(hund.getZwingername());
 
-			fields.get("hund_2").setValue(hund.getZwingername());
+			fields.get("hundename_2").setValue(hund.getZwingername());
 
 			fields.get("rasse").setValue(Rassen.getUrkundenBezeichnungFuerKurzBezeichnung(hund.getRasse()));
 

@@ -41,7 +41,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
 public class VeranstaltungsUebersicht extends TabSheet
-		implements View, CloseHandler, VeranstaltungsDetailViewNeu.VeranstaltungsDetailListener {
+		implements View,  VeranstaltungsDetailViewNeu.VeranstaltungsDetailListener {
 
 	public static final String CONFIRM_DIALOG_ID = "confirm-dialog";
 
@@ -52,7 +52,7 @@ public class VeranstaltungsUebersicht extends TabSheet
 		setSizeFull();
 		addStyleName("reports");
 		addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
-		setCloseHandler(this);
+		//setCloseHandler(this);
 
 		DashBoardEventBus.register(this);
 
@@ -308,67 +308,67 @@ public class VeranstaltungsUebersicht extends TabSheet
 
 	}
 
-	@Override
-	public void onTabClose(final TabSheet tabsheet, final Component tabContent) {
-		Label message = new Label(
-				"You have not saved this report. Do you want to save or discard any changes you've made to this report?");
-		message.setWidth("25em");
-
-		final Window confirmDialog = new Window("Unsaved Changes");
-		confirmDialog.setId(CONFIRM_DIALOG_ID);
-		confirmDialog.addCloseShortcut(KeyCode.ESCAPE, null);
-		confirmDialog.setModal(true);
-		confirmDialog.setClosable(false);
-		confirmDialog.setResizable(false);
-
-		VerticalLayout root = new VerticalLayout();
-		root.setSpacing(true);
-		root.setMargin(true);
-		confirmDialog.setContent(root);
-
-		HorizontalLayout footer = new HorizontalLayout();
-		footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
-		footer.setWidth("100%");
-		footer.setSpacing(true);
-
-		root.addComponents(message, footer);
-
-		Button ok = new Button("Save", new ClickListener() {
-			@Override
-			public void buttonClick(final ClickEvent event) {
-				confirmDialog.close();
-				VeranstaltungsDetailViewNeu saveComponent = (VeranstaltungsDetailViewNeu) tabContent;
-				// saveComponent.commit();
-				removeComponent(tabContent);
-				DashBoardEventBus.post(new ReportsCountUpdatedEvent(getComponentCount() - 1));
-				Notification.show("Die Veranstaltung wurde gespeichert", Type.TRAY_NOTIFICATION);
-			}
-		});
-		ok.addStyleName(ValoTheme.BUTTON_PRIMARY);
-
-		Button discard = new Button("Discard Changes", new ClickListener() {
-			@Override
-			public void buttonClick(final ClickEvent event) {
-				confirmDialog.close();
-				removeComponent(tabContent);
-				DashBoardEventBus.post(new ReportsCountUpdatedEvent(getComponentCount() - 1));
-			}
-		});
-		discard.addStyleName(ValoTheme.BUTTON_DANGER);
-
-		Button cancel = new Button("Cancel", new ClickListener() {
-			@Override
-			public void buttonClick(final ClickEvent event) {
-				confirmDialog.close();
-			}
-		});
-
-		footer.addComponents(discard, cancel, ok);
-		footer.setExpandRatio(discard, 1);
-
-		getUI().addWindow(confirmDialog);
-		confirmDialog.focus();
-	}
+//	@Override
+//	public void onTabClose(final TabSheet tabsheet, final Component tabContent) {
+//		Label message = new Label(
+//				"You have not saved this report. Do you want to save or discard any changes you've made to this report?");
+//		message.setWidth("25em");
+//
+//		final Window confirmDialog = new Window("Unsaved Changes");
+//		confirmDialog.setId(CONFIRM_DIALOG_ID);
+//		confirmDialog.addCloseShortcut(KeyCode.ESCAPE, null);
+//		confirmDialog.setModal(true);
+//		confirmDialog.setClosable(false);
+//		confirmDialog.setResizable(false);
+//
+//		VerticalLayout root = new VerticalLayout();
+//		root.setSpacing(true);
+//		root.setMargin(true);
+//		confirmDialog.setContent(root);
+//
+//		HorizontalLayout footer = new HorizontalLayout();
+//		footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
+//		footer.setWidth("100%");
+//		footer.setSpacing(true);
+//
+//		root.addComponents(message, footer);
+//
+//		Button ok = new Button("Save", new ClickListener() {
+//			@Override
+//			public void buttonClick(final ClickEvent event) {
+//				confirmDialog.close();
+//				VeranstaltungsDetailViewNeu saveComponent = (VeranstaltungsDetailViewNeu) tabContent;
+//				// saveComponent.commit();
+//				removeComponent(tabContent);
+//				DashBoardEventBus.post(new ReportsCountUpdatedEvent(getComponentCount() - 1));
+//				Notification.show("Die Veranstaltung wurde gespeichert", Type.TRAY_NOTIFICATION);
+//			}
+//		});
+//		ok.addStyleName(ValoTheme.BUTTON_PRIMARY);
+//
+//		Button discard = new Button("Discard Changes", new ClickListener() {
+//			@Override
+//			public void buttonClick(final ClickEvent event) {
+//				confirmDialog.close();
+//				removeComponent(tabContent);
+//				DashBoardEventBus.post(new ReportsCountUpdatedEvent(getComponentCount() - 1));
+//			}
+//		});
+//		discard.addStyleName(ValoTheme.BUTTON_DANGER);
+//
+//		Button cancel = new Button("Cancel", new ClickListener() {
+//			@Override
+//			public void buttonClick(final ClickEvent event) {
+//				confirmDialog.close();
+//			}
+//		});
+//
+//		footer.addComponents(discard, cancel, ok);
+//		footer.setExpandRatio(discard, 1);
+//
+//		getUI().addWindow(confirmDialog);
+//		confirmDialog.focus();
+//	}
 
 	@Override
 	public void enter(final ViewChangeEvent event) {

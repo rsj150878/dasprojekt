@@ -37,7 +37,7 @@ public class IBgh3RichterBlatt extends CustomComponent {
 	private static final long serialVersionUID = -5610861175293387273L;
 
 	/** The original PDF file. */
-	public static final String DATASHEET = "files/BH_VT.pdf";
+	public static final String DATASHEET = "files/IBGH-3.pdf";
 	public static final String FONT = "files/arialuni.ttf";
 
 	public static final String RESULT = "IBGH-3.pdf";
@@ -108,10 +108,10 @@ public class IBgh3RichterBlatt extends CustomComponent {
 			fields.get("va_ort_2").setValue(veranstaltung.getVeranstaltungsort());
 
 			fields.get("veranstalter").setValue(veranstaltung.getVeranstalter());
-			
+
 			fields.get("pruefungsleiter").setValue(veranstaltung.getVeranstaltungsleiter());
 			fields.get("leistungsrichter").setValue(veranstaltung.getRichter());
-			
+
 			fields.get("hund").setValue(hund.getZwingername());
 
 			fields.get("hund_2").setValue(hund.getZwingername());

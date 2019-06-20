@@ -436,27 +436,24 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent {
 
 	private Component createThirdPanel() {
 		stufenSheet = new TabSheet();
-		
 
 		for (VeranstaltungsStufe zw : stufenList) {
 
 			AnmeldungsPanel myAnmeldungsPanel = new AnmeldungsPanel(zw.getStufenTyp(), currentVeranstaltungsItem, zw);
 
 			stufenSheet.addTab(myAnmeldungsPanel, zw.getStufenTyp().getBezeichnung());
-			stufenSheet.addSelectedTabChangeListener(new SelectedTabChangeListener() {
 
-				@Override
-				public void selectedTabChange(SelectedTabChangeEvent event) {
-					// TODO Auto-generated method stub
-					TabSheet ts = (TabSheet) event.getSource();
-					Iterator i = ts.iterator();
-					while (i.hasNext()) {
-						Object o = i.next();
-						if (o instanceof AnmeldungsPanel) {
-							AnmeldungsPanel anmeldungsPanel = (AnmeldungsPanel) o;
-							anmeldungsPanel.removePrintComponent();
+			stufenSheet.addSelectedTabChangeListener(event -> { // TODO
+																// Auto-generated
+																// method stub
+				TabSheet ts = (TabSheet) event.getSource();
+				Iterator <?>i = ts.iterator();
+				while (i.hasNext()) {
+					Object o = i.next();
+					if (o instanceof AnmeldungsPanel) {
+						AnmeldungsPanel anmeldungsPanel = (AnmeldungsPanel) o;
+						anmeldungsPanel.removePrintComponent();
 
-						}
 					}
 
 				}
@@ -464,10 +461,13 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent {
 
 		}
 		receiver.setComponentForMeldung(stufenSheet.getTab(0).getComponent());
-		
-		DropTargetExtension<TabSheet> dropTarget  = new DropTargetExtension<>(stufenSheet);
-		dropTarget.setDropEffect(DropEffect.MOVE);
 
+		DropTargetExtension<TabSheet> dropTarget = new DropTargetExtension<>(stufenSheet);
+		dropTarget.setDropEffect(DropEffect.MOVE);
+		dropTarget.addDropListener(event -> {
+			System.out.println(event.getComponent().getCaption());
+			System.out.println("drop target");
+		});
 		return stufenSheet;
 	}
 

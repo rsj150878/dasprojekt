@@ -6,8 +6,12 @@ import java.util.Optional;
 
 import com.app.auth.Hund;
 import com.app.auth.Person;
+import com.app.dashboard.event.DashBoardEvent.DogUpdatedEvent;
 import com.app.dashboard.event.DashBoardEvent.SearchEvent;
+import com.app.dashboard.event.DashBoardEvent.UpdateUserEvent;
 import com.app.dashboard.event.DashBoardEventBus;
+import com.app.dashboardwindow.HundeDetailWindow;
+import com.app.dashboardwindow.ProfilePreferencesWindow;
 import com.app.dbio.DBHund;
 import com.app.dbio.DBPerson;
 import com.app.dbio.DBVeranstaltung;
@@ -17,11 +21,8 @@ import com.app.enumdatatypes.VeranstaltungsStufen;
 import com.app.veranstaltung.VeranstaltungsStufe;
 import com.app.veranstaltung.VeranstaltungsTeilnehmer;
 import com.google.common.eventbus.Subscribe;
-import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.UserError;
-import com.vaadin.shared.ui.dnd.DropEffect;
-import com.vaadin.shared.ui.dnd.EffectAllowed;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Grid;
@@ -29,7 +30,6 @@ import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
-import com.vaadin.ui.components.grid.GridDragSource;
 import com.vaadin.ui.renderers.ComponentRenderer;
 import com.vaadin.ui.renderers.TextRenderer;
 import com.vaadin.ui.themes.ValoTheme;
@@ -46,12 +46,14 @@ public class VeranstaltungsTeilnehmerGrid extends Grid<VeranstaltungsTeilnehmer>
 	private List<VeranstaltungsTeilnehmer> teilnehmerList;
 	private DBVeranstaltung dbVeranstaltung;
 
-	private List<VeranstaltungsTeilnehmer> draggedItems = null;
+//	private List<VeranstaltungsTeilnehmer> draggedItems = null;
 	
 	public VeranstaltungsTeilnehmerGrid(final VeranstaltungsStufen defStufe, VeranstaltungsStufe stufe) {
 		super();
 		this.stufe = stufe;
 		dbVeranstaltung = new DBVeranstaltung();
+		
+
 
 		addStyleName(ValoTheme.TABLE_BORDERLESS);
 		addStyleName(ValoTheme.TABLE_NO_STRIPES);
@@ -68,7 +70,7 @@ public class VeranstaltungsTeilnehmerGrid extends Grid<VeranstaltungsTeilnehmer>
 			Notification.show("fehler beim aufbau der Datencontainer");
 			e.printStackTrace();
 		}
-
+		
 		Column<VeranstaltungsTeilnehmer, Person> teilnehmerColumn = addColumn(VeranstaltungsTeilnehmer::getPerson);
 		teilnehmerColumn.setRenderer(person -> person.getLastName() + " " + person.getFirstName(), new TextRenderer());
 		teilnehmerColumn.setCaption("Teilnehmer");
@@ -92,7 +94,31 @@ public class VeranstaltungsTeilnehmerGrid extends Grid<VeranstaltungsTeilnehmer>
 			});
 			return delButton;
 		});
+		
+		addComponentColumn(teilnehmer ->  {
+			Button mitgliedButton = new Button();
+			mitgliedButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+			mitgliedButton.setIcon(VaadinIcons.CHILD);
+			mitgliedButton.addClickListener( evt -> {
+				DashBoardEventBus.register(this);
+				ProfilePreferencesWindow.open(teilnehmer.getPerson(), true);
 
+			});
+			return mitgliedButton;
+		});	//
+
+		addComponentColumn(teilnehmer ->  {
+			Button hundButton = new Button();
+			hundButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+			hundButton.setIcon(VaadinIcons.TWITTER);
+			hundButton.addClickListener( evt -> {
+				DashBoardEventBus.register(this);
+				HundeDetailWindow.open(teilnehmer.getHund());
+
+			});
+			return hundButton;
+		});
+		
 		addColumn(teilnehmer -> {
 			CheckBox bezahlt = new CheckBox();
 			bezahlt.setValue(teilnehmer.getBezahlt().equals("J") ? true : false);
@@ -274,34 +300,34 @@ public class VeranstaltungsTeilnehmerGrid extends Grid<VeranstaltungsTeilnehmer>
 
 		this.recalculateColumnWidths();
 
-		GridDragSource<VeranstaltungsTeilnehmer> dragSource = new GridDragSource<>(this);
-		dragSource.setEffectAllowed(EffectAllowed.MOVE);
-
-		// dragSource.setDragDataGenerator("text", teilnehmer -> {
-		// return teilnehmer.getHundefuehrer() == null ||
-		// teilnehmer.getHundefuehrer().isEmpty()
-		// ? teilnehmer.getPerson().getLastName() + " " +
-		// teilnehmer.getPerson().getFirstName()
-		// : teilnehmer.getHundefuehrer() + "\n" +
-		// teilnehmer.getHund().getZwingername();
-		//
-		// });
-
-		dragSource.addGridDragStartListener(event ->
-		// Keep reference to the dragged items
-		draggedItems = event.getDraggedItems());
-		
-		dragSource.addGridDragEndListener(event -> {
-		    // If drop was successful, remove dragged items from source Grid
-		    if (event.getDropEffect() == DropEffect.MOVE) {
-		        ((ListDataProvider<VeranstaltungsTeilnehmer>) getDataProvider()).getItems()
-		                .removeAll(draggedItems);
-		        getDataProvider().refreshAll();
-
-		        // Remove reference to dragged items
-		        draggedItems = null;
-		    }
-		});
+//		GridDragSource<VeranstaltungsTeilnehmer> dragSource = new GridDragSource<>(this);
+//		dragSource.setEffectAllowed(EffectAllowed.MOVE);
+//
+//		// dragSource.setDragDataGenerator("text", teilnehmer -> {
+//		// return teilnehmer.getHundefuehrer() == null ||
+//		// teilnehmer.getHundefuehrer().isEmpty()
+//		// ? teilnehmer.getPerson().getLastName() + " " +
+//		// teilnehmer.getPerson().getFirstName()
+//		// : teilnehmer.getHundefuehrer() + "\n" +
+//		// teilnehmer.getHund().getZwingername();
+//		//
+//		// });
+//
+//		dragSource.addGridDragStartListener(event ->
+//		// Keep reference to the dragged items
+//		draggedItems = event.getDraggedItems());
+//		
+//		dragSource.addGridDragEndListener(event -> {
+//		    // If drop was successful, remove dragged items from source Grid
+//		    if (event.getDropEffect() == DropEffect.MOVE) {
+//		        ((ListDataProvider<VeranstaltungsTeilnehmer>) getDataProvider()).getItems()
+//		                .removeAll(draggedItems);
+//		        getDataProvider().refreshAll();
+//
+//		        // Remove reference to dragged items
+//		        draggedItems = null;
+//		    }
+//		});
 	}
 
 	private void saveTeilnehmer(VeranstaltungsTeilnehmer teilnehmer) {
@@ -324,6 +350,20 @@ public class VeranstaltungsTeilnehmerGrid extends Grid<VeranstaltungsTeilnehmer>
 				+ Optional.ofNullable(teilnehmer.getUebung8()).orElse(Integer.valueOf(0));
 		teilnehmer.setGesPunkte(result);
 
+	}
+	
+	@Subscribe
+	public void updateUserEvent(UpdateUserEvent event) {
+		// mitgliederListe.update();
+		DashBoardEventBus.unregister(this);
+		getDataProvider().refreshAll();
+	} 
+
+	@Subscribe
+	public void updateDogEvent(DogUpdatedEvent event) {
+		// mitgliederListe.update();
+		DashBoardEventBus.unregister(this);
+		getDataProvider().refreshAll();
 	}
 
 	@Subscribe
@@ -360,4 +400,11 @@ public class VeranstaltungsTeilnehmerGrid extends Grid<VeranstaltungsTeilnehmer>
 		}
 	}
 
+	@Override
+	public void detach() {
+		super.detach();
+		// A new instance of TransactionsView is created every time it's
+		// navigated to so we'll need to clean up references to it on detach.
+		//DashBoardEventBus.unregister(this);
+	}
 }

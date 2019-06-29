@@ -19,7 +19,9 @@ public enum Rassen {
 	WEIMARANER_KURZHAAR("WK", "Weimaraner Kurzhaar", "Weimaraner"),
 	WEIMARANER_LANGHAAR("WL", "Weimaraner Langhaar", "Weimaraner"),
 	OESTERREICHISCHER_PINSCHER("OEP", "Österreichischer Pinscher", "Pinscher"),
-	AUSTRALIAN_LABRADOODLE("ALD", "Australian Labradoodle", "Australian Labradoodle");
+	AUSTRALIAN_LABRADOODLE("ALD", "Australian Labradoodle", "Australian Labradoodle"),
+	MAGYAR_VISZLA("MGZ", "Magyar Vizsla", "Magyar Vizsla"),
+	ENGLISH_COCKER_SPANIEL("CS", "English Cocker Spaniel", "English Cocker Spaniel");
 	
 	
 	private final String RassenLangBezeichnung;

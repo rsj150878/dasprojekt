@@ -324,11 +324,13 @@ public class DBVeranstaltung {
 		Connection conn = DBConnectionNeu.INSTANCE.getConnection();
 
 		PreparedStatement st = null;
+		
+		System.out.println("in speichern" + saveItem.getId_veranstaltung());
 
 		if (saveItem.getId_veranstaltung() == null) {
 			st = conn.prepareStatement(
 					"insert into veranstaltung (version, name, datum, richter, veranstaltungsleiter, typ, veranstalter,  "
-							+ "veranstaltungsort, plz_leiter, ort_leiter, strasse_leiter, tel_nr_leiter) values (?,?,?,?,?,?,?,?,?,?,?,?)");
+							+ "veranstaltungsort, plz_leiter, ort_leiter, strasse_leiter, tel_nr_leiter,idschau) values (?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			st.setInt(1, 0);
 			st.setString(2, saveItem.getName());
 			//st.setDate(3, saveItem.getDatum() != null ? new java.sql.Date(saveItem.getDatum().getTime()) : null);
@@ -343,7 +345,7 @@ public class DBVeranstaltung {
 			st.setString(10, saveItem.getOrt_leiter());
 			st.setString(11, saveItem.getStrasse_leiter());
 			st.setString(12, saveItem.getTel_nr_leiter());
-			// st.setInt(13, saveItem.getIdschau() != null ?
+			st.setObject(13, saveItem.getIdschau());
 			// saveItem.getIdschau() :null);
 		} else {
 

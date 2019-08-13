@@ -1,16 +1,16 @@
 package com.app.dashboard.view;
 
 import java.util.Iterator;
+import java.util.List;
 
 import com.app.dashboard.component.HundeSchulStundeUebersichtGrid;
 import com.app.dashboard.event.DashBoardEvent.CloseOpenWindowsEvent;
 import com.app.dashboard.event.DashBoardEventBus;
-import com.app.dashboardwindow.InfoWindow;
 import com.app.dashboardwindow.SearchWindow;
-import com.app.dbio.DBConnection;
-import com.vaadin.event.LayoutEvents.LayoutClickEvent;
-import com.vaadin.event.LayoutEvents.LayoutClickListener;
-import com.vaadin.server.FontAwesome;
+import com.app.dbio.DBKurs;
+import com.app.kurs.KursStunde;
+import com.app.kurs.KursTag;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Responsive;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
@@ -18,18 +18,18 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.MenuBar.Command;
 import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
-import com.vaadin.v7.data.Item;
-import com.vaadin.v7.data.util.filter.Compare.Equal;
-import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
 
 public class KursTagPanel extends Panel {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3285761827506965841L;
 
 	// public static final String EDIT_ID = "dashboard-edit";
 	public static final String TITLE_ID = "dashboard-title";
@@ -37,27 +37,14 @@ public class KursTagPanel extends Panel {
 	private CssLayout dashboardPanels;
 	private final VerticalLayout root;
 
-	private TableQuery kursStundeQuery;
-	private SQLContainer kursStundeContainer;
-	private Item tagItem;
+	private KursTag kursTag;
+	private List<KursStunde> kursStunden;
 
-	public KursTagPanel(Item tagItem) {
-		this.tagItem = tagItem;
+	public KursTagPanel(KursTag kursTag) {
+		this.kursTag = kursTag;
 		addStyleName(ValoTheme.PANEL_BORDERLESS);
 		setSizeFull();
 		DashBoardEventBus.register(this);
-
-		kursStundeQuery = new TableQuery("kursstunde",
-				DBConnection.INSTANCE.getConnectionPool());
-		kursStundeQuery.setVersionColumn("version");
-
-		try {
-			kursStundeContainer = new SQLContainer(kursStundeQuery);
-
-		} catch (Exception e) {
-			Notification.show("fehler beim aufbau der Container");
-			e.printStackTrace();
-		}
 
 		root = new VerticalLayout();
 		root.setSizeFull();
@@ -72,12 +59,7 @@ public class KursTagPanel extends Panel {
 
 		// All the open sub-windows should be closed whenever the root layout
 		// gets clicked.
-		root.addLayoutClickListener(new LayoutClickListener() {
-			@Override
-			public void layoutClick(final LayoutClickEvent event) {
-				DashBoardEventBus.post(new CloseOpenWindowsEvent());
-			}
-		});
+		root.addLayoutClickListener(event -> DashBoardEventBus.post(new CloseOpenWindowsEvent()));
 	}
 
 	//
@@ -86,40 +68,27 @@ public class KursTagPanel extends Panel {
 		dashboardPanels.addStyleName("dashboard-panels");
 		Responsive.makeResponsive(dashboardPanels);
 
-		kursStundeContainer.removeAllContainerFilters();
-
-		kursStundeContainer.addContainerFilter(new Equal("idkurstag", tagItem
-				.getItemProperty("idkurstag").getValue()));
-
-		for (Object o : kursStundeContainer.getItemIds()) {
-			Item kursStunde = kursStundeContainer.getItem(o);
-			dashboardPanels.addComponent(buildKursStunde(kursStunde));
+		DBKurs dbKurs = new DBKurs();
+		try {
+			kursStunden = dbKurs.getKursStundenZuKursTag(kursTag);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Notification.show("Fehler beim lesen der kursStunden");
 		}
 
-		// dashboardPanels.addComponent(buildTopGrossingMovies());
-		// dashboardPanels.addComponent(buildNotes());
-		// dashboardPanels.addComponent(buildTop10TitlesByRevenue());
-		// dashboardPanels.addComponent(buildPopularMovies());
-		//
+		kursStunden.forEach(stunde -> dashboardPanels.addComponent(buildKursStunde(stunde)));
+
 		return dashboardPanels;
 	}
 
-	private Component buildKursStunde(Item kursStunde) {
+	private Component buildKursStunde(KursStunde kursStunde) {
 
-		HundeSchulStundeUebersichtGrid kurStundeGrid = new HundeSchulStundeUebersichtGrid(
-				kursStunde);
+		HundeSchulStundeUebersichtGrid kurStundeGrid = new HundeSchulStundeUebersichtGrid(kursStunde);
 		Component contentWrapper = createContentWrapper(kurStundeGrid);
 		contentWrapper.addStyleName("top10-revenue");
 
 		return contentWrapper;
 	}
-
-	// private Component buildTop10TitlesByRevenue() {
-	// Component contentWrapper = createContentWrapper(new TopTenMoviesTable());
-	// contentWrapper.addStyleName("top10-revenue");
-	// return contentWrapper;
-	// }
-	//
 
 	private Component createContentWrapper(final Component content) {
 		final CssLayout slot = new CssLayout();
@@ -142,60 +111,32 @@ public class KursTagPanel extends Panel {
 
 		MenuBar tools = new MenuBar();
 		tools.addStyleName(ValoTheme.MENUBAR_BORDERLESS);
-		MenuItem addDog = tools.addItem("", FontAwesome.PLUS, new Command() {
-
-			@Override
-			public void menuSelected(final MenuItem selectedItem) {
-				DashBoardEventBus.register(content);
-				SearchWindow.open();
-			}
+		MenuItem addDog = tools.addItem("", VaadinIcons.PLUS, selectedItem -> {
+			DashBoardEventBus.register(content);
+			SearchWindow.open();
 		});
+
 		addDog.setStyleName("icon-only");
 
-		MenuItem max = tools.addItem("", FontAwesome.EXPAND, new Command() {
-
-			@Override
-			public void menuSelected(final MenuItem selectedItem) {
-				if (!slot.getStyleName().contains("max")) {
-					selectedItem.setIcon(FontAwesome.COMPRESS);
-					toggleMaximized(slot, true);
-				} else {
-					slot.removeStyleName("max");
-					selectedItem.setIcon(FontAwesome.EXPAND);
-					toggleMaximized(slot, false);
-				}
+		MenuItem max = tools.addItem("", VaadinIcons.EXPAND, selectedItem -> {
+			if (!slot.getStyleName().contains("max")) {
+				selectedItem.setIcon(VaadinIcons.COMPRESS);
+				toggleMaximized(slot, true);
+			} else {
+				slot.removeStyleName("max");
+				selectedItem.setIcon(VaadinIcons.EXPAND);
+				toggleMaximized(slot, false);
 			}
 		});
-		max.setStyleName("icon-only");
-		
-		MenuItem copy = tools.addItem("",FontAwesome.MAIL_FORWARD, new Command() {
 
-			@Override
-			public void menuSelected(final MenuItem selectedItem) {
-				HundeSchulStundeUebersichtGrid zw = (HundeSchulStundeUebersichtGrid )content;
-				InfoWindow.open(zw.copyMailAdressestoClipBoard()); 
-			}
+		max.setStyleName("icon-only");
+
+		MenuItem copy = tools.addItem("", VaadinIcons.ARROW_FORWARD, selectedItem -> {
+			HundeSchulStundeUebersichtGrid zw = (HundeSchulStundeUebersichtGrid) content;
+			//InfoWindow.open(zw.copyMailAdressestoClipBoard());
 		});
 		copy.setStyleName("icon-only");
-
 		
-//		MenuItem root = tools.addItem("", FontAwesome.MAIL_FORWARD, null);
-//		root.addItem("Mail", new Command() {
-//			@Override
-//			public void menuSelected(final MenuItem selectedItem) {
-//				HundeSchulStundeUebersichtGrid zw = (HundeSchulStundeUebersichtGrid )content;
-//				zw.copyMailAdressestoClipBoard(); 
-//				
-//			}
-//		});
-//		root.addSeparator();
-//		root.addItem("Close", new Command() {
-//			@Override
-//			public void menuSelected(final MenuItem selectedItem) {
-//				Notification.show("Not implemented in this demo");
-//			}
-//		});
-//
 		toolbar.addComponents(caption, tools);
 		toolbar.setExpandRatio(caption, 1);
 		toolbar.setComponentAlignment(caption, Alignment.MIDDLE_LEFT);

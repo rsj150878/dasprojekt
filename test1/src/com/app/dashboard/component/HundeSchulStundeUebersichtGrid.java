@@ -1,54 +1,42 @@
 package com.app.dashboard.component;
 
-import java.sql.SQLException;
-import java.util.Locale;
+import java.util.List;
 
+import com.app.auth.Hund;
 import com.app.dashboard.event.DashBoardEvent.SearchEvent;
-import com.app.dbio.DBConnection;
 import com.app.dashboard.event.DashBoardEventBus;
+import com.app.dbio.DBHund;
+import com.app.dbio.DBKurs;
+import com.app.kurs.KursStunde;
+import com.app.kurs.KursTeilnehmer;
 import com.google.common.eventbus.Subscribe;
-import com.vaadin.server.FontAwesome;
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.renderers.ComponentRenderer;
+import com.vaadin.ui.renderers.TextRenderer;
 import com.vaadin.ui.themes.ValoTheme;
-import com.vaadin.v7.data.Item;
-import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitEvent;
-import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitHandler;
-import com.vaadin.v7.data.util.GeneratedPropertyContainer;
-import com.vaadin.v7.data.util.PropertyValueGenerator;
-import com.vaadin.v7.data.util.converter.Converter;
-import com.vaadin.v7.data.util.filter.Compare.Equal;
-import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
-import com.vaadin.v7.ui.Grid;
-import com.vaadin.v7.ui.OptionGroup;
-import com.vaadin.v7.ui.renderers.ButtonRenderer;
-import com.vaadin.v7.ui.renderers.ClickableRenderer.RendererClickEvent;
-import com.vaadin.v7.ui.renderers.ClickableRenderer.RendererClickListener;
-import com.vaadin.v7.ui.renderers.HtmlRenderer;
 
-public class HundeSchulStundeUebersichtGrid extends Grid {
+public class HundeSchulStundeUebersichtGrid extends Grid<KursTeilnehmer> {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6141955154197613028L;
 
-	private TableQuery kursTeilnehmerQuery;
-
-	private SQLContainer kursTeilnehmerContainer;
-	private Item stunde;
-
-	private SQLContainer dogContainer;
-	private TableQuery dogQuery;
-
-	private SQLContainer personContainer;
-	private TableQuery personQuery;
-
-	public HundeSchulStundeUebersichtGrid(Item stunde) {
+	private List<KursTeilnehmer> kursTeilnehmer;
+	private KursStunde stunde;
+	private DBKurs dbKurs;
+	
+	public HundeSchulStundeUebersichtGrid(KursStunde stunde) {
 		super();
 		this.stunde = stunde;
 
-		setCaption(stunde.getItemProperty("bezeichnung").getValue().toString());
+		dbKurs = new DBKurs();
+		
+		setCaption(stunde.getBezeichnung());
 
 		addStyleName(ValoTheme.TABLE_BORDERLESS);
 		addStyleName(ValoTheme.TABLE_NO_STRIPES);
@@ -57,222 +45,95 @@ public class HundeSchulStundeUebersichtGrid extends Grid {
 
 		setSizeFull();
 
-		getHeader().setVisible(false);
-		// setRowHeaderMode(RowHeaderMode.INDEX);
-
-		kursTeilnehmerQuery = new TableQuery("kursteilnehmer",
-				DBConnection.INSTANCE.getConnectionPool());
-		kursTeilnehmerQuery.setVersionColumn("version");
-
-		dogQuery = new TableQuery("hund",
-				DBConnection.INSTANCE.getConnectionPool());
-		personQuery = new TableQuery("person",
-				DBConnection.INSTANCE.getConnectionPool());
+		//getHeader().setVisible(false);
 
 		try {
-			kursTeilnehmerContainer = new SQLContainer(kursTeilnehmerQuery);
-			kursTeilnehmerContainer.addContainerFilter(new Equal(
-					"idkursstunde", stunde.getItemProperty("idkursstunde")
-							.getValue()));
 
-			dogContainer = new SQLContainer(dogQuery);
-			personContainer = new SQLContainer(personQuery);
+			kursTeilnehmer = dbKurs.getKursTeilnehmerZuKursStunde(stunde);
+			setItems(kursTeilnehmer);
 
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			Notification.show("fehler beim aufbau der Stundencontainer");
 			e.printStackTrace();
 		}
 
-		final GeneratedPropertyContainer cpContainer = new GeneratedPropertyContainer(
-				kursTeilnehmerContainer);
+		Column<KursTeilnehmer, Hund> hundColumn = addColumn(KursTeilnehmer::getHund);
+		hundColumn.setRenderer(hund -> hund.getRufname() + " - " + hund.getZwingername(), new TextRenderer());
+		hundColumn.setCaption("Hund");
 
-		cpContainer.addGeneratedProperty("kursteilnehmer",
-				new PropertyValueGenerator<String>() {
-					private static final long serialVersionUID = -1636752705984592807L;
-
-					@Override
-					public String getValue(Item item, Object itemId,
-							Object propertyId) {
-
-						dogContainer.removeAllContainerFilters();
-						dogContainer.addContainerFilter(new Equal("idhund",
-								item.getItemProperty("idhund").getValue()));
-						Item dogItem = dogContainer.getItem(dogContainer
-								.getIdByIndex(0));
-						return dogItem.getItemProperty("rufname").getValue()
-								.toString()
-								+ " - "
-								+ dogItem.getItemProperty("zwingername")
-										.getValue().toString();
-						// return "asdf";
-					}
-
-					@Override
-					public Class<String> getType() {
-						return String.class;
-					}
-				});
-
-		cpContainer.addGeneratedProperty("delete",
-				new PropertyValueGenerator<String>() {
-					private static final long serialVersionUID = -1636752705984592807L;
-
-					@Override
-					public String getValue(Item item, Object itemId,
-							Object propertyId) {
-
-						return "del";
-					}
-
-					@Override
-					public Class<String> getType() {
-						return String.class;
-					}
-				});
-
-		setContainerDataSource(cpContainer);
-		setColumns("kursteilnehmer", "kursbezahlt", "abwfuehrer", "delete");
-		getColumn("delete").setRenderer(
-				new ButtonRenderer(new RendererClickListener() {
-					/**
-					 * 
-					 */
-					private static final long serialVersionUID = -5189664162539062746L;
-
-					@Override
-					public void click(RendererClickEvent event) {
-						cpContainer.removeItem(event.getItemId());
-						try {
-							kursTeilnehmerContainer.commit();
-						} catch (Exception e) {
-							Notification.show("fehler beim speichern");
-							e.printStackTrace();
-
-						}
-
-					}
-				}));
-
-		getColumn("kursbezahlt").setRenderer(new HtmlRenderer(),
-				new Converter<String, String>() {
-					/**
-					 * 
-					 */
-					private static final long serialVersionUID = -1289049726888267048L;
-
-					@Override
-					public String convertToModel(String value,
-							Class<? extends String> targetType, Locale locale)
-							throws Converter.ConversionException {
-						return "not implemented";
-					}
-
-					@Override
-					public String convertToPresentation(String value,
-							Class<? extends String> targetType, Locale locale)
-							throws Converter.ConversionException {
-						return value.equals("J") ? FontAwesome.CHECK_CIRCLE_O
-								.getHtml() : FontAwesome.CIRCLE_O.getHtml();
-					}
-
-					@Override
-					public Class<String> getModelType() {
-						return String.class;
-					}
-
-					@Override
-					public Class<String> getPresentationType() {
-						return String.class;
-					}
-				});
-
-		setEditorEnabled(true);
-
-		getEditorFieldGroup().addCommitHandler(new CommitHandler() {
-
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = -6469506458961134644L;
-
-			@Override
-			public void preCommit(CommitEvent commitEvent)
-					throws CommitException {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void postCommit(CommitEvent commitEvent)
-					throws CommitException {
+		addComponentColumn(teilnehmer -> {
+			Button delButton = new Button();
+			delButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+			delButton.setIcon(VaadinIcons.TRASH);
+			delButton.addClickListener(evt -> {
 				try {
-					kursTeilnehmerContainer.commit();
+					dbKurs.deleteKursTeilnehmer(teilnehmer);
 				} catch (Exception e) {
-					Notification.show("fehler beim speichern");
-					e.printStackTrace();
-
+					Notification.show("es ist ein fehler beim löschen passiert");
 				}
-
-			}
-
+				kursTeilnehmer.remove(teilnehmer);
+				getDataProvider().refreshAll();
+			});
+			return delButton;
 		});
 
-		OptionGroup bezahltGroup = new OptionGroup();
-		bezahltGroup.addItem("J");
-		bezahltGroup.setItemCaption("J", "Ja");
-		bezahltGroup.addItem("N");
-		bezahltGroup.setItemCaption("N", "Nein");
+		addColumn(teilnehmer -> {
+			CheckBox bezahlt = new CheckBox();
+			bezahlt.setValue(teilnehmer.getBezahlt().equals("J") ? true : false);
+			bezahlt.addValueChangeListener(evt -> {
 
-		getColumn("kursbezahlt").setEditorField(bezahltGroup);
+				teilnehmer.setBezahlt(bezahlt.getValue() == true ? "J" : "N");
+				try {
+					dbKurs.saveKursTeilnehmer(teilnehmer);
+				} catch (Exception e) {
+					e.printStackTrace();
+					Notification.show("fehler beim speichern");
+				}});
+			return bezahlt;
+		}, new ComponentRenderer()).setCaption("bezahlt");
+
+		addColumn(teilnehmer -> {
+			TextField hundeFuehrer = new TextField();
+			hundeFuehrer.setValue(
+					teilnehmer.getAbweichenderHundeFuehrer() == null ? "" : teilnehmer.getAbweichenderHundeFuehrer());
+			hundeFuehrer.addValueChangeListener(evt -> {
+				teilnehmer.setAbweichenderHundeFuehrer(hundeFuehrer.getValue());
+				try {
+					dbKurs.saveKursTeilnehmer(teilnehmer);
+				} catch (Exception e) {
+					e.printStackTrace();
+					Notification.show("fehler beim speichern");
+				}
+			});
+			return hundeFuehrer;
+
+		}, new ComponentRenderer()).setCaption("Hundeführer");
 
 	}
 
-	public String copyMailAdressestoClipBoard() {
-		StringBuilder sb = new StringBuilder();
-
-		
-		for (Object to : kursTeilnehmerContainer.getItemIds()) {
-			Item teilnehmerItem = kursTeilnehmerContainer.getItem(to);
-			dogContainer.removeAllContainerFilters();
-			dogContainer.addContainerFilter(new Equal("idhund", teilnehmerItem
-					.getItemProperty("idhund").getValue()));
-
-			Item dogItem = dogContainer.getItem(dogContainer.getIdByIndex(0));
-
-			personContainer.removeAllContainerFilters();
-			personContainer.addContainerFilter(new Equal("idperson", dogItem
-					.getItemProperty("idperson").getValue()));
-			
-			Item personItem = personContainer.getItem(personContainer.getIdByIndex(0));
-			
-			if (!(personItem.getItemProperty("email") == null)) {
-				sb.append(personItem.getItemProperty("email").getValue());
-				sb.append(";");
-			}
-			
-		}
-
-
-		return sb.toString();
-	}
-	
 	@Subscribe
 	public void searchResult(SearchEvent event) {
 		DashBoardEventBus.unregister(this);
 		if (!(event.getDogIdResult() == null)) {
-			Object id = kursTeilnehmerContainer.addItem();
-			Item newItem = kursTeilnehmerContainer.getItemUnfiltered(id);
-			newItem.getItemProperty("idkursstunde").setValue(
-					stunde.getItemProperty("idkursstunde").getValue());
-			newItem.getItemProperty("idhund").setValue(event.getDogIdResult());
+			Integer idHund = event.getDogIdResult();
+			DBHund dbHund = new DBHund();
 			try {
-				kursTeilnehmerContainer.commit();
+				Hund hund = dbHund.getHundForHundId(idHund);
+				KursTeilnehmer neuerTeilnehmer = new KursTeilnehmer();
+
+				neuerTeilnehmer.setHund(hund);
+				neuerTeilnehmer.setIdHund(idHund);
+				neuerTeilnehmer.setIdKursStunde(stunde.getIdKursStunde());
+				neuerTeilnehmer.setVersion(0);
+				neuerTeilnehmer.setBezahlt("N");
+
+				dbKurs.saveKursTeilnehmer(neuerTeilnehmer);
+
+				kursTeilnehmer.add(neuerTeilnehmer);
+				getDataProvider().refreshAll();
 			} catch (Exception e) {
-				Notification.show("fehler beim speichern");
 				e.printStackTrace();
-
 			}
-
 		}
 	}
 

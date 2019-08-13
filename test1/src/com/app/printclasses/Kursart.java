@@ -11,10 +11,6 @@ public class Kursart {
 	private String sonntagsKurs;
 	private String mittwochsKurs;
 	
-	public void Kursart() {
-		
-	}
-	
 	public String getWelpen1() {
 		return welpen1;
 	}

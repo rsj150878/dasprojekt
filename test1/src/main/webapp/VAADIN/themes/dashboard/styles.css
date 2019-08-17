@@ -1077,7 +1077,7 @@
  */
 
 .v-vaadin-version:after {
-	content: "8.5.0";
+	content: "8.8.6";
 }
 
 .v-widget {
@@ -4406,6 +4406,10 @@ div.v-layout.v-horizontal.v-widget {
 	left: 0;
 }
 
+.dashboard .v-grid-body .v-grid-header > .v-grid-row {
+	position: relative;
+}
+
 .dashboard .v-grid-row {
 	display: block;
 }
@@ -4581,6 +4585,8 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-box-shadow: 1px 0 2px rgba(0, 0, 0, 0.1);
 	box-shadow: 1px 0 2px rgba(0, 0, 0, 0.1);
 	border-right: 1px solid #d4d4d4;
+	position: relative;
+	z-index: 11;
 }
 
 .dashboard .v-grid-cell.frozen  + th, .dashboard .v-grid-cell.frozen  + td {
@@ -6301,7 +6307,12 @@ div.v-layout.v-horizontal.v-widget {
 
 .dashboard .v-datefield-popup td.v-datefield-calendarpanel-month {
 	width: 148px;
+	cursor: default;
 	color: #197de1;
+}
+
+.dashboard .v-datefield-popup td.v-datefield-calendarpanel-month.header-month-year {
+	cursor: pointer;
 }
 
 .dashboard .v-datefield-popup .v-datefield-calendarpanel-year td.v-datefield-calendarpanel-month {
@@ -6486,7 +6497,12 @@ div.v-layout.v-horizontal.v-widget {
 
 .dashboard td.v-datefield-calendarpanel-month {
 	width: 148px;
+	cursor: default;
 	color: #197de1;
+}
+
+.dashboard td.v-datefield-calendarpanel-month.header-month-year {
+	cursor: pointer;
 }
 
 .dashboard .v-datefield-calendarpanel-year td.v-datefield-calendarpanel-month {
@@ -7141,7 +7157,12 @@ div.v-layout.v-horizontal.v-widget {
 
 .dashboard td.v-inline-datefield-calendarpanel-month {
 	width: 148px;
+	cursor: default;
 	color: #197de1;
+}
+
+.dashboard td.v-inline-datefield-calendarpanel-month.header-month-year {
+	cursor: pointer;
 }
 
 .dashboard .v-inline-datefield-calendarpanel-year td.v-inline-datefield-calendarpanel-month {
@@ -9052,6 +9073,10 @@ div.v-layout.v-horizontal.v-widget {
 	left: 0;
 }
 
+.dashboard .v-tree8-body .v-tree8-header > .v-tree8-row {
+	position: relative;
+}
+
 .dashboard .v-tree8-row {
 	display: block;
 }
@@ -9227,6 +9252,8 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-box-shadow: 1px 0 2px rgba(0, 0, 0, 0.1);
 	box-shadow: 1px 0 2px rgba(0, 0, 0, 0.1);
 	border-right: 1px solid #d4d4d4;
+	position: relative;
+	z-index: 11;
 }
 
 .dashboard .v-tree8-cell.frozen  + th, .dashboard .v-tree8-cell.frozen  + td {
@@ -9943,6 +9970,70 @@ div.v-layout.v-horizontal.v-widget {
 	padding-left: 15em;
 }
 
+.dashboard .v-tree8-node.depth-16 {
+	padding-left: 16em;
+}
+
+.dashboard .v-tree8-node.depth-17 {
+	padding-left: 17em;
+}
+
+.dashboard .v-tree8-node.depth-18 {
+	padding-left: 18em;
+}
+
+.dashboard .v-tree8-node.depth-19 {
+	padding-left: 19em;
+}
+
+.dashboard .v-tree8-node.depth-20 {
+	padding-left: 20em;
+}
+
+.dashboard .v-tree8-node.depth-21 {
+	padding-left: 21em;
+}
+
+.dashboard .v-tree8-node.depth-22 {
+	padding-left: 22em;
+}
+
+.dashboard .v-tree8-node.depth-23 {
+	padding-left: 23em;
+}
+
+.dashboard .v-tree8-node.depth-24 {
+	padding-left: 24em;
+}
+
+.dashboard .v-tree8-node.depth-25 {
+	padding-left: 25em;
+}
+
+.dashboard .v-tree8-node.depth-26 {
+	padding-left: 26em;
+}
+
+.dashboard .v-tree8-node.depth-27 {
+	padding-left: 27em;
+}
+
+.dashboard .v-tree8-node.depth-28 {
+	padding-left: 28em;
+}
+
+.dashboard .v-tree8-node.depth-29 {
+	padding-left: 29em;
+}
+
+.dashboard .v-tree8-node.depth-30 {
+	padding-left: 30em;
+}
+
+.dashboard .v-tree8-node.depth-31 {
+	padding-left: 31em;
+}
+
 .dashboard .v-tree8-cell-content {
 	display: inline-block;
 	vertical-align: middle;
@@ -10128,6 +10219,10 @@ div.v-layout.v-horizontal.v-widget {
 	left: 0;
 }
 
+.dashboard .v-treegrid-body .v-treegrid-header > .v-treegrid-row {
+	position: relative;
+}
+
 .dashboard .v-treegrid-row {
 	display: block;
 }
@@ -10303,6 +10398,8 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-box-shadow: 1px 0 2px rgba(0, 0, 0, 0.1);
 	box-shadow: 1px 0 2px rgba(0, 0, 0, 0.1);
 	border-right: 1px solid #d4d4d4;
+	position: relative;
+	z-index: 11;
 }
 
 .dashboard .v-treegrid-cell.frozen  + th, .dashboard .v-treegrid-cell.frozen  + td {
@@ -11017,6 +11114,70 @@ div.v-layout.v-horizontal.v-widget {
 
 .dashboard .v-treegrid-node.depth-15 {
 	padding-left: 15em;
+}
+
+.dashboard .v-treegrid-node.depth-16 {
+	padding-left: 16em;
+}
+
+.dashboard .v-treegrid-node.depth-17 {
+	padding-left: 17em;
+}
+
+.dashboard .v-treegrid-node.depth-18 {
+	padding-left: 18em;
+}
+
+.dashboard .v-treegrid-node.depth-19 {
+	padding-left: 19em;
+}
+
+.dashboard .v-treegrid-node.depth-20 {
+	padding-left: 20em;
+}
+
+.dashboard .v-treegrid-node.depth-21 {
+	padding-left: 21em;
+}
+
+.dashboard .v-treegrid-node.depth-22 {
+	padding-left: 22em;
+}
+
+.dashboard .v-treegrid-node.depth-23 {
+	padding-left: 23em;
+}
+
+.dashboard .v-treegrid-node.depth-24 {
+	padding-left: 24em;
+}
+
+.dashboard .v-treegrid-node.depth-25 {
+	padding-left: 25em;
+}
+
+.dashboard .v-treegrid-node.depth-26 {
+	padding-left: 26em;
+}
+
+.dashboard .v-treegrid-node.depth-27 {
+	padding-left: 27em;
+}
+
+.dashboard .v-treegrid-node.depth-28 {
+	padding-left: 28em;
+}
+
+.dashboard .v-treegrid-node.depth-29 {
+	padding-left: 29em;
+}
+
+.dashboard .v-treegrid-node.depth-30 {
+	padding-left: 30em;
+}
+
+.dashboard .v-treegrid-node.depth-31 {
+	padding-left: 31em;
 }
 
 .dashboard .v-treegrid-cell-content {
@@ -12047,6 +12208,14 @@ div.v-layout.v-horizontal.v-widget {
 
 .dashboard .v-tabsheet-right-aligned-tabs  > .v-tabsheet-tabcontainer {
 	text-align: right;
+}
+
+.dashboard .v-tabsheet-right-aligned-tabs .v-tabsheet-spacertd {
+	display: inline-block !important;
+}
+
+.dashboard .v-tabsheet-right-aligned-tabs .v-tabsheet-scroller {
+	padding-left: 9px;
 }
 
 .dashboard .v-tabsheet-padded-tabbar  > .v-tabsheet-tabcontainer .v-tabsheet-tabs {

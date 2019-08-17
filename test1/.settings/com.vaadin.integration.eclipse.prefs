@@ -1,6 +1,7 @@
 =\=\=\=\=\=\=
 <<<<<<<=HEAD
 >>>>>>>=branch 'master' of https\://github.com/rsj150878/dasprojekt.git
+com.vaadin.integration.eclipse.mavenAutoCompileWidgetset=null
 com.vaadin.integration.eclipse.mavenLatestVersionsUpgrade=["8.5.2","8.8.6"]
 com.vaadin.integration.eclipse.previousCompileAction=both
 com.vaadin.integration.eclipse.useLatestNightly=false

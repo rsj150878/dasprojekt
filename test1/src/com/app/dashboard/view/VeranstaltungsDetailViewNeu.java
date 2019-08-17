@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-import com.app.component.WesensTestImporter;
 import com.app.dashboard.component.VeranstaltungsTeilnehmerGrid;
 import com.app.dashboard.event.DashBoardEventBus;
 import com.app.dashboardwindow.SearchWindow;
@@ -42,8 +41,6 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
-import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
@@ -84,7 +81,7 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent {
 	Binder<Veranstaltung> vaBinder;
 
 	private TabSheet stufenSheet;
-	private WesensTestImporter receiver = new WesensTestImporter();;
+	
 	private HundeDokumenteImporter hundeDokumenteImporter = new HundeDokumenteImporter();
 	DBVeranstaltung db;
 	List<VeranstaltungsStufe> stufenList;
@@ -289,17 +286,6 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent {
 		);
 		secondLineLayout.addComponent(printBewertungsListeButton, 0, 2);
 
-		if (defTyp.equals(VeranstaltungsTypen.WESENSTEST)) {
-
-			Upload upload = new Upload("starte Datenupload hier", receiver);
-			upload.setButtonCaption("Start Upload");
-			upload.addSucceededListener(receiver);
-			upload.addFailedListener(receiver);
-			upload.setId("upload");
-			secondLineLayout.addComponent(upload, 1, 2, 3, 2);
-			;
-		}
-
 		if (defTyp.equals(VeranstaltungsTypen.RBP_2017_WASSER) || defTyp.equals(VeranstaltungsTypen.GAP_PRÜFUNG)) {
 
 			this.hundeDokumenteImporter.setGehoertZu(currentVeranstaltungsItem.getId_veranstaltung());
@@ -472,8 +458,7 @@ public class VeranstaltungsDetailViewNeu extends CustomComponent {
 			});
 
 		}
-		receiver.setComponentForMeldung(stufenSheet.getTab(0).getComponent());
-
+	
 		DropTargetExtension<TabSheet> dropTarget = new DropTargetExtension<>(stufenSheet);
 		dropTarget.setDropEffect(DropEffect.MOVE);
 		dropTarget.addDropListener(event -> {

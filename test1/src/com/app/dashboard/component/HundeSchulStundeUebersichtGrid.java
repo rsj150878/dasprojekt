@@ -3,10 +3,12 @@ package com.app.dashboard.component;
 import java.util.List;
 
 import com.app.auth.Hund;
+import com.app.auth.Person;
 import com.app.dashboard.event.DashBoardEvent.SearchEvent;
 import com.app.dashboard.event.DashBoardEventBus;
 import com.app.dbio.DBHund;
 import com.app.dbio.DBKurs;
+import com.app.dbio.DBPerson;
 import com.app.kurs.KursStunde;
 import com.app.kurs.KursTeilnehmer;
 import com.google.common.eventbus.Subscribe;
@@ -29,13 +31,16 @@ public class HundeSchulStundeUebersichtGrid extends Grid<KursTeilnehmer> {
 	private List<KursTeilnehmer> kursTeilnehmer;
 	private KursStunde stunde;
 	private DBKurs dbKurs;
-	
+
+	private DBPerson dbPerson;
+
 	public HundeSchulStundeUebersichtGrid(KursStunde stunde) {
 		super();
 		this.stunde = stunde;
 
 		dbKurs = new DBKurs();
 		
+
 		setCaption(stunde.getBezeichnung());
 
 		addStyleName(ValoTheme.TABLE_BORDERLESS);
@@ -45,7 +50,7 @@ public class HundeSchulStundeUebersichtGrid extends Grid<KursTeilnehmer> {
 
 		setSizeFull();
 
-		//getHeader().setVisible(false);
+		// getHeader().setVisible(false);
 
 		try {
 
@@ -88,7 +93,8 @@ public class HundeSchulStundeUebersichtGrid extends Grid<KursTeilnehmer> {
 				} catch (Exception e) {
 					e.printStackTrace();
 					Notification.show("fehler beim speichern");
-				}});
+				}
+			});
 			return bezahlt;
 		}, new ComponentRenderer()).setCaption("bezahlt");
 
@@ -135,6 +141,27 @@ public class HundeSchulStundeUebersichtGrid extends Grid<KursTeilnehmer> {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public String copyMailAdressestoClipBoard() {
+		StringBuilder sb = new StringBuilder();
+
+		kursTeilnehmer.forEach(teilnehmer -> {
+			try {
+				dbPerson = new DBPerson();
+				Person person = dbPerson.getPersonForId(teilnehmer.getHund().getIdperson());
+				
+				if (person.getEmail() != null) {
+					sb.append(person.getEmail());
+					sb.append(";");
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		});
+		return sb.toString();
 	}
 
 }

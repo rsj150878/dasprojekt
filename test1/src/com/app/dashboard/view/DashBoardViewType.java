@@ -1,6 +1,5 @@
 package com.app.dashboard.view;
 
-import com.app.component.HundeImport;
 import com.app.dashboard.DashboardView;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
@@ -13,13 +12,9 @@ public enum DashBoardViewType {
     EMAILZUSATZ("Emailadresse alt", EmailAdressNewsletterView.class, VaadinIcons.MAILBOX, false, null),
     VERANSTALTUNG("Veranstaltungen", VeranstaltungsUebersicht.class, VaadinIcons.PARAGRAPH, false, "work"),
     MAILABGLEICH("Mailadressenabgleich", MailReplicateView.class, VaadinIcons.FORWARD, false, null),
-    SCHOWIMPORT("SchowDatenImport", ShowImporter.class, VaadinIcons.EXCLAMATION, false, null),
     KURSGRUNDDATEN("KursGrundDaten", KursDetails.class, VaadinIcons.CODE, false, null),
     KURSUEBERSICHT("KursÜbersicht", KursUebersicht.class, VaadinIcons.CLIPBOARD, false, null),
-    CUPBASISBERECHUNG("ShowCup Basis", CupBasisBerechnungsView.class, VaadinIcons.DATABASE, false, null),
-    HUNDEIMPORT("Hunde importieren", HundeImport.class, VaadinIcons.TICKET, false, null),
     SCHAUUEBERSICHT("Schauübersicht", ShowUebersicht.class,  VaadinIcons.SHARE, false, null),
-    WUERFE("Würfe", WurfUebersicht.class, VaadinIcons.MICROPHONE, false, null),
     SHOWBEWERTUNG("Schaubewertung", ShowBewertungUebersicht.class, VaadinIcons.FILE_TREE, false, "show"),
     SHOWBEWERTUNGKOKMPLETT("PDF Ergebnisse", ShowBewertungDruckUebersicht.class, VaadinIcons.PAPERCLIP, false, "show"),
     ERGEBNISSE("Punkte erfassen", VeranstaltungPunkteEingabeView.class, VaadinIcons.POINTER, false, null)

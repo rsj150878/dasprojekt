@@ -41,7 +41,7 @@ public class EwsReplClass {
 	private static int EWS_TYP_GROUP_MEMBER = 2;
 	private static int EWS_TYP_GROUP_MEMBER_EMAIL = 3;
 
-	private ArrayList ewsList = new ArrayList();
+	private ArrayList <String[]>ewsList = new ArrayList<>();
 
 	protected EwsReplClass() {
 		ewsList.add(new String[] { "stefan@retrieverebreichsdorf.at",

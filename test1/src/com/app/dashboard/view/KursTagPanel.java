@@ -6,6 +6,7 @@ import java.util.List;
 import com.app.dashboard.component.HundeSchulStundeUebersichtGrid;
 import com.app.dashboard.event.DashBoardEvent.CloseOpenWindowsEvent;
 import com.app.dashboard.event.DashBoardEventBus;
+import com.app.dashboardwindow.InfoWindow;
 import com.app.dashboardwindow.SearchWindow;
 import com.app.dbio.DBKurs;
 import com.app.kurs.KursStunde;
@@ -133,7 +134,7 @@ public class KursTagPanel extends Panel {
 
 		MenuItem copy = tools.addItem("", VaadinIcons.ARROW_FORWARD, selectedItem -> {
 			HundeSchulStundeUebersichtGrid zw = (HundeSchulStundeUebersichtGrid) content;
-			//InfoWindow.open(zw.copyMailAdressestoClipBoard());
+			InfoWindow.open(zw.copyMailAdressestoClipBoard());
 		});
 		copy.setStyleName("icon-only");
 		

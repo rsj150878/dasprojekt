@@ -1,5 +1,6 @@
 package com.app.dashboard.view;
 
+import java.util.List;
 import java.util.Locale;
 
 import com.app.auth.DataProvider;
@@ -9,6 +10,8 @@ import com.app.dashboard.event.DashBoardEvent.BrowserResizeEvent;
 import com.app.dashboard.event.DashBoardEvent.UpdateUserEvent;
 import com.app.dashboard.event.DashBoardEvent.UserNewEvent;
 import com.app.dashboard.event.DashBoardEventBus;
+import com.app.dbio.DBMail;
+import com.app.email.EmailList;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -19,34 +22,35 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitEvent;
 import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitHandler;
 import com.vaadin.v7.data.util.BeanItem;
-import com.vaadin.v7.data.util.BeanItemContainer;
 import com.vaadin.v7.data.util.converter.Converter;
 import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.Grid;
-import com.vaadin.v7.ui.HorizontalLayout;
-import com.vaadin.v7.ui.Label;
-import com.vaadin.v7.ui.VerticalLayout;
 import com.vaadin.v7.ui.renderers.HtmlRenderer;
 
 
 @SuppressWarnings({ "serial", "unchecked" })
 public class EmailAdressNewsletterView extends VerticalLayout implements View {
 
-	private final Grid table;
+	private final Grid <EmailList>table;
 	private Button neuesMitglied;
-	private BeanItemContainer<EmailForEmailVerteiler> mitgliederListe;
+	private List<EmailList> mitgliederListe;
+	private DBMail dbMail;
 
 	public EmailAdressNewsletterView() {
 
 		setSizeFull();
 		addStyleName("mitglieder");
 		DashBoardEventBus.register(this);
+		dbMail = new DBMail();
 
 		addComponent(buildToolbar());
 
@@ -103,8 +107,8 @@ public class EmailAdressNewsletterView extends VerticalLayout implements View {
 		return createReport;
 	}
 
-	private Grid buildTable() {
-		final Grid gridTable = new Grid();
+	private Grid<EmailList> buildTable() {
+		final Grid <EmailList> gridTable = new Grid<>();
 		gridTable.setSizeFull();
 
 		gridTable.addStyleName(ValoTheme.TABLE_BORDERLESS);
@@ -115,11 +119,10 @@ public class EmailAdressNewsletterView extends VerticalLayout implements View {
 
 //		mitgliederListe = new TempTransactionsContainer(
 //				DataProvider.getEmailList());
-		mitgliederListe = new BeanItemContainer<EmailForEmailVerteiler>(EmailForEmailVerteiler.class);
 
-		mitgliederListe.addAll(DataProvider.getEmailList());
+		mitgliederListe = dbMail.getAllEmails();
 		
-		gridTable.setContainerDataSource(mitgliederListe);
+		gridTable.setItems(mitgliederListe);
 
 		gridTable.setEditorEnabled(true);
 		gridTable.setColumnOrder("id","emailAdresse", "newsLetter");
@@ -217,18 +220,7 @@ public class EmailAdressNewsletterView extends VerticalLayout implements View {
 		// mitgliederListe.update();
 	}
 
-	// TODO
-	// private boolean defaultColumnsVisible() {
-	// boolean result = true;
-	// for (String propertyId : DEFAULT_COLLAPSIBLE) {
-	// if (table.isColumnCollapsed(propertyId) == Page.getCurrent()
-	// .getBrowserWindowWidth() < 800) {
-	// result = false;
-	// }
-	// }
-	// return result;
-	// }
-
+	
 	// TODO
 	@Subscribe
 	public void browserResized(final BrowserResizeEvent event) {

@@ -1,14 +1,11 @@
 package com.app.dashboard.view;
 
-import java.sql.SQLException;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import com.app.dashboard.event.DashBoardEventBus;
-import com.app.dbio.DBConnection;
 import com.app.dbio.DBKurs;
 import com.app.kurs.Kurs;
 import com.app.kurs.KursStunde;
@@ -19,28 +16,16 @@ import com.vaadin.server.Responsive;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.renderers.ComponentRenderer;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.renderers.ComponentRenderer;
 import com.vaadin.ui.themes.ValoTheme;
-import com.vaadin.v7.data.Item;
-import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitEvent;
-import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitHandler;
-import com.vaadin.v7.data.util.converter.Converter;
-import com.vaadin.v7.data.util.filter.Compare.Equal;
-import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
-import com.vaadin.v7.event.SelectionEvent.SelectionListener;
-import com.vaadin.v7.shared.ui.datefield.Resolution;
-import com.vaadin.ui.Grid;
-import com.vaadin.v7.ui.PopupDateField;
-import com.vaadin.v7.ui.renderers.DateRenderer;
 
 @SuppressWarnings({ "serial" })
 public class KursDetails extends VerticalLayout implements View {
@@ -50,14 +35,6 @@ public class KursDetails extends VerticalLayout implements View {
 	private List<Kurs> kurse;
 	private List<KursTag> kursTage;
 	private List<KursStunde> kursStunden;
-
-	private TableQuery kursQuery;
-	private TableQuery kursTagQuery;
-	private TableQuery kursStundeQuery;
-
-	private SQLContainer kursContainer;
-	private SQLContainer kursTagContainer;
-	private SQLContainer kursStundeContainer;
 
 	private Grid<Kurs> kursGrid;
 	private Grid<KursTag> kursTagGrid;
@@ -70,25 +47,6 @@ public class KursDetails extends VerticalLayout implements View {
 
 		addComponent(buildToolbar());
 		dbKurs = new DBKurs();
-
-		kursQuery = new TableQuery("kurs", DBConnection.INSTANCE.getConnectionPool());
-		kursQuery.setVersionColumn("version");
-
-		kursTagQuery = new TableQuery("kurstag", DBConnection.INSTANCE.getConnectionPool());
-		kursTagQuery.setVersionColumn("version");
-
-		kursStundeQuery = new TableQuery("kursstunde", DBConnection.INSTANCE.getConnectionPool());
-		kursStundeQuery.setVersionColumn("version");
-
-		try {
-			kursContainer = new SQLContainer(kursQuery);
-			kursTagContainer = new SQLContainer(kursTagQuery);
-			kursStundeContainer = new SQLContainer(kursStundeQuery);
-
-		} catch (Exception e) {
-			Notification.show("fehler beim aufbau der Container");
-			e.printStackTrace();
-		}
 
 		Component x = buildWorkingArea();
 		addComponent(x);
@@ -163,14 +121,15 @@ public class KursDetails extends VerticalLayout implements View {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				// TODO Auto-generated method stub
-				Object o = kursContainer.addItem();
-				Item item = kursContainer.getItem(o);
-				item.getItemProperty("kursbezeichnung").setValue("");
-				item.getItemProperty("startdat").setValue(new Date());
-				item.getItemProperty("endedat").setValue(new Date());
+
+				Kurs newKurs = new Kurs();
+				newKurs.setKursBezeichnung("");
+				newKurs.setStartDat(new Date());
+				newKurs.setEndeDat(new Date());
 				try {
-					kursContainer.commit();
-					kursContainer.refresh();
+
+					dbKurs.saveKurs(newKurs);
+					kurse.add(newKurs);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -186,15 +145,17 @@ public class KursDetails extends VerticalLayout implements View {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				if (kursGrid.getSelectedRow() == null) {
+				Kurs selectedItem = kursGrid.getSelectedItems().iterator().next();
+				if (selectedItem == null) {
 					Notification.show("den zu löschenden Kurs auswählen");
-				} else if (kursTagContainer.size() > 0) {
+				} else if (kursTage.size() > 0) {
 					Notification.show("Kurs kann nicht gelöscht werden es sind noch Tage vorhanden");
 				} else {
-					kursContainer.removeItem(kursGrid.getSelectedRow());
+
+					kurse.remove(selectedItem);
 					try {
-						kursContainer.commit();
-					} catch (UnsupportedOperationException | SQLException e) {
+						dbKurs.deleteKurs(selectedItem);
+					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 						Notification.show("fehler beim löschen des Kurses");
@@ -275,13 +236,29 @@ public class KursDetails extends VerticalLayout implements View {
 
 		}, new ComponentRenderer()).setCaption("Preis 2. Hund/Tag - Kein Mitglied");
 
-		kursGrid.setItems(kurse);
+		try {
+			kurse = dbKurs.getAllKurse();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			Notification.show("fehler beim ermitteln der Kurse");
 
-		kursGrid.addItemClickListener(event -> {
+		}
 
-			
+		if (kurse != null) {
+			kursGrid.setItems(kurse);
+
+		}
+		
+		kursGrid.addSelectionListener(event -> {
+
+			Kurs selectedItem = kursGrid.getSelectedItems().iterator().next();
 			try {
-				kursTage = dbKurs.getKursTageZuKurs(event.getItem());
+				kursTage = dbKurs.getKursTageZuKurs(selectedItem);
+				if (kursTage != null) {
+					kursTagGrid.setItems(kursTage);
+
+				}
 			} catch (Exception e) {
 				Notification.show("fehler beim ermitteln der tage");
 				e.printStackTrace();
@@ -308,18 +285,17 @@ public class KursDetails extends VerticalLayout implements View {
 			public void buttonClick(ClickEvent event) {
 				// TODO Auto-generated method stub
 
-				if (kursGrid.getSelectedRow() == null) {
+				Kurs selectedItem = kursGrid.getSelectedItems().iterator().next();
+				if (selectedItem == null) {
 					Notification.show("Bitte Kurstag auswählen");
 
 				} else {
-					Object o = kursTagContainer.addItem();
-					Item item = kursTagContainer.getItemUnfiltered(o);
-					item.getItemProperty("bezeichnung").setValue("neuer Tag");
-					item.getItemProperty("idkurs").setValue(
-							kursContainer.getItem(kursGrid.getSelectedRow()).getItemProperty("idkurs").getValue());
+					KursTag neuerKursTag = new KursTag();
+					neuerKursTag.setBezeichnung("neuer Tag");
+					neuerKursTag.setIdKurs(selectedItem.getIdKurs());
 					try {
-						kursTagContainer.commit();
-						kursTagContainer.refresh();
+						dbKurs.saveKursTag(neuerKursTag);
+						kursTage.add(neuerKursTag);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -336,15 +312,19 @@ public class KursDetails extends VerticalLayout implements View {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				if (kursTagGrid.getSelectedRow() == null) {
+				KursTag selectedItem = kursTagGrid.getSelectedItems().iterator().next();
+
+				if (selectedItem == null) {
 					Notification.show("den zu löschenden Tag auswählen");
-				} else if (kursStundeContainer.size() > 0) {
+				} else if (kursStunden.size() > 0) {
 					Notification.show("Tag kann nicht gelöscht werden es sind noch Stunden vorhanden");
 				} else {
-					kursTagContainer.removeItem(kursTagGrid.getSelectedRow());
 					try {
-						kursTagContainer.commit();
-					} catch (UnsupportedOperationException | SQLException e) {
+
+						dbKurs.deleteKursTag(selectedItem);
+						kursTage.remove(selectedItem);
+
+					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 						Notification.show("fehler beim löschen des Tages");
@@ -356,55 +336,51 @@ public class KursDetails extends VerticalLayout implements View {
 
 		kursTagLayout.addComponent(buttonLayout);
 
-		kursTagGrid = new Grid();
+		kursTagGrid = new Grid<>();
 		kursTagGrid.setSizeFull();
 		kursTagGrid.addStyleName(ValoTheme.TABLE_BORDERLESS);
 		kursTagGrid.addStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
 		kursTagGrid.addStyleName(ValoTheme.TABLE_COMPACT);
 
-		kursTagGrid.setEditorEnabled(true);
+		
+		kursTagGrid.addItemClickListener(event -> {
+			KursTag selectedItem = kursTagGrid.getSelectedItems().iterator().next();
+			if (!(selectedItem == null)) {
 
-		kursTagGrid.setColumns("bezeichnung");
-
-		kursTagGrid.setContainerDataSource(kursTagContainer);
-
-		kursTagGrid.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void select(com.vaadin.v7.event.SelectionEvent event) {
-				kursStundeContainer.removeAllContainerFilters();
-				if (!(kursTagGrid.getSelectedRow() == null)) {
-					kursStundeContainer.addContainerFilter(new Equal("idkurstag", kursTagContainer
-							.getItem(kursTagGrid.getSelectedRow()).getItemProperty("idkurstag").getValue()));
-				}
-				kursStundeGrid.select(null);
-
-			}
-
-		});
-
-		kursTagGrid.getEditorFieldGroup().addCommitHandler(new CommitHandler() {
-
-			@Override
-			public void preCommit(CommitEvent commitEvent) throws CommitException {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void postCommit(CommitEvent commitEvent) throws CommitException {
 				try {
-					kursTagContainer.commit();
-				} catch (UnsupportedOperationException e) {
+					kursStunden = dbKurs.getKursStundenZuKursTag(selectedItem);
+					if (kursStunden != null) {
+						kursStundeGrid.setItems(kursStunden);
+
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
-					throw new CommitException(e);
-				} catch (SQLException e) {
-					e.printStackTrace();
-					throw new CommitException(e);
+					Notification.show("fehler beim speichern");
 				}
 			}
+			kursStundeGrid.select(null);
 
-		});
+		}
+
+		);
+
+		kursTagGrid.addColumn(kursTag -> {
+			TextField bezeichnung = new TextField();
+			bezeichnung.setValue(kursTag.getBezeichnung() == null ? "" : kursTag.getBezeichnung());
+			bezeichnung.addValueChangeListener(evt -> {
+				kursTag.setBezeichnung(bezeichnung.getValue());
+				try {
+					dbKurs.saveKursTag(kursTag);
+				} catch (Exception e) {
+					e.printStackTrace();
+					Notification.show("fehler beim speichern");
+				}
+			});
+			return bezeichnung;
+
+		}, new ComponentRenderer()).setCaption("bezeichnung");
+
 		kursTagLayout.addComponent(kursTagGrid);
 		return kursTagLayout;
 	}
@@ -421,20 +397,19 @@ public class KursDetails extends VerticalLayout implements View {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				// TODO Auto-generated method stub
 
-				if (kursTagGrid.getSelectedRow() == null) {
+				KursTag selectedItem = kursTagGrid.getSelectedItems().iterator().next();
+				if (selectedItem == null) {
 					Notification.show("Bitte Kurstag auswählen");
 
 				} else {
-					Object o = kursStundeContainer.addItem();
-					Item item = kursStundeContainer.getItemUnfiltered(o);
-					item.getItemProperty("bezeichnung").setValue("neue Stunde");
-					item.getItemProperty("idkurstag").setValue(kursTagContainer.getItem(kursTagGrid.getSelectedRow())
-							.getItemProperty("idkurstag").getValue());
+
+					KursStunde newKursStunde = new KursStunde();
+					newKursStunde.setBezeichnung("");
+					newKursStunde.setIdKursTag(selectedItem.getIdKursTag());
 					try {
-						kursStundeContainer.commit();
-						kursStundeContainer.refresh();
+						dbKurs.saveKursStunde(newKursStunde);
+						kursStunden.add(newKursStunde);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -451,12 +426,13 @@ public class KursDetails extends VerticalLayout implements View {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				if (kursStundeGrid.getSelectedRow() == null) {
+				KursStunde selectedItem = kursStundeGrid.getSelectedItems().iterator().next();
+				if (selectedItem == null) {
 					Notification.show("Bitte zu löschende Stunde wählen");
 				} else {
-					kursStundeContainer.removeItem(kursStundeGrid.getSelectedRow());
 					try {
-						kursStundeContainer.commit();
+						dbKurs.deleteKursStunde(selectedItem);
+						kursStunden.remove(selectedItem);
 					} catch (Exception e) {
 						Notification.show("Fehler beim löschen der Stunde");
 					}
@@ -468,97 +444,99 @@ public class KursDetails extends VerticalLayout implements View {
 
 		kursStundeLayout.addComponent(buttonLayout);
 
-		kursStundeGrid = new Grid();
+		kursStundeGrid = new Grid<>();
 		kursStundeGrid.setSizeFull();
 		kursStundeGrid.addStyleName(ValoTheme.TABLE_BORDERLESS);
 		kursStundeGrid.addStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
 		kursStundeGrid.addStyleName(ValoTheme.TABLE_COMPACT);
 
-		kursStundeGrid.setEditorEnabled(true);
-
-		kursStundeGrid.setColumns("bezeichnung", "startzeit", "endzeit");
-
-		kursStundeGrid.setContainerDataSource(kursStundeContainer);
-
-		PopupDateField dateField = new PopupDateField();
-		dateField.setDateFormat("HH:mm");
-		dateField.setResolution(Resolution.MINUTE);
-		// dateField.setConverter(new StringToDateConverter());
-		dateField.addStyleName("time-only");
-
-		dateField.setConverter(new MyConverter());
-
-		kursStundeGrid.getColumn("startzeit").setEditorField(dateField);
-		kursStundeGrid.getColumn("startzeit").setRenderer(new DateRenderer(new SimpleDateFormat("HH:mm")));
-
-		PopupDateField endeTimeField = new PopupDateField();
-		endeTimeField.setDateFormat("HH:mm");
-		endeTimeField.setResolution(Resolution.MINUTE);
-		endeTimeField.addStyleName("time-only");
-		endeTimeField.setConverter(new MyConverter());
-
-		kursStundeGrid.getColumn("endzeit").setEditorField(endeTimeField);
-		kursStundeGrid.getColumn("endzeit").setRenderer(new DateRenderer(new SimpleDateFormat("HH:mm")));
-
-		// field.setResolution(Resolution.MINUTE);
-		kursStundeGrid.getEditorFieldGroup().addCommitHandler(new CommitHandler() {
-
-			@Override
-			public void preCommit(CommitEvent commitEvent) throws CommitException {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void postCommit(CommitEvent commitEvent) throws CommitException {
-
+		
+		kursStundeGrid.addColumn(kursStunde -> {
+			TextField bezeichnung = new TextField();
+			bezeichnung.setValue(kursStunde.getBezeichnung() == null ? "" : kursStunde.getBezeichnung());
+			bezeichnung.addValueChangeListener(evt -> {
+				kursStunde.setBezeichnung(bezeichnung.getValue());
 				try {
-					kursStundeContainer.commit();
-				} catch (UnsupportedOperationException | SQLException e) {
-					// TODO Auto-generated catch block
+					dbKurs.saveKursStunde(kursStunde);
+				} catch (Exception e) {
 					e.printStackTrace();
+					Notification.show("fehler beim speichern");
 				}
+			});
+			return bezeichnung;
 
-			}
+		}, new ComponentRenderer()).setCaption("Bezeichnung");
 
-		});
+		kursStundeGrid.addColumn(kursStunde -> {
+			TextField bezeichnung = new TextField();
+			bezeichnung.setValue(kursStunde.getStartZeit() == null ? ""
+					: new SimpleDateFormat("HH:mm").format(kursStunde.getStartZeit()));
+			bezeichnung.addValueChangeListener(evt -> {
+				kursStunde.setStartZeit(Time.valueOf(bezeichnung.getValue()));
+				try {
+					dbKurs.saveKursStunde(kursStunde);
+				} catch (Exception e) {
+					e.printStackTrace();
+					Notification.show("fehler beim speichern");
+				}
+			});
+			return bezeichnung;
+
+		}, new ComponentRenderer()).setCaption("Startzeit");
+
+		kursStundeGrid.addColumn(kursStunde -> {
+			TextField bezeichnung = new TextField();
+			bezeichnung.setValue(kursStunde.getEndZeit() == null ? ""
+					: new SimpleDateFormat("HH:mm").format(kursStunde.getEndZeit()));
+			bezeichnung.addValueChangeListener(evt -> {
+				kursStunde.setEndZeit(Time.valueOf(bezeichnung.getValue()));
+				try {
+					dbKurs.saveKursStunde(kursStunde);
+				} catch (Exception e) {
+					e.printStackTrace();
+					Notification.show("fehler beim speichern");
+				}
+			});
+			return bezeichnung;
+
+		}, new ComponentRenderer()).setCaption("Endzeit");
 
 		kursStundeLayout.addComponent(kursStundeGrid);
 
 		return kursStundeLayout;
 	}
 
-	public class MyConverter implements Converter<Date, Time> {
-
-		private static final long serialVersionUID = 1L;
-		// public static final MyConverter INSTANCE = new MyConverter();
-
-		@Override
-		public Time convertToModel(Date value, Class<? extends Time> targetType, Locale locale)
-				throws ConversionException {
-			return value == null ? null : new Time(value.getTime());
-		}
-
-		@Override
-		public Date convertToPresentation(Time value, Class<? extends Date> targetType, Locale locale)
-				throws ConversionException {
-			return value;
-		}
-
-		@Override
-		public Class<Time> getModelType() {
-			return Time.class;
-		}
-
-		@Override
-		public Class<Date> getPresentationType() {
-			return Date.class;
-		}
-
-//	    private Object readResolve() {
-//	        return INSTANCE; // preserves singleton property
-//	    }
-
-	}
+//	public class MyConverter implements Converter<Date, Time> {
+//
+//		private static final long serialVersionUID = 1L;
+//		// public static final MyConverter INSTANCE = new MyConverter();
+//
+//		@Override
+//		public Time convertToModel(Date value, Class<? extends Time> targetType, Locale locale)
+//				throws ConversionException {
+//			return value == null ? null : new Time(value.getTime());
+//		}
+//
+//		@Override
+//		public Date convertToPresentation(Time value, Class<? extends Date> targetType, Locale locale)
+//				throws ConversionException {
+//			return value;
+//		}
+//
+//		@Override
+//		public Class<Time> getModelType() {
+//			return Time.class;
+//		}
+//
+//		@Override
+//		public Class<Date> getPresentationType() {
+//			return Date.class;
+//		}
+//
+////	    private Object readResolve() {
+////	        return INSTANCE; // preserves singleton property
+////	    }
+//
+//	}
 
 }

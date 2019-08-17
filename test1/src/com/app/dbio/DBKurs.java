@@ -87,16 +87,25 @@ public class DBKurs {
 			saveItem.setIdKurs(keySet.getInt(1));
 		}
 	}
-	
+
+	public void deleteKurs(Kurs delItem) throws Exception {
+		Connection conn = DBConnectionNeu.INSTANCE.getConnection();
+		PreparedStatement st;
+		st = conn.prepareStatement("delete from kurs " + "where idkurs = ? ");
+
+		st.setObject(1, delItem.getIdKurs(), Types.INTEGER);
+
+		st.executeQuery();
+
+	}
+
 	public List<KursTag> getKursTageZuKurs(Kurs kurs) throws Exception {
 		Connection conn = DBConnectionNeu.INSTANCE.getConnection();
 		PreparedStatement st;
-		st = conn.prepareStatement("select * from kurstag "
-				+ "where idkurs = ? "
-				+ "order by idkurstag desc");
+		st = conn.prepareStatement("select * from kurstag " + "where idkurs = ? " + "order by idkurstag desc");
 
 		st.setObject(1, kurs.getIdKurs(), Types.INTEGER);
-		
+
 		List<KursTag> resultList = new ArrayList<KursTag>();
 
 		ResultSet rs = st.executeQuery();
@@ -112,16 +121,55 @@ public class DBKurs {
 
 		return resultList;
 	}
-	
+
+	public void saveKursTag(KursTag saveItem) throws Exception {
+		Connection conn = DBConnectionNeu.INSTANCE.getConnection();
+		PreparedStatement st;
+
+		if (saveItem.getIdKurs() == null) {
+			st = conn.prepareStatement("insert into kurstag (version,bezeichnung, idkurs)" + "  values (?,?,?) ");
+
+			st.setObject(1, saveItem.getVersion(), Types.INTEGER);
+			st.setObject(2, saveItem.getBezeichnung(), Types.CHAR);
+			st.setObject(3, saveItem.getIdKurs(), Types.INTEGER);
+
+		} else {
+
+			st = conn.prepareStatement("update kurstag set version =? ,bezeichnung=? where idkurstag =? ");
+
+			st.setObject(1, saveItem.getVersion(), Types.INTEGER);
+			st.setObject(2, saveItem.getBezeichnung(), Types.CHAR);
+			st.setObject(3, saveItem.getIdKursTag(), Types.INTEGER);
+
+		}
+
+		st.executeUpdate();
+
+		ResultSet keySet = st.getGeneratedKeys();
+		if (keySet.next()) {
+			saveItem.setIdKursTag(keySet.getInt(1));
+		}
+	}
+
+	public void deleteKursTag(KursTag saveItem) throws Exception {
+		Connection conn = DBConnectionNeu.INSTANCE.getConnection();
+		PreparedStatement st;
+
+		st = conn.prepareStatement("delete from kurstag where idkurstag =? ");
+
+		st.setObject(1, saveItem.getIdKursTag(), Types.INTEGER);
+
+		st.executeUpdate();
+
+	}
+
 	public List<KursStunde> getKursStundenZuKursTag(KursTag kursTag) throws Exception {
 		Connection conn = DBConnectionNeu.INSTANCE.getConnection();
 		PreparedStatement st;
-		st = conn.prepareStatement("select * from kursstunde "
-				+ "where idkurstag = ? "
-				+ "order by idkursstunde desc");
+		st = conn.prepareStatement("select * from kursstunde " + "where idkurstag = ? " + "order by idkursstunde desc");
 
 		st.setObject(1, kursTag.getIdKursTag(), Types.INTEGER);
-		
+
 		List<KursStunde> resultList = new ArrayList<KursStunde>();
 
 		ResultSet rs = st.executeQuery();
@@ -143,13 +191,12 @@ public class DBKurs {
 	public List<KursTeilnehmer> getKursTeilnehmerZuKursStunde(KursStunde kursStunde) throws Exception {
 		Connection conn = DBConnectionNeu.INSTANCE.getConnection();
 		PreparedStatement st;
-		st = conn.prepareStatement("select * from kursteilnehmer "
-				+ "where idkursstunde = ? "
-				+ "order by idkursteilnehmer desc");
+		st = conn.prepareStatement(
+				"select * from kursteilnehmer " + "where idkursstunde = ? " + "order by idkursteilnehmer desc");
 
 		st.setObject(1, kursStunde.getIdKursStunde(), Types.INTEGER);
 		DBHund dbHund = new DBHund();
-		
+
 		List<KursTeilnehmer> resultList = new ArrayList<KursTeilnehmer>();
 
 		ResultSet rs = st.executeQuery();
@@ -162,40 +209,41 @@ public class DBKurs {
 			zw.setIdHund(rs.getInt("idhund"));
 			zw.setAbweichenderHundeFuehrer(rs.getString("abwfuehrer"));
 			zw.setBezahlt(rs.getString("kursbezahlt"));
-			
+
 			zw.setHund(dbHund.getHundForHundId(zw.getIdHund()));
 			resultList.add(zw);
 		}
 
 		return resultList;
 	}
-	
+
 	public void saveKursTeilnehmer(KursTeilnehmer saveItem) throws Exception {
 		Connection conn = DBConnectionNeu.INSTANCE.getConnection();
 		PreparedStatement st;
-		
+
 		if (saveItem.getIdKursTeilnehmer() == null) {
-			st = conn.prepareStatement("insert into kursteilnehmer (version, idkursstunde, idhund, abwfuehrer, kursbezahlt) "
-					+ "values (?,?,?,?,?)");
-			
-			st.setObject(1,saveItem.getVersion(), Types.INTEGER);
+			st = conn.prepareStatement(
+					"insert into kursteilnehmer (version, idkursstunde, idhund, abwfuehrer, kursbezahlt) "
+							+ "values (?,?,?,?,?)");
+
+			st.setObject(1, saveItem.getVersion(), Types.INTEGER);
 			st.setObject(2, saveItem.getIdKursStunde(), Types.INTEGER);
 			st.setObject(3, saveItem.getIdHund(), Types.INTEGER);
 			st.setObject(4, saveItem.getAbweichenderHundeFuehrer(), Types.CHAR);
 			st.setObject(5, saveItem.getBezahlt(), Types.CHAR);
-			
-		} else
-		{
-			st = conn.prepareStatement("update kursteilnehmer set version =?, idkursstunde=?, idhund=?, abwfuehrer=?, kursbezahlt=? "
-					+ "where idkursteilnehmer = ?");
-			
-			st.setObject(1,saveItem.getVersion(), Types.INTEGER);
+
+		} else {
+			st = conn.prepareStatement(
+					"update kursteilnehmer set version =?, idkursstunde=?, idhund=?, abwfuehrer=?, kursbezahlt=? "
+							+ "where idkursteilnehmer = ?");
+
+			st.setObject(1, saveItem.getVersion(), Types.INTEGER);
 			st.setObject(2, saveItem.getIdKursStunde(), Types.INTEGER);
 			st.setObject(3, saveItem.getIdHund(), Types.INTEGER);
 			st.setObject(4, saveItem.getAbweichenderHundeFuehrer(), Types.CHAR);
 			st.setObject(5, saveItem.getBezahlt(), Types.CHAR);
 			st.setObject(6, saveItem.getIdKursTeilnehmer(), Types.INTEGER);
-					
+
 		}
 		st.executeUpdate();
 
@@ -204,17 +252,64 @@ public class DBKurs {
 			saveItem.setIdKursTeilnehmer(keySet.getInt(1));
 		}
 	}
-	
+
 	public void deleteKursTeilnehmer(KursTeilnehmer delItem) throws Exception {
 		Connection conn = DBConnectionNeu.INSTANCE.getConnection();
 		PreparedStatement st;
-		st = conn.prepareStatement("delete from kursteilnehmer "
-				+ "where idkursteilnehmer = ? ");
+		st = conn.prepareStatement("delete from kursteilnehmer " + "where idkursteilnehmer = ? ");
 
 		st.setObject(1, delItem.getIdKursTeilnehmer(), Types.INTEGER);
 		st.executeUpdate();
-		
-		
+
+	}
+	
+	public void saveKursStunde(KursStunde saveItem) throws Exception {
+		Connection conn = DBConnectionNeu.INSTANCE.getConnection();
+		PreparedStatement st;
+
+		if (saveItem.getIdKursStunde() == null) {
+			st = conn.prepareStatement(
+					"insert into kursstunde (version, bezeichnung, idkurstag, startzeit, endzeit) "
+							+ "values (?,?,?,?,?)");
+
+			st.setObject(1, saveItem.getVersion(), Types.INTEGER);
+			st.setObject(2, saveItem.getBezeichnung(), Types.CHAR);
+			st.setObject(3, saveItem.getIdKursTag(), Types.INTEGER);
+			st.setObject(4, saveItem.getStartZeit(), Types.TIME);
+			st.setObject(5, saveItem.getEndZeit(), Types.TIME);
+
+		} else {
+			st = conn.prepareStatement(
+					"update kursstunde set version =?, bezeichnung=?, startzeit=?,endzeit=? "
+							+ "where idkursstunde = ?");
+
+			st.setObject(1, saveItem.getVersion(), Types.INTEGER);
+			st.setObject(2, saveItem.getBezeichnung(), Types.CHAR);
+			st.setObject(3, saveItem.getStartZeit(), Types.TIME);
+			st.setObject(4, saveItem.getEndZeit(), Types.TIME);
+			st.setObject(5, saveItem.getIdKursStunde(), Types.INTEGER);
+
+		}
+		st.executeUpdate();
+
+		ResultSet keySet = st.getGeneratedKeys();
+		if (keySet.next()) {
+			saveItem.setIdKursStunde(keySet.getInt(1));
+		}
 	}
 
+	public void deleteKursStunde(KursStunde saveItem) throws Exception {
+		Connection conn = DBConnectionNeu.INSTANCE.getConnection();
+		PreparedStatement st;
+
+		st = conn.prepareStatement(
+					"delete from kursstunde "
+							+ "where idkursstunde = ?");
+
+			st.setObject(1, saveItem.getIdKursStunde(), Types.INTEGER);
+
+		st.executeUpdate();
+
+		
+	}
 }

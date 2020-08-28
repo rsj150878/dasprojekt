@@ -45,6 +45,8 @@ public class ShowHundBewertungComponent extends Panel {
 	private CheckBox mitglied;
 
 	private CheckBox klubSieger;
+	private CheckBox veroeffentlichen;
+	private TextField besitzerEmail;
 
 	private TextArea bewertung;
 
@@ -78,13 +80,12 @@ public class ShowHundBewertungComponent extends Panel {
 		panelContent = new VerticalLayout();
 		panelContent.setWidth("100%");
 
-		panelContent.addComponentsAndExpand(buildAllgemeinInfo(), buildAllgemeinInfo3(), buildBewertung(),
-				buildFormwertInfo(), buildPrintButton());
+		panelContent.addComponentsAndExpand(buildAllgemeinInfo(), buildAllgemeinInfo3(), buildAllgemeinInfo4(),
+				buildBewertung(), buildFormwertInfo(), buildPrintButton());
 
 		setContent(panelContent);
-		
+
 		setEditingFieldsEnabled(!hundFehlt.getValue());
-		
 
 		// Set the size as undefined at all levels
 		// panelContent.setSizeUndefined();
@@ -153,6 +154,32 @@ public class ShowHundBewertungComponent extends Panel {
 		return ersteZeile;
 	}
 
+	private Component buildAllgemeinInfo4() {
+
+		HorizontalLayout ersteZeile = new HorizontalLayout();
+		ersteZeile.setWidth("100%");
+
+		besitzerEmail = new TextField("Besitzer-Email");
+		besitzerEmail.setValue(hund.getBesitzerEmail() == null ? "" : hund.getBesitzerEmail());
+
+		ersteZeile.addComponent(besitzerEmail);
+		besitzerEmail.addValueChangeListener(event -> {
+			hund.setBesitzerEmail(besitzerEmail.getValue());
+			saveHund();
+		});
+
+		veroeffentlichen = new CheckBox("Ergebnis veröffentlichen?");
+		veroeffentlichen.setValue(hund.getVeroeffentlichen());
+		ersteZeile.addComponent(veroeffentlichen);
+
+		veroeffentlichen.addValueChangeListener(event -> {
+			hund.setVeroeffentlichen(hundFehlt.getValue());
+			saveHund();
+		});
+
+		return ersteZeile;
+	}
+
 	private Component buildBewertung() {
 		bewertung = new TextArea("Beschreibung");
 		bewertung.setWidth("100%");
@@ -170,25 +197,24 @@ public class ShowHundBewertungComponent extends Panel {
 	private Component buildPrintButton() {
 		HorizontalLayout buttonLeisteLayout = new HorizontalLayout();
 		buttonLeisteLayout.setWidth("100%");
-		
+
 		Button printButton = new Button("Bewertung drucken");
 		printButton.addClickListener(event -> {
 			ShowBewertungsBlatt blatt = new ShowBewertungsBlatt(show, hund);
 			panelContent.addComponent(blatt);
 
 		});
-		
+
 		buttonLeisteLayout.addComponent(printButton);
-		
+
 		Button resetButton = new Button("Bewertung zurücksetzen");
-		
+
 		resetButton.addClickListener(event -> {
 
 			if (!(klubSieger == null)) {
 				klubSieger.setValue(false);
 			}
 
-			
 			if (!(formwertJuengsten == null)) {
 				formwertJuengsten.setSelectedItem(null);
 			}
@@ -208,15 +234,40 @@ public class ShowHundBewertungComponent extends Panel {
 			if (!(bobButtonGroup == null)) {
 				bobButtonGroup.setSelectedItem(null);
 			}
-			
+
 			if (!(cacibButtonGroup == null)) {
 				cacibButtonGroup.setSelectedItem(null);
 			}
 
-			
 		});
-		
+
 		buttonLeisteLayout.addComponent(resetButton);
+
+		Button mailButton = new Button("Bewertung mailen");
+		mailButton.addClickListener(event -> {
+			ShowBewertungsBlatt blatt = new ShowBewertungsBlatt(show, hund);
+			// panelContent.addComponent(blatt);
+			try {
+				blatt.sendBewertungAsEmail(show, hund);
+				Notification.show("Mail erfolgreich verschickt");
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				Notification.show("Fehler beim mailschicken");
+			}
+
+		});
+
+		buttonLeisteLayout.addComponent(mailButton);
+
+		Button urkundeDruckButton = new Button("Zertifikat drucken");
+		urkundeDruckButton.addClickListener(event -> {
+			ShowBewertungsBlatt blatt = new ShowBewertungsBlatt(show, "ZF", hund);
+			panelContent.addComponent(blatt);
+
+		});
+
+		buttonLeisteLayout.addComponent(urkundeDruckButton);
 
 		return buttonLeisteLayout;
 	}
@@ -238,7 +289,8 @@ public class ShowHundBewertungComponent extends Panel {
 				layout.addComponent(formwertJuengsten);
 
 				formwertJuengsten.addValueChangeListener(event -> {
-					hund.setFormwert(formwertJuengsten.getValue() == null ? null : formwertJuengsten.getValue().getFormwert());
+					hund.setFormwert(
+							formwertJuengsten.getValue() == null ? null : formwertJuengsten.getValue().getFormwert());
 					saveHund();
 				});
 			} else {
@@ -282,7 +334,8 @@ public class ShowHundBewertungComponent extends Panel {
 				cacaButtonGroup.setSelectedItem(CacaDataType.getTextForDataBaseValue(hund.getCACA()));
 
 				cacaButtonGroup.addValueChangeListener(event -> {
-					hund.setCACA(cacaButtonGroup.getValue() == null ? null : cacaButtonGroup.getValue().getDataBaseValue());
+					hund.setCACA(
+							cacaButtonGroup.getValue() == null ? null : cacaButtonGroup.getValue().getDataBaseValue());
 					saveHund();
 				});
 
@@ -296,7 +349,8 @@ public class ShowHundBewertungComponent extends Panel {
 				bobButtonGroup.setSelectedItem(BobDataType.getTextForDataBaseValue(hund.getBOB()));
 
 				bobButtonGroup.addValueChangeListener(event -> {
-					hund.setBOB(bobButtonGroup.getValue() == null ? null : bobButtonGroup.getValue().getDataBaseValue());
+					hund.setBOB(
+							bobButtonGroup.getValue() == null ? null : bobButtonGroup.getValue().getDataBaseValue());
 					saveHund();
 				});
 
@@ -355,7 +409,8 @@ public class ShowHundBewertungComponent extends Panel {
 					cacibButtonGroup.setSelectedItem(CacibDataType.getTextForDataBaseValue(hund.getCACIB()));
 
 					cacibButtonGroup.addValueChangeListener(event -> {
-						hund.setCACIB(cacibButtonGroup.getValue() == null ? null : cacibButtonGroup.getValue().getDataBaseValue());
+						hund.setCACIB(cacibButtonGroup.getValue() == null ? null
+								: cacibButtonGroup.getValue().getDataBaseValue());
 						saveHund();
 					});
 
@@ -408,7 +463,7 @@ public class ShowHundBewertungComponent extends Panel {
 		if (!(bobButtonGroup == null)) {
 			bobButtonGroup.setEnabled(enabled);
 		}
-		
+
 		if (!(cacibButtonGroup == null)) {
 			cacibButtonGroup.setEnabled(enabled);
 		}

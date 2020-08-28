@@ -1,14 +1,21 @@
 package com.app.printclasses;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.output.ByteArrayOutputStream;
-
-import com.app.dbio.DBConnection;
+import com.app.auth.Hund;
+import com.app.auth.Person;
+import com.app.dbio.DBHund;
+import com.app.dbio.DBPerson;
+import com.app.dbio.DBVeranstaltung;
 import com.app.service.TemporaryFileDownloadResource;
+import com.app.veranstaltung.Veranstaltung;
+import com.app.veranstaltung.VeranstaltungsStufe;
+import com.app.veranstaltung.VeranstaltungsTeilnehmer;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfPageFormCopier;
 import com.itextpdf.forms.fields.PdfFormField;
@@ -18,62 +25,42 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.CustomComponent;
-import com.vaadin.v7.data.Item;
-import com.vaadin.v7.data.util.filter.Compare.Equal;
-import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.v7.data.util.sqlcontainer.query.OrderBy;
-import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
+
 
 public class JungHundePruefung2017 extends CustomComponent {
 
-	private AbsoluteLayout mainLayout;
-	private TableQuery q3;
-	private TableQuery q4;
-	private TableQuery q5;
-	private TableQuery q1;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 29409964073332357L;
 
-	private SQLContainer veranstaltungsStufenContainer;
-	private SQLContainer personContainer;
-	private SQLContainer hundContainer;
-	private SQLContainer teilnehmerContainer;
+	private AbsoluteLayout mainLayout;
 
 	private static String RESULT = "Urkunde.pdf";
 	
-	public static final String DATASHEET_KURZ = "files/URKUNDE JUHU_PFG_2018-Alfred.pdf";
+	public static final String DATASHEET_KURZ = "files/URKUNDE JUHU_PFG_2020-Alfred.pdf";
 	public static final String DATASHEET_LANG = "files/URKUNDE JUHU_PFG_2017-Alfred+Birgit.pdf";
 
+	private DBVeranstaltung dbVa;
+	private DBHund dbHund;
+	private DBPerson dbPerson;
 
+	public JungHundePruefung2017(Veranstaltung veranstaltung,
+			 VeranstaltungsStufe veranstaltungsStufe) {
 
-	public JungHundePruefung2017(Item veranstaltung, boolean kurzeUrkunde) {
-
+		dbVa = new DBVeranstaltung();
+		dbHund = new DBHund();
+		dbPerson = new DBPerson();
 
 		
-		q3 = new TableQuery("veranstaltungs_teilnehmer", DBConnection.INSTANCE.getConnectionPool());
-		q3.setVersionColumn("version");
-
-		q4 = new TableQuery("person", DBConnection.INSTANCE.getConnectionPool());
-		q4.setVersionColumn("version");
-
-		q5 = new TableQuery("hund", DBConnection.INSTANCE.getConnectionPool());
-		q5.setVersionColumn("version");
-
 		try {
 
-			personContainer = new SQLContainer(q4);
-			hundContainer = new SQLContainer(q5);
-			teilnehmerContainer = new SQLContainer(q3);
-
-			teilnehmerContainer.addContainerFilter(
-					new Equal("id_veranstaltung", veranstaltung.getItemProperty("id_veranstaltung").getValue()));
-			teilnehmerContainer.addOrderBy(new OrderBy("startnr", true));
-
-
-			mainLayout = new AbsoluteLayout();
+						mainLayout = new AbsoluteLayout();
 			mainLayout.setWidth("100%");
 			mainLayout.setHeight("100%");
 			setCompositionRoot(mainLayout);
 
-						bauPdf(veranstaltung,kurzeUrkunde);
+			bauPdf(veranstaltung, veranstaltungsStufe);
 		
 			TemporaryFileDownloadResource s = null;
 			try {
@@ -90,53 +77,49 @@ public class JungHundePruefung2017 extends CustomComponent {
 		}
 	}
 	
-	private void bauPdf(Item veranstaltung, boolean kurzeUrkunde) throws Exception {
+	private void bauPdf(Veranstaltung veranstaltung, VeranstaltungsStufe veranstaltungsStufe) throws Exception {
 
+		
 		PdfDocument pdfDoc = new PdfDocument(new PdfWriter(RESULT));
 		pdfDoc.initializeOutlines();
 		
-		String vorlage =  kurzeUrkunde ? DATASHEET_KURZ:DATASHEET_LANG;
+		String vorlage =  DATASHEET_KURZ;
 
 		ByteArrayOutputStream baos;
 		PdfDocument pdfInnerDoc;
 		Map<String, PdfFormField> fields;
 		PdfAcroForm form;
-		for (Object id : teilnehmerContainer.getItemIds()) {
+		
+		
+		List<VeranstaltungsTeilnehmer> teilnehmer = dbVa.getAlleTeilnehmerZuStufe(veranstaltungsStufe.getIdStufe());
 
-			Item teilnehmerItem = teilnehmerContainer.getItem(id);
+		for (VeranstaltungsTeilnehmer zw : teilnehmer) {
+
 			// create a PDF in memory
 			baos = new ByteArrayOutputStream();
 			pdfInnerDoc = new PdfDocument(new PdfReader(vorlage), new PdfWriter(baos));
 			form = PdfAcroForm.getAcroForm(pdfInnerDoc, true);
 			fields = form.getFormFields();
 
-			hundContainer.addContainerFilter(new Equal("idhund", teilnehmerItem.getItemProperty("id_hund").getValue()));
+			Hund hund = dbHund.getHundForHundId(zw.getIdHund());
+			Person person = dbPerson.getPersonForId(zw.getIdPerson());
+	
+			fields.get("hund").setValue(hund.getZwingername());
 
-			personContainer
-					.addContainerFilter(new Equal("idperson", teilnehmerItem.getItemProperty("id_person").getValue()));
-
-			fields.get("hund").setValue(hundContainer.getItem(hundContainer.firstItemId())
-					.getItemProperty("zwingername").getValue().toString());
-
-			if (teilnehmerItem.getItemProperty("hundefuehrer").getValue() != null) {
-
+			if (zw.getHundefuehrer() != null && !zw.getHundefuehrer().isEmpty() && zw.getHundefuehrer().length() > 0) {
+				
+				
 				fields.get("hundeFuehrer")
-						.setValue(teilnehmerItem.getItemProperty("hundefuehrer").getValue().toString());
+						.setValue(zw.getHundefuehrer());
 			} else {
 				fields.get("hundeFuehrer")
-						.setValue(personContainer.getItem(personContainer.firstItemId()).getItemProperty("nachname")
-								.getValue().toString() + " "
-								+ personContainer.getItem(personContainer.firstItemId()).getItemProperty("vorname")
-										.getValue().toString()
+						.setValue(person.getLastName() + " "
+								+ person.getFirstName()
 
 				);
 			}
 
-		
-
-			hundContainer.removeAllContainerFilters();
-			personContainer.removeAllContainerFilters();
-			form.flattenFields();
+					form.flattenFields();
 			pdfInnerDoc.close();
 
 			pdfInnerDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())));

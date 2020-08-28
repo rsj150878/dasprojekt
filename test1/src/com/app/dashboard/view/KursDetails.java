@@ -343,7 +343,7 @@ public class KursDetails extends VerticalLayout implements View {
 		kursTagGrid.addStyleName(ValoTheme.TABLE_COMPACT);
 
 		
-		kursTagGrid.addItemClickListener(event -> {
+		kursTagGrid.addSelectionListener(event -> {
 			KursTag selectedItem = kursTagGrid.getSelectedItems().iterator().next();
 			if (!(selectedItem == null)) {
 
@@ -359,7 +359,7 @@ public class KursDetails extends VerticalLayout implements View {
 					Notification.show("fehler beim speichern");
 				}
 			}
-			kursStundeGrid.select(null);
+			kursStundeGrid.deselectAll();
 
 		}
 

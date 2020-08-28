@@ -36,7 +36,7 @@ public class BewertungsListeNeu extends CustomComponent {
 	private static final long serialVersionUID = -8416619752436456154L;
 
 	private AbsoluteLayout mainLayout;
-	
+
 	private DBVeranstaltung dbVa;
 	private DBPerson dbPerson;
 	private DBHund dbHund;
@@ -118,7 +118,8 @@ public class BewertungsListeNeu extends CustomComponent {
 					Label unbefangenheitsprobe = new Label(7, i, (zwi.getBestanden() != null && zwi.getBestanden().equals("J")) ? "B" : "NB");
 					sheet.addCell(unbefangenheitsprobe);
 
-					if (zw.getStufenTyp().equals(VeranstaltungsStufen.STUFE_BH)) {
+					if (zw.getStufenTyp().equals(VeranstaltungsStufen.STUFE_BH)
+							|| zw.getStufenTyp().equals(VeranstaltungsStufen.STUFE_BH_VT_ONLY)) {
 
 						String bestandenString = "";
 						if (zwi.getBestanden() != null && zwi.getBestanden()

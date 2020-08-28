@@ -31,7 +31,7 @@ public final class User extends AbstractPersonClass {
 				throw new UsernameNotFoundException("User Unbekannt");
 			}
 
-			if (userResult.getString("password").equals(password)) {
+			if (userResult.getString("pass").equals(password)) {
 
 			} else {
 			}

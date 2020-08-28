@@ -17,7 +17,8 @@ public enum DashBoardViewType {
     SCHAUUEBERSICHT("Schauübersicht", ShowUebersicht.class,  VaadinIcons.SHARE, false, null),
     SHOWBEWERTUNG("Schaubewertung", ShowBewertungUebersicht.class, VaadinIcons.FILE_TREE, false, "show"),
     SHOWBEWERTUNGKOKMPLETT("PDF Ergebnisse", ShowBewertungDruckUebersicht.class, VaadinIcons.PAPERCLIP, false, "show"),
-    ERGEBNISSE("Punkte erfassen", VeranstaltungPunkteEingabeView.class, VaadinIcons.POINTER, false, null)
+    ERGEBNISSE("Punkte erfassen", VeranstaltungPunkteEingabeView.class, VaadinIcons.POINTER, false, null),
+    TESTSCAN("testscan", TestBarCodeScan.class, VaadinIcons.POINTER, false, null)
     ;
  
     private final String viewName;

@@ -101,20 +101,20 @@ public class IBgh2RichterBlatt extends CustomComponent {
 
 			SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd.MM.yyyy");
 
-			fields.get("va_datum").setValue(dateFormat1.format(veranstaltung.getDatum()));
-			fields.get("datum_2").setValue(dateFormat1.format(veranstaltung.getDatum()));
+			fields.get("veranstaltungstag").setValue(dateFormat1.format(veranstaltung.getDatum()));
+			fields.get("veranstaltungstag_2").setValue(dateFormat1.format(veranstaltung.getDatum()));
 
-			fields.get("va_ort").setValue(veranstaltung.getVeranstaltungsort());
-			fields.get("va_ort_2").setValue(veranstaltung.getVeranstaltungsort());
+			fields.get("veranstaltungsort").setValue(veranstaltung.getVeranstaltungsort());
+			fields.get("veranstaltungsort_2").setValue(veranstaltung.getVeranstaltungsort());
 
 			fields.get("veranstalter").setValue(veranstaltung.getVeranstalter());
 			
 			fields.get("pruefungsleiter").setValue(veranstaltung.getVeranstaltungsleiter());
 			fields.get("leistungsrichter").setValue(veranstaltung.getRichter());
 			
-			fields.get("hund").setValue(hund.getZwingername());
+			fields.get("hundename").setValue(hund.getZwingername());
 
-			fields.get("hund_2").setValue(hund.getZwingername());
+			fields.get("hundename_2").setValue(hund.getZwingername());
 
 			fields.get("rasse").setValue(Rassen.getUrkundenBezeichnungFuerKurzBezeichnung(hund.getRasse()));
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mobile-app xmlns="http://rapidclipse.com/mobile/1.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://rapidclipse.com/mobile/1.0.0 http://rapidclipse.com/xsd/mobile-1.0.0.xsd">
+	<services>
+		<service class="com.xdev.mobile.service.app.AppService"></service>
+		<service
+			class="com.xdev.mobile.service.barcodescanner.BarcodescannerService">
+		</service>
+	</services>
+
+
+</mobile-app>

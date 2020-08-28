@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.org/dtd/hibernate-reverse-engineering-3.0.dtd" >
+
+<hibernate-reverse-engineering>
+	<type-mapping>
+		<sql-type jdbc-type="INTEGER" not-null="true"
+			hibernate-type="int" />
+		<sql-type jdbc-type="INTEGER"
+			hibernate-type="java.lang.Integer" />
+		<sql-type jdbc-type="TINYINT" precision="1" not-null="true"
+			hibernate-type="boolean" />
+		<sql-type jdbc-type="TINYINT" precision="1"
+			hibernate-type="java.lang.Boolean" />
+		<sql-type jdbc-type="TINYINT" not-null="true"
+			hibernate-type="short" />
+		<sql-type jdbc-type="TINYINT"
+			hibernate-type="java.lang.Short" />
+	</type-mapping>
+	<table-filter match-name="ausstellungscup_basis"
+		match-catalog="test1">
+	</table-filter>
+	<table-filter match-name="ausstellungscup_komprimiert"
+		match-catalog="test1">
+	</table-filter>
+	<table-filter match-name="auswertungsbasis"
+		match-catalog="test1"></table-filter>
+	<table-filter match-name="ellenbogen"
+		match-catalog="test1"></table-filter>
+	<table-filter match-name="elternupdate"
+		match-catalog="test1"></table-filter>
+	<table-filter match-name="email" match-catalog="test1"></table-filter>
+	<table-filter match-name="emailattachment"
+		match-catalog="test1"></table-filter>
+	<table-filter match-name="emaillist" match-catalog="test1"></table-filter>
+	<table-filter match-name="ews" match-catalog="test1"></table-filter>
+	<table-filter match-name="files" match-catalog="test1"></table-filter>
+	<table-filter match-name="huefte" match-catalog="test1"></table-filter>
+	<table-filter match-name="hund" match-catalog="test1"></table-filter>
+	<table-filter match-name="iha_grunddaten"
+		match-catalog="test1"></table-filter>
+	<table-filter match-name="import" match-catalog="test1"></table-filter>
+	<table-filter match-name="kurs" match-catalog="test1"></table-filter>
+	<table-filter match-name="kurskarte" match-catalog="test1"></table-filter>
+	<table-filter match-name="kurskartenbesuche"
+		match-catalog="test1">
+	</table-filter>
+	<table-filter match-name="kurskartentyp"
+		match-catalog="test1"></table-filter>
+	<table-filter match-name="kursstunde"
+		match-catalog="test1"></table-filter>
+	<table-filter match-name="kurstag" match-catalog="test1"></table-filter>
+	<table-filter match-name="kursteilnehmer"
+		match-catalog="test1"></table-filter>
+	<table-filter match-name="oerc_hund" match-catalog="test1"></table-filter>
+	<table-filter match-name="oerc_hund_neu"
+		match-catalog="test1"></table-filter>
+	<table-filter match-name="person" match-catalog="test1"></table-filter>
+	<table-filter match-name="schau" match-catalog="test1"></table-filter>
+	<table-filter match-name="schauhund" match-catalog="test1"></table-filter>
+	<table-filter match-name="schauring" match-catalog="test1"></table-filter>
+	<table-filter match-name="schulter" match-catalog="test1"></table-filter>
+	<table-filter match-name="user" match-catalog="test1"></table-filter>
+	<table-filter match-name="veranstaltung"
+		match-catalog="test1"></table-filter>
+	<table-filter match-name="veranstaltungs_richter"
+		match-catalog="test1">
+	</table-filter>
+	<table-filter match-name="veranstaltungs_stufe"
+		match-catalog="test1">
+	</table-filter>
+	<table-filter match-name="veranstaltungs_teilnehmer"
+		match-catalog="test1">
+	</table-filter>
+	<table catalog="test1" name="kurskarte" class="Kurskarte" />
+	<table catalog="test1" name="kurskartenbesuche"
+		class="Kurskartenbesuche" />
+	<table catalog="test1" name="kurskartentyp" class="Kurskartentyp" />
+
+	<table catalog="test1" name="ausstellungscup_basis"
+		class="ausstellungscup_basis">
+	</table>
+	<table catalog="test1" name="ausstellungscup_komprimiert"
+		class="ausstellungscup_komprimiert">
+	</table>
+	<table catalog="test1" name="auswertungsbasis"
+		class="auswertungsbasis">
+	</table>
+	<table catalog="test1" name="ellenbogen" class="ellenbogen">
+
+	</table>
+	<table catalog="test1" name="elternupdate" class="elternupdate">
+
+	</table>
+	<table catalog="test1" name="email" class="email">
+
+	</table>
+	<table catalog="test1" name="emailattachment"
+		class="emailattachment">
+
+	</table>
+	<table catalog="test1" name="emaillist" class="emaillist">
+
+	</table>
+	<table catalog="test1" name="ews" class="ews">
+
+	</table>
+	<table catalog="test1" name="files" class="files">
+
+	</table>
+	<table catalog="test1" name="huefte" class="huefte">
+
+	</table>
+	<table catalog="test1" name="hund" class="hund">
+
+	</table>
+	<table catalog="test1" name="iha_grunddaten"
+		class="iha_grunddaten">
+
+	</table>
+	<table catalog="test1" name="import" class="import">
+
+	</table>
+	<table catalog="test1" name="kurs" class="kurs">
+
+	</table>
+	<table catalog="test1" name="kursstunde" class="kursstunde">
+
+	</table>
+	<table catalog="test1" name="kurstag" class="kurstag">
+
+	</table>
+	<table catalog="test1" name="kursteilnehmer"
+		class="kursteilnehmer">
+
+	</table>
+	<table catalog="test1" name="oerc_hund" class="oerc_hund">
+
+	</table>
+	<table catalog="test1" name="oerc_hund_neu" class="oerc_hund_neu">
+
+	</table>
+	<table catalog="test1" name="person" class="person">
+
+	</table>
+	<table catalog="test1" name="schau" class="schau">
+
+	</table>
+	<table catalog="test1" name="schauhund" class="schauhund">
+
+	</table>
+	<table catalog="test1" name="schauring" class="schauring">
+
+	</table>
+	<table catalog="test1" name="schulter" class="schulter">
+
+	</table>
+	<table catalog="test1" name="user" class="user">
+
+	</table>
+	<table catalog="test1" name="veranstaltung" class="veranstaltung">
+
+	</table>
+	<table catalog="test1" name="veranstaltungs_richter"
+		class="veranstaltungs_richter">
+
+	</table>
+	<table catalog="test1" name="veranstaltungs_stufe"
+		class="veranstaltungs_stufe">
+	</table>
+	<table catalog="test1" name="veranstaltungs_teilnehmer"
+		class="veranstaltungs_teilnehmer">
+
+	</table>
+</hibernate-reverse-engineering>

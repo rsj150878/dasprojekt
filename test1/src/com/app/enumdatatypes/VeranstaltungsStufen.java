@@ -16,6 +16,7 @@ import com.app.printclasses.RBP2RichterBlatt;
 import com.app.printclasses.RBP32017RichterBlatt;
 import com.app.printclasses.RBP3RichterBlatt;
 import com.app.printclasses.RBP4RichterBlatt;
+import com.app.printclasses.VtBestaetigungsBlatt;
 import com.vaadin.ui.CustomComponent;
 
 
@@ -59,6 +60,7 @@ public enum VeranstaltungsStufen {
 	STUFE_IBGH1(30, "IBGH1", "IBGH 1", IBgh1RichterBlatt.class, VeranstaltungsStationen.IBGH1, 1,2,3,4,5), 
 	STUFE_IBGH2(31, "IBGH2","IBGH 2", IBgh2RichterBlatt.class, VeranstaltungsStationen.IBGH2, 1,2,3,4,5), 
 	STUFE_IBGH3(32, "IBGH3","IBGH 3", IBgh3RichterBlatt.class, VeranstaltungsStationen.IBGH3, 1,2,3,4,5),
+	STUFE_BH_VT_ONLY(33,"VT", "VT", BhVtRichterBlatt.class, null)
 	
 //	
 

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <mapping resource="ews.hbm.xml"/>
+        <mapping resource="import.hbm.xml"/>
+        <mapping resource="huefte.hbm.xml"/>
+        <mapping resource="emailattachment.hbm.xml"/>
+        <mapping resource="iha_grunddaten.hbm.xml"/>
+        <mapping resource="kursteilnehmer.hbm.xml"/>
+        <mapping resource="schauhund.hbm.xml"/>
+        <mapping resource="veranstaltungs_richter.hbm.xml"/>
+        <mapping resource="Kurskartenbesuche.hbm.xml"/>
+        <mapping resource="schau.hbm.xml"/>
+        <mapping resource="elternupdate.hbm.xml"/>
+        <mapping resource="kurstag.hbm.xml"/>
+        <mapping resource="veranstaltungs_stufe.hbm.xml"/>
+        <mapping resource="ausstellungscup_basis.hbm.xml"/>
+        <mapping resource="ausstellungscup_komprimiert.hbm.xml"/>
+        <mapping resource="emaillist.hbm.xml"/>
+        <mapping resource="kurs.hbm.xml"/>
+        <mapping resource="schulter.hbm.xml"/>
+        <mapping resource="email.hbm.xml"/>
+        <mapping resource="oerc_hund.hbm.xml"/>
+        <mapping resource="veranstaltung.hbm.xml"/>
+        <mapping resource="veranstaltungs_teilnehmer.hbm.xml"/>
+        <mapping resource="kursstunde.hbm.xml"/>
+        <mapping resource="Kurskarte.hbm.xml"/>
+        <mapping resource="auswertungsbasis.hbm.xml"/>
+        <mapping resource="ellenbogen.hbm.xml"/>
+        <mapping resource="Kurskartentyp.hbm.xml"/>
+        <mapping resource="hund.hbm.xml"/>
+        <mapping resource="person.hbm.xml"/>
+        <mapping resource="files.hbm.xml"/>
+        <mapping resource="oerc_hund_neu.hbm.xml"/>
+        <mapping resource="schauring.hbm.xml"/>
+        <mapping resource="user.hbm.xml"/>
+    </session-factory>
+</hibernate-configuration>

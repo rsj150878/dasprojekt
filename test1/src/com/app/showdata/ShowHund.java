@@ -37,8 +37,14 @@ public class ShowHund extends ShowKlasseEnde {
 	private Rassen rasse;
 	private Integer id_teilnehmer;
 	private Boolean veroeffentlichen;
-	
+	private String besitzerEmail;
 	 
+	public String getBesitzerEmail() {
+		return besitzerEmail;
+	}
+	public void setBesitzerEmail(String besitzerEmail) {
+		this.besitzerEmail = besitzerEmail;
+	}
 	public String getShowHundName() {
 		return showHundName;
 	}

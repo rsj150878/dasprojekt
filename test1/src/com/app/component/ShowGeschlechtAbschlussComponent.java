@@ -44,6 +44,7 @@ public class ShowGeschlechtAbschlussComponent extends Panel {
 
 		panelContent.addComponent(buildTab());
 		panelContent.addComponent(buildPrintButton());
+		panelContent.addComponent(buildMailButton());
 
 		setContent(panelContent);
 	}
@@ -80,6 +81,28 @@ public class ShowGeschlechtAbschlussComponent extends Panel {
 		});
 		
 		return printButton;
+	}
+	
+	private Component buildMailButton() {
+		Button mailButton = new Button("Bewertung des klasse mailen");
+		mailButton.addClickListener(event -> {
+			ShowHund[] arry = ende.getRingGeschlechtEndeFor().flattened().filter(p -> (p instanceof ShowHund
+					&& p.getRasse()
+					.equals(ende.getRasse()) && p.getGeschlecht().equals(ende.getGeschlechtEnde())))
+					.toArray(ShowHund[]::new);
+		
+			ShowBewertungsBlatt blatt = new ShowBewertungsBlatt(show, arry);
+			// panelContent.addComponent(blatt);
+			try {
+				blatt.sendBewertungAsEmail(show, arry);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				Notification.show("Fehler beim mailschicken");
+			}
+
+		});
+		return mailButton;
 	}
 
 	private Component buildKlubSieger(String klubSiegerFor, String dataBaseValue) {

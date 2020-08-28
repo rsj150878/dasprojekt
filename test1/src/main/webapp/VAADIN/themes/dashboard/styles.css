@@ -15581,3 +15581,8 @@ div.v-layout.v-horizontal.v-widget {
 .dashboard .reports .transaction .seats {
 	left: 60%;
 }
+
+.dashboard .v-textarea-fieldblacked {
+	background-color: black !important;
+	color: light green;
+}

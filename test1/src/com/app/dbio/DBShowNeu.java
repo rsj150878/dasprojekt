@@ -55,6 +55,35 @@ public class DBShowNeu {
 
 	}
 
+	public List<Show> getShowsForYear(Integer year) throws Exception {
+		Connection conn = DBConnectionNeu.INSTANCE.getConnection();
+
+		PreparedStatement st;
+		st = conn.prepareStatement("select * from schau where schautyp in ('I','C') and year(datum) = ? order by datum desc");
+		st.setInt(1, year);
+
+		List<Show> resultList = new ArrayList<Show>();
+
+		ResultSet resultSetShow = st.executeQuery();
+
+		while (resultSetShow.next()) {
+			Show zwShow = new Show();
+			zwShow.setIdSchau(Integer.valueOf(resultSetShow.getInt("idschau")));
+			zwShow.setLeiter(resultSetShow.getString("leiter"));
+			zwShow.setSchaubezeichnung(resultSetShow.getString("bezeichnung"));
+			zwShow.setSchauDate(resultSetShow.getDate("datum"));
+			zwShow.setSchauKuerzel(resultSetShow.getString("schaukuerzel"));
+			zwShow.setSchauTyp(resultSetShow.getString("schautyp"));
+
+			zwShow.setRinge(getRingeFuerShow(true, zwShow));
+
+			resultList.add(zwShow);
+
+		}
+
+		return resultList;
+
+	}
 	public List<ShowRing> getRingeFuerShow(boolean kurzversion, Show show) throws Exception {
 
 		Connection conn = DBConnectionNeu.INSTANCE.getConnection();
@@ -208,6 +237,8 @@ public class DBShowNeu {
 			zw.setRichter(ring.getRichter());
 			zw.setMitglied(resultSet.getString("mitglied"));
 			zw.setVeroeffentlichen(resultSet.getBoolean("veroeffentlichen"));
+			zw.setBesitzerEmail(resultSet.getString("besitzeremail"));
+			zw.setZuechter(resultSet.getString("zuechter"));
 			resultList.add(zw);
 
 		}
@@ -260,6 +291,8 @@ public class DBShowNeu {
 			zw.setRasse(Rassen.getRasseForKurzBezeichnung(resultSet.getString("rasse")));
 			zw.setMitglied(resultSet.getString("mitglied"));
 			zw.setVeroeffentlichen(resultSet.getBoolean("veroeffentlichen"));
+			zw.setBesitzerEmail(resultSet.getString("besitzeremail"));
+			zw.setZuechter(resultSet.getString("zuechter"));
 			
 			
 			resultList.add(zw);
@@ -300,7 +333,7 @@ public class DBShowNeu {
 		sb.append("CACA = ?, CACIB = ?, BOB = ?, clubsieger = ?");
 		sb.append(", name = ?, wurftag = ?, zuchtbuchnummer = ?, katalognummer =?");
 		sb.append(",  rasse = ?, vater = ?, mutter = ?, ");
-		sb.append("besitzershow = ?, geschlecht = ?, sort_kat_nr = ?, idschauring = ?, chipnummer = ?");
+		sb.append("besitzershow = ?, geschlecht = ?, sort_kat_nr = ?, idschauring = ?, chipnummer = ?, veroeffentlichen=?,besitzeremail=?");
 		sb.append(" where idschauhund = ?");
 		PreparedStatement st = conn.prepareStatement(sb.toString());
 		st.setString(1, updateHund.getBewertung());
@@ -323,7 +356,10 @@ public class DBShowNeu {
 		st.setInt(18, updateHund.getSort_kat_nr().intValue());
 		st.setInt(19, updateHund.getRingId().intValue());
 		st.setString(20,updateHund.getChipnummer());
-		st.setInt(21, updateHund.getIdschauhund().intValue());
+		st.setBoolean(21,updateHund.getVeroeffentlichen());
+		st.setString(22,updateHund.getBesitzerEmail());
+		
+		st.setInt(23, updateHund.getIdschauhund().intValue());
 
 		System.out.println("update showhund " + updateHund.getIdschauhund());
 
@@ -454,6 +490,9 @@ public class DBShowNeu {
 			result.setRasse(Rassen.getRasseForKurzBezeichnung(resultSet.getString("rasse")));
 			result.setRingNummer(ring.getRingNummer());
 			result.setRichter(ring.getRichter());
+			result.setVeroeffentlichen(resultSet.getBoolean("veroeffentlichen"));
+			result.setBesitzerEmail(resultSet.getString("besitzeremail"));
+			result.setZuechter(resultSet.getString("zuechter"));
 
 		} else {
 			StringBuilder insertSb = new StringBuilder();

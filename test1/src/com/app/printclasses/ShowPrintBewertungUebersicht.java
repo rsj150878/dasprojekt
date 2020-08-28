@@ -276,7 +276,7 @@ public class ShowPrintBewertungUebersicht extends CustomComponent {
 	// Name Hund#
 	//
 
-	private String getFormwertText(Show show, ShowHund hund) throws Exception {
+	public static String getFormwertText(Show show, ShowHund hund) throws Exception {
 
 		StringBuilder sb = new StringBuilder();
 		if (!(hund.getFormwert() == null)) {

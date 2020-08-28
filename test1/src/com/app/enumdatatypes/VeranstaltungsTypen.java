@@ -11,7 +11,7 @@ public enum VeranstaltungsTypen {
 	RBP_2017_WASSER(7,"RBP" ,Boolean.TRUE,null, 5,22,23,8),
 	TRAIN_WT_2017(8, "Trainings-Working-Test", Boolean.TRUE,null, 24,25,26),
 	JUNGHUNDEPRUEFUNG(9, "Junghundepruefung", Boolean.TRUE, null, 27),
-	BH_BGH_PRÜFUNG_2019(10, "BH-IBGH-Prüfung", Boolean.TRUE, null,28, 29, 30, 31, 32),
+	BH_BGH_PRÜFUNG_2019(10, "BH-IBGH-Prüfung", Boolean.TRUE, null,28, 29, 30, 31, 32, 33),
 
 	
 ;

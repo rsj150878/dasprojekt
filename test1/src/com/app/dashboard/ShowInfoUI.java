@@ -1,39 +1,31 @@
 package com.app.dashboard;
 
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
 
-import com.app.dashboard.event.DashBoardEventBus;
-import com.app.dbio.DBConnection;
+import com.app.dbio.DBShowNeu;
 import com.app.enumdatatypes.Rassen;
 import com.app.enumdatatypes.ShowKlassen;
+import com.app.printclasses.ShowPrintBewertungUebersicht;
+import com.app.showdata.Show;
+import com.app.showdata.ShowHund;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.Widgetset;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
-import com.vaadin.v7.data.Container.Filter;
-import com.vaadin.v7.data.Item;
-import com.vaadin.v7.data.Property.ValueChangeEvent;
-import com.vaadin.v7.data.Property.ValueChangeListener;
-import com.vaadin.v7.data.util.filter.Between;
-import com.vaadin.v7.data.util.filter.Compare.Equal;
-import com.vaadin.v7.data.util.filter.Or;
-import com.vaadin.v7.data.util.sqlcontainer.SQLContainer;
-import com.vaadin.v7.data.util.sqlcontainer.query.OrderBy;
-import com.vaadin.v7.data.util.sqlcontainer.query.TableQuery;
-import com.vaadin.v7.shared.ui.label.ContentMode;
-import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.Label;
 
 @Theme("dashboard")
 @Widgetset("com.app.DashBoard.DashboardWidgetsetNeu")
@@ -42,65 +34,33 @@ import com.vaadin.v7.ui.Label;
 public final class ShowInfoUI extends UI {
 
 	/*
-	 * This field stores an access to the dummy backend layer. In real
-	 * applications you most likely gain access to your beans trough lookup or
-	 * injection; and not in the UI but somewhere closer to where they're
-	 * actually accessed.
+	 * This field stores an access to the dummy backend layer. In real applications
+	 * you most likely gain access to your beans trough lookup or injection; and not
+	 * in the UI but somewhere closer to where they're actually accessed.
 	 */
 
-	private TableQuery q1;
-	private TableQuery q2;
-	private TableQuery q3;
-
-	private SQLContainer showContainer;
-	private SQLContainer ringContainer;
-	private SQLContainer hundContainer;
-
-	Filter showFilter;
-	Filter rassenFilter;
-	ComboBox showSelect;
-	ComboBox rassenSelect;
+	ComboBox<Show> showSelect;
+	ComboBox<Rassen> rassenSelect;
 	Panel scrollPanel;
 
+	List<Show> showList;
+	DBShowNeu db = new DBShowNeu();
+
 	// private final DataProvider dataProvider = new DummyDataProvider();
-	private final DashBoardEventBus dashboardEventbus = new DashBoardEventBus();
 
 	@Override
 	protected void init(final VaadinRequest request) {
 		setLocale(Locale.GERMANY);
 
 		Responsive.makeResponsive(this);
-		// addStyleName(ValoTheme.UI_WITH_MENU);
-
-		q1 = new TableQuery("schau", DBConnection.INSTANCE.getConnectionPool());
-		q1.setVersionColumn("version");
-
-		q2 = new TableQuery("schauring", DBConnection.INSTANCE.getConnectionPool());
-		q2.setVersionColumn("version");
-
-		q3 = new TableQuery("schauhund", DBConnection.INSTANCE.getConnectionPool());
-		q3.setVersionColumn("version");
-
-		try {
-			showContainer = new SQLContainer(q1);
-
-			ringContainer = new SQLContainer(q2);
-			hundContainer = new SQLContainer(q3);
-
-			hundContainer.addOrderBy(new OrderBy("sort_kat_nr", true));
-			hundContainer.addOrderBy(new OrderBy("katalognummer", true));
-
-		} catch (SQLException e) {
-
-		}
-
+	
 		updateContent();
 
 	}
 
 	/**
-	 * Updates the correct content for this UI based on the current user status.
-	 * If the user is logged in with appropriate privileges, main view is shown.
+	 * Updates the correct content for this UI based on the current user status. If
+	 * the user is logged in with appropriate privileges, main view is shown.
 	 * Otherwise login view is shown.
 	 */
 	private void updateContent() {
@@ -114,50 +74,23 @@ public final class ShowInfoUI extends UI {
 		infoFormLayout.setSpacing(true);
 		infoFormLayout.setMargin(true);
 
-		final ComboBox yearSelect = new ComboBox("Ausstellungsjahr");
-		yearSelect.addItem(2016);
-		yearSelect.setItemCaption(2016, "2016");
-		yearSelect.addItem(2017);
-		yearSelect.setItemCaption(2017, "2017");
-		yearSelect.addItem(2018);
-		yearSelect.setItemCaption(2018, "2018");
-
+		Integer[] showJahre = { 2016, 2017, 2018, 2019, 2020 };
+		final ComboBox<Integer> yearSelect = new ComboBox<>("Ausstellungsjahr");
+		yearSelect.setItems(showJahre);
 		infoFormLayout.addComponent(yearSelect);
 		infoFormLayout.setComponentAlignment(yearSelect, Alignment.MIDDLE_CENTER);
 
-		showSelect = new ComboBox("Schau");
+		showSelect = new ComboBox<>("Schau");
 		showSelect.setEnabled(false);
-		showSelect.setContainerDataSource(showContainer);
-		showSelect.setItemCaptionPropertyId("bezeichnung");
+		showSelect.setItemCaptionGenerator(Show::getSchaubezeichnung);
 
 		infoFormLayout.addComponent(showSelect);
 
-		rassenSelect = new ComboBox("Rasse");
+		rassenSelect = new ComboBox<>("Rasse");
 		rassenSelect.setEnabled(false);
 
-		rassenSelect.addItem(Rassen.GOLDEN_RETRIEVER.getRassenKurzBezeichnung());
-		rassenSelect.setItemCaption(Rassen.GOLDEN_RETRIEVER.getRassenKurzBezeichnung(),
-				Rassen.GOLDEN_RETRIEVER.getRassenLangBezeichnung());
-
-		rassenSelect.addItem(Rassen.LABRADOR_RETRIEVER.getRassenKurzBezeichnung());
-		rassenSelect.setItemCaption(Rassen.LABRADOR_RETRIEVER.getRassenKurzBezeichnung(),
-				Rassen.LABRADOR_RETRIEVER.getRassenLangBezeichnung());
-
-		rassenSelect.addItem(Rassen.CHESAPEAKE_BAY_RETRIEVER.getRassenKurzBezeichnung());
-		rassenSelect.setItemCaption(Rassen.CHESAPEAKE_BAY_RETRIEVER.getRassenKurzBezeichnung(),
-				Rassen.CHESAPEAKE_BAY_RETRIEVER.getRassenLangBezeichnung());
-
-		rassenSelect.addItem(Rassen.FLAT_COATED_RETRIEVER.getRassenKurzBezeichnung());
-		rassenSelect.setItemCaption(Rassen.FLAT_COATED_RETRIEVER.getRassenKurzBezeichnung(),
-				Rassen.FLAT_COATED_RETRIEVER.getRassenLangBezeichnung());
-
-		rassenSelect.addItem(Rassen.CURLY_COATED_RETRIEVER.getRassenKurzBezeichnung());
-		rassenSelect.setItemCaption(Rassen.CURLY_COATED_RETRIEVER.getRassenKurzBezeichnung(),
-				Rassen.CURLY_COATED_RETRIEVER.getRassenLangBezeichnung());
-
-		rassenSelect.addItem(Rassen.NOVA_SCOTIA_DUCK_TOLLING_RETRIEVER.getRassenKurzBezeichnung());
-		rassenSelect.setItemCaption(Rassen.NOVA_SCOTIA_DUCK_TOLLING_RETRIEVER.getRassenKurzBezeichnung(),
-				Rassen.NOVA_SCOTIA_DUCK_TOLLING_RETRIEVER.getRassenLangBezeichnung());
+		rassenSelect.setItems(Rassen.getOercRassen());
+		rassenSelect.setItemCaptionGenerator(Rassen::getRassenLangBezeichnung);
 
 		infoFormLayout.addComponent(rassenSelect);
 
@@ -175,81 +108,45 @@ public final class ShowInfoUI extends UI {
 		mainLayout.setComponentAlignment(scrollPanel, Alignment.MIDDLE_CENTER);
 		mainLayout.setExpandRatio(scrollPanel, 3);
 
-		yearSelect.addValueChangeListener(new ValueChangeListener() {
+		yearSelect.addValueChangeListener(event -> {
+			System.out.println("vlaue " + yearSelect.getValue());
 
-			@Override
-			public void valueChange(ValueChangeEvent event) {
-				System.out.println("vlaue " + yearSelect.getValue());
-				showContainer.removeAllContainerFilters();
-				showContainer.addContainerFilter(
-						new Between("datum", new GregorianCalendar((int) yearSelect.getValue(), 1, 1).getTime(),
-								new GregorianCalendar((int) yearSelect.getValue(), 12, 31).getTime()));
-				showContainer.addContainerFilter(new Or(new Equal("schautyp", "I"), new Equal("schautyp", "C")));
-
-				showSelect.setContainerDataSource(showContainer);
-				showSelect.markAsDirty();
-				showSelect.setEnabled(true);
-				rassenSelect.setEnabled(false);
-				rassenSelect.select(null);
-
+			try {
+				showList = db.getShowsForYear(yearSelect.getValue());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+			showSelect.setItems(showList);
+	
+			showSelect.setValue(null);
+			showSelect.setEnabled(true);
+			rassenSelect.setEnabled(false);
 
-		});
+			rassenSelect.setValue(null);
+			scrollPanel.setContent(new VerticalLayout());
+		}
 
-		showSelect.addValueChangeListener(new ValueChangeListener() {
+		);
 
-			@Override
-			public void valueChange(ValueChangeEvent event) {
-				// TODO Auto-generated method stub
-				rassenSelect.setEnabled(true);
-				rassenSelect.select(null);
-				addShowFilter();
+		showSelect.addValueChangeListener(evt -> {
+			// TODO Auto-generated method stub
+			rassenSelect.setEnabled(true);
+			rassenSelect.setValue(null);
+			scrollPanel.setContent(new VerticalLayout());
 
-			}
+		}
 
-		});
+		);
 
-		rassenSelect.addValueChangeListener(new ValueChangeListener() {
-
-			@Override
-			public void valueChange(ValueChangeEvent event) {
-				// TODO Auto-generated method stub
-
-				addRasseFilter();
-				if (!(rassenSelect.getValue() == null)) {
-					buildInfoArea();
-				}
+		rassenSelect.addValueChangeListener(evt -> {
+			if (rassenSelect.getValue() != null) {
+				buildInfoArea();
 			}
 		});
 
 		setContent(mainLayout);
 
-	}
-
-	private void addShowFilter() {
-
-		if (!(showFilter == null)) {
-			hundContainer.removeContainerFilter(showFilter);
-		}
-
-		Item showItem = showContainer.getItem(showSelect.getValue());
-		if (!(showItem == null)) {
-			showFilter = new Equal("idschau", showItem.getItemProperty("idschau").getValue());
-
-			hundContainer.addContainerFilter(showFilter);
-
-		}
-	}
-
-	private void addRasseFilter() {
-		if (!(rassenFilter == null)) {
-			hundContainer.removeContainerFilter(rassenFilter);
-		}
-
-		if (!(rassenSelect.getValue() == null)) {
-			rassenFilter = new Equal("rasse", rassenSelect.getValue());
-			hundContainer.addContainerFilter(rassenFilter);
-		}
 	}
 
 	private void buildInfoArea() {
@@ -258,200 +155,150 @@ public final class ShowInfoUI extends UI {
 		// infoLayout.setSizeUndefined();
 		scrollPanel.setContent(infoLayout);
 
-		if (hundContainer.size() == 0) {
-			Label noDog = new Label();
-			noDog.setContentMode(ContentMode.HTML);
-			noDog.setValue("<center>Leider waren keine Hunde gemeldet</center>");
-			infoLayout.addComponent(noDog);
-			infoLayout.setComponentAlignment(noDog, Alignment.MIDDLE_CENTER);
+		Label klassenLabel = new Label();
+		klassenLabel.setContentMode(ContentMode.HTML);
+		klassenLabel.setValue("<center>" + "Rüden" + "</center>");
+		klassenLabel.addStyleName(ValoTheme.LABEL_H2);
+		infoLayout.addComponent(klassenLabel);
+		infoLayout.setComponentAlignment(klassenLabel, Alignment.TOP_CENTER);
 
-		} else {
-
-			String geschlecht = "";
-			String currentKlasse = "";
-			for (int i = 0; i < hundContainer.size(); i++) {
-				Item currentItem = hundContainer.getItem(hundContainer.getIdByIndex(i));
-
-				VerticalLayout hundLayout = new VerticalLayout();
-				// hundLayout.setSizeFull();
-
-				if (!geschlecht.equals(currentItem.getItemProperty("geschlecht").getValue())) {
-					Label klassenLabel = new Label();
-					klassenLabel.setContentMode(ContentMode.HTML);
-					klassenLabel.setValue(
-							"<center>" + (currentItem.getItemProperty("geschlecht").getValue().toString().equals("R")
-									? "Rüden" : "Hündinnen") + "</center>");
-					klassenLabel.addStyleName(ValoTheme.LABEL_H2);
-					hundLayout.addComponent(klassenLabel);
-					hundLayout.setComponentAlignment(klassenLabel, Alignment.TOP_CENTER);
-
-					currentKlasse = currentItem.getItemProperty("geschlecht").getValue().toString();
-					geschlecht = currentItem.getItemProperty("geschlecht").getValue().toString();
-					currentKlasse = "";
-				}
-
-				if (!currentKlasse.equals(currentItem.getItemProperty("klasse").getValue())) {
-					Label klassenLabel = new Label();
-					klassenLabel.setContentMode(ContentMode.HTML);
-					System.out.println("klasse: " + currentItem.getItemProperty("klasse").getValue().toString().trim());
-					klassenLabel
-							.setValue("<center>"
-									+ ShowKlassen.getLangBezeichnungFuerKurzBezeichnung(
-											currentItem.getItemProperty("klasse").getValue().toString().trim())
-									+ "</center>");
-					klassenLabel.addStyleName(ValoTheme.LABEL_H2);
-					hundLayout.addComponent(klassenLabel);
-					hundLayout.setComponentAlignment(klassenLabel, Alignment.TOP_CENTER);
-
-					currentKlasse = currentItem.getItemProperty("klasse").getValue().toString();
-				}
-
-				Label hund = new Label();
-				hund.setContentMode(ContentMode.HTML);
-				String name = "<center><b>" + currentItem.getItemProperty("katalognummer").getValue() + "</b> "
-						+ currentItem.getItemProperty("name").getValue() + "</center>";
-				hund.setValue(name.trim());
-				hund.setReadOnly(true);
-				hund.addStyleName(ValoTheme.LABEL_H3);
-				hundLayout.addComponent(hund);
-				hundLayout.setComponentAlignment(hund, Alignment.TOP_CENTER);
-
-				Label zbnrWt = new Label();
-				zbnrWt.setContentMode(ContentMode.HTML);
-				zbnrWt.setValue("<center>" + currentItem.getItemProperty("zuchtbuchnummer").getValue() + ", gew. am "
-						+ new SimpleDateFormat("dd.MM.yyyy").format(currentItem.getItemProperty("wurftag").getValue())
-						+ "</center>");
-				hundLayout.addComponent(zbnrWt);
-				hundLayout.setComponentAlignment(zbnrWt, Alignment.TOP_CENTER);
-
-				Label besitzer = new Label();
-				besitzer.setContentMode(ContentMode.HTML);
-				besitzer.setValue("<center><b>Besitzer: </b>" + currentItem.getItemProperty("besitzershow").getValue()
-						+ "</center>");
-				hundLayout.addComponent(besitzer);
-				hundLayout.setComponentAlignment(besitzer, Alignment.TOP_CENTER);
-
-				Label zuechter = new Label();
-				zuechter.setContentMode(ContentMode.HTML);
-				zuechter.setValue(
-						"<center><b>Züchter: </b>" + currentItem.getItemProperty("zuechter").getValue() + "</center>");
-				hundLayout.addComponent(zuechter);
-				hundLayout.setComponentAlignment(zuechter, Alignment.TOP_CENTER);
-
-				Label vater = new Label();
-				vater.setContentMode(ContentMode.HTML);
-				vater.setValue(
-						"<center><b>Vater: </b>" + currentItem.getItemProperty("vater").getValue() + "</center>");
-				hundLayout.addComponent(vater);
-				hundLayout.setComponentAlignment(vater, Alignment.TOP_CENTER);
-
-				Label mutter = new Label();
-				mutter.setContentMode(ContentMode.HTML);
-				mutter.setValue(
-						"<center><b>Mutter: </b>" + currentItem.getItemProperty("mutter").getValue() + "</center>");
-				hundLayout.addComponent(mutter);
-				hundLayout.setComponentAlignment(mutter, Alignment.TOP_CENTER);
-
-				// System.out.println("katalognummer" + currentItem.getItemPro)
-				TextArea beschreibung = new TextArea();
-				beschreibung.addStyleName(ValoTheme.TEXTAREA_BORDERLESS);
-				beschreibung.setWidth(50.f, Unit.PERCENTAGE);
-
-				if (!(currentItem.getItemProperty("hundfehlt").getValue() == null)) {
-					if (currentItem.getItemProperty("hundfehlt").getValue().toString().equals("J"))
-						beschreibung.setValue("Hund fehlt");
-					else
-						beschreibung.setValue("" + currentItem.getItemProperty("bewertung").getValue());
-				} else {
-					if (!(currentItem.getItemProperty("bewertung").getValue() == null)) {
-
-						beschreibung.setValue("" + currentItem.getItemProperty("bewertung").getValue());
-
-					}
-
-				}
-
-				StringBuilder sb = new StringBuilder();
-				String bewertung = "";
-
-				if ((!(currentItem.getItemProperty("hundfehlt").getValue() == null)
-						&& currentItem.getItemProperty("hundfehlt").getValue().toString().equals("N"))
-						|| currentItem.getItemProperty("hundfehlt").getValue() == null) {
-
-					if (!(currentItem.getItemProperty("formwert").getValue() == null)) {
-						switch (currentItem.getItemProperty("formwert").getValue().toString()) {
-						case "vv":
-							sb.append("vielversprechend");
-							break;
-						case "v":
-							if (currentItem.getItemProperty("klasse").getValue().toString().equals("JÜ"))
-								sb.append("versprechend");
-							else
-								sb.append("V");
-							break;
-						case "sg":
-							sb.append("SG");
-							break;
-						case "g":
-							sb.append("gut");
-							break;
-						case "gen":
-							sb.append("genügend");
-							break;
-						case "ob":
-							sb.append("ohne bewertung");
-							break;
-						default:
-							sb.append("");
-
-						}
-					}
-					
-					if (!(currentItem.getItemProperty("platzierung").getValue() == null))
-						sb.append(currentItem.getItemProperty("platzierung").getValue());
-
-					if (!(currentItem.getItemProperty("CACA").getValue() == null)) {
-						if (currentItem.getItemProperty("CACA").getValue().equals("J"))
-							sb.append(", JB");
-						else
-							sb.append(currentItem.getItemProperty("CACA").getValue().equals("C") ? ", CACA"
-									: ", Res.CACA");
-					}
-
-					if (!(currentItem.getItemProperty("CACIB").getValue() == null)) {
-						sb.append(currentItem.getItemProperty("CACIB").getValue().equals("C") ? ", CACIB"
-								: ", Res.CACIB");
-					}
-
-					if (!(currentItem.getItemProperty("BOB").getValue() == null)) {
-						sb.append(currentItem.getItemProperty("BOB").getValue().equals("B") ? ", BOB" : ", BOS");
-					}
-					// sb.append((!(currentItem.getItemProperty("CACA").getValue()
-					// == null &&))
-
-				}
-
-				Label formwert = new Label();
-				formwert.setContentMode(ContentMode.HTML);
-				formwert.setValue("<center><b>Bewertung: </b>" + sb.toString() + "</center>");
-				hundLayout.addComponent(formwert);
-				hundLayout.setComponentAlignment(formwert, Alignment.BOTTOM_CENTER);
-
-				beschreibung.setReadOnly(true);
-				hundLayout.addComponent(beschreibung);
-				hundLayout.setComponentAlignment(beschreibung, Alignment.MIDDLE_CENTER);
-
-				infoLayout.addComponent(hundLayout);
-				infoLayout.setComponentAlignment(hundLayout, Alignment.MIDDLE_CENTER);
+		for (ShowKlassen x : ShowKlassen.values()) {
+			List<ShowHund> hundDerKlassen = null;
+			try {
+				hundDerKlassen = db.getHundeForKlasse(showSelect.getValue(), x, rassenSelect.getValue(), "R");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+
+			if (hundDerKlassen.size() > 0) {
+
+				klassenLabel = new Label();
+				klassenLabel.setContentMode(ContentMode.HTML);
+				klassenLabel.setValue("<center>" + x.getShowKlasseLangBezeichnung() + "</center>");
+				klassenLabel.addStyleName(ValoTheme.LABEL_H2);
+				infoLayout.addComponent(klassenLabel);
+				infoLayout.setComponentAlignment(klassenLabel, Alignment.TOP_CENTER);
+
+				Component zw = printKlasse(showSelect.getValue(), x, hundDerKlassen, "R");
+				infoLayout.addComponent(zw);
+				infoLayout.setComponentAlignment(zw, Alignment.MIDDLE_CENTER);
+			}
+
+		}
+
+		klassenLabel = new Label();
+		klassenLabel.setContentMode(ContentMode.HTML);
+		klassenLabel.setValue("<center>" + "Hündinnen" + "</center>");
+		klassenLabel.addStyleName(ValoTheme.LABEL_H2);
+		infoLayout.addComponent(klassenLabel);
+		infoLayout.setComponentAlignment(klassenLabel, Alignment.TOP_CENTER);
+
+		for (ShowKlassen x : ShowKlassen.values()) {
+			List<ShowHund> hundDerKlassen = null;
+			try {
+				hundDerKlassen = db.getHundeForKlasse(showSelect.getValue(), x, rassenSelect.getValue(), "H");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			if (hundDerKlassen.size() > 0) {
+				klassenLabel = new Label();
+				klassenLabel.setContentMode(ContentMode.HTML);
+				klassenLabel.setValue("<center>" + x.getShowKlasseLangBezeichnung() + "</center>");
+				klassenLabel.addStyleName(ValoTheme.LABEL_H2);
+				infoLayout.addComponent(klassenLabel);
+				infoLayout.setComponentAlignment(klassenLabel, Alignment.TOP_CENTER);
+
+				Component zw = printKlasse(showSelect.getValue(), x, hundDerKlassen, "R");
+
+				infoLayout.addComponent(zw);
+				infoLayout.setComponentAlignment(zw, Alignment.MIDDLE_CENTER);
+			}
+
 		}
 
 	}
-	/**
-	 * @return An instance for accessing the (dummy) services layer.
-	 */
-	// public static DataProvider getDataProvider() {
-	// return ((DashboardUI) getCurrent()).dataProvider;
-	// }
 
+	private Component printKlasse(Show show, ShowKlassen klasse, List<ShowHund> hundeDerKlasse, String geschlecht) {
+
+		VerticalLayout hundLayout = new VerticalLayout();
+
+		for (ShowHund zwHund : hundeDerKlasse) {
+
+			Label hund = new Label();
+			hund.setContentMode(ContentMode.HTML);
+			String name = "<center><b>" + zwHund.getKatalognumer() + "</b> " + (zwHund.getVeroeffentlichen() ? zwHund.getShowHundName():"--")  + "</center>";
+			hund.setValue(name.trim());
+			hund.addStyleName(ValoTheme.LABEL_H3);
+			hundLayout.addComponent(hund);
+			hundLayout.setComponentAlignment(hund, Alignment.TOP_CENTER);
+
+			Label zbnrWt = new Label();
+			zbnrWt.setContentMode(ContentMode.HTML);
+			zbnrWt.setValue("<center>" + (zwHund.getVeroeffentlichen() ? zwHund.getZuchtbuchnummer() :"--") + ", gew. am "
+					+ 
+					(zwHund.getVeroeffentlichen() ? new SimpleDateFormat("dd.MM.yyyy").format(zwHund.getWurftag()) :"--") + "</center>");
+			hundLayout.addComponent(zbnrWt);
+			hundLayout.setComponentAlignment(zbnrWt, Alignment.TOP_CENTER);
+
+			Label besitzer = new Label();
+			besitzer.setContentMode(ContentMode.HTML);
+			besitzer.setValue("<center><b>Besitzer: </b>" + (zwHund.getVeroeffentlichen() ? zwHund.getBesitzershow() :"--") + "</center>");
+			hundLayout.addComponent(besitzer);
+			hundLayout.setComponentAlignment(besitzer, Alignment.TOP_CENTER);
+
+			Label zuechter = new Label();
+			zuechter.setContentMode(ContentMode.HTML);
+			zuechter.setValue("<center><b>Züchter: </b>" + (zwHund.getVeroeffentlichen() ? zwHund.getZuechter() :"--") + "</center>");
+			hundLayout.addComponent(zuechter);
+			hundLayout.setComponentAlignment(zuechter, Alignment.TOP_CENTER);
+
+			Label vater = new Label();
+			vater.setContentMode(ContentMode.HTML);
+			vater.setValue("<center><b>Vater: </b>" + (zwHund.getVeroeffentlichen() ? zwHund.getVater() :"--") + "</center>");
+			hundLayout.addComponent(vater);
+			hundLayout.setComponentAlignment(vater, Alignment.TOP_CENTER);
+
+			Label mutter = new Label();
+			mutter.setContentMode(ContentMode.HTML);
+			mutter.setValue("<center><b>Mutter: </b>" + (zwHund.getVeroeffentlichen() ? zwHund.getMutter() :"--") + "</center>");
+			hundLayout.addComponent(mutter);
+			hundLayout.setComponentAlignment(mutter, Alignment.TOP_CENTER);
+
+			String bewertung = "";
+			try {
+				bewertung = ShowPrintBewertungUebersicht.getFormwertText(show, zwHund);
+			} catch (Exception e) {
+
+			}
+
+			Label formwert = new Label();
+			formwert.setContentMode(ContentMode.HTML);
+			formwert.setValue("<center><b>Bewertung: </b>" + (zwHund.getVeroeffentlichen() ? bewertung :"--") + "</center>");
+			hundLayout.addComponent(formwert);
+			hundLayout.setComponentAlignment(formwert, Alignment.BOTTOM_CENTER);
+			
+			// System.out.println("katalognummer" + currentItem.getItemPro)
+			TextArea beschreibung = new TextArea();
+			beschreibung.addStyleName(ValoTheme.TEXTAREA_BORDERLESS);
+			beschreibung.setWidth(50.f, Unit.PERCENTAGE);
+			
+			if (!(zwHund.getBewertung() == null)) {
+
+				beschreibung.setValue("" + (zwHund.getVeroeffentlichen() ? zwHund.getBewertung() :"wird nicht veröffentlicht") );
+
+			}
+
+		
+		
+			
+			beschreibung.setReadOnly(true);
+			hundLayout.addComponent(beschreibung);
+			hundLayout.setComponentAlignment(beschreibung, Alignment.MIDDLE_CENTER);
+
+		}
+		return hundLayout;
+	}
 }

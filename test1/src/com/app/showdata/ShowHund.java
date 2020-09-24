@@ -38,7 +38,28 @@ public class ShowHund extends ShowKlasseEnde {
 	private Integer id_teilnehmer;
 	private Boolean veroeffentlichen;
 	private String besitzerEmail;
-	 
+	private String besterHund;
+	private String JBOB;
+	private String VBOB;
+	
+	public String getBesterHund() {
+		return besterHund;
+	}
+	public void setBesterHund(String besterHund) {
+		this.besterHund = besterHund;
+	}
+	public String getJBOB() {
+		return JBOB;
+	}
+	public void setJBOB(String jBOB) {
+		JBOB = jBOB;
+	}
+	public String getVBOB() {
+		return VBOB;
+	}
+	public void setVBOB(String vBOB) {
+		VBOB = vBOB;
+	}
 	public String getBesitzerEmail() {
 		return besitzerEmail;
 	}

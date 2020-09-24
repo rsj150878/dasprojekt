@@ -20,6 +20,7 @@ import javax.mail.internet.MimeMultipart;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
+import com.app.enumdatatypes.ShowEmailSender;
 import com.app.service.TemporaryFileDownloadResource;
 import com.app.showdata.Show;
 import com.app.showdata.ShowHund;
@@ -41,12 +42,13 @@ public class ShowBewertungsBlatt extends CustomComponent {
 	 */
 	private static final long serialVersionUID = -8769572414405768707L;
 	/** The original PDF file. */
-	public static final String DATASHEET = "files/BEWERTUNGSBLATT_FORM.pdf";
+	public static final String DATASHEET = "files/BEWERTUNGSBLATT_NEU_VBOB.pdf";
 	public static final String DATASHEET_IHA = "files/BEWERTUNGSBLATT_IHA.pdf";
 	public static final String DATASHEET_WESENSTEST = "files/BEWERTUNGSBLATT_WT.pdf";
 	public static final String FONT = "files/arialuni.ttf";
 
 	public static final String ZERTIFIKAT_VORLAGE = "files/URKUNDE_CSS_2020.pdf";
+	public static final String ZERTIFIKAT_FESTIVAL = "files/retrieverfestival_urkunde_2020_form.pdf";
 
 	public static final String RESULT = "Bewertung.pdf";
 	public static final String ZERTIFIKAT = "Zertifikat.pdf";
@@ -81,6 +83,8 @@ public class ShowBewertungsBlatt extends CustomComponent {
 
 	public ShowBewertungsBlatt(Show show, String dokument, ShowHund... hund) {
 
+		ShowEmailSender senderProps = ShowEmailSender.getEmailSenderForID(show.getEmailSenderID());
+
 		mainLayout = new AbsoluteLayout();
 		mainLayout.setWidth("100%");
 		mainLayout.setHeight("100%");
@@ -95,7 +99,7 @@ public class ShowBewertungsBlatt extends CustomComponent {
 				s = new TemporaryFileDownloadResource(RESULT, "application/pdf", new File(RESULT));
 
 			} else {
-				bauPdfZertifikat(show, hund);
+				bauPdfZertifikat(show, senderProps, hund);
 				s = new TemporaryFileDownloadResource(ZERTIFIKAT, "application/pdf", new File(ZERTIFIKAT));
 
 			}
@@ -113,31 +117,35 @@ public class ShowBewertungsBlatt extends CustomComponent {
 	}
 
 	public void sendBewertungAsEmail(Show show, ShowHund... hund) throws Exception {
+
+		ShowEmailSender senderProps = ShowEmailSender.getEmailSenderForID(show.getEmailSenderID());
+
+		if (senderProps == null) {
+			return;
+		}
 		Properties prop = new Properties();
 		prop.put("mail.smtp.auth", true);
-		//prop.put("mail.smtp.starttls.enable", "true");
-		prop.put("mail.smtp.host", "mail.mymagenta.business");
+		prop.put("mail.smtp.host", senderProps.getHost());
 		prop.put("mail.smtp.port", "587");
-		//prop.put("mail.smtp.ssl.trust", "mail.mymagenta.business");
-		
-//		prop.put("mail.smtp.auth", true);
-//		prop.put("mail.smtp.starttls.enable", "true");
-//		prop.put("mail.smtp.host", "smtp.world4you.com");
-//		prop.put("mail.smtp.port", "587");
-//		prop.put("mail.smtp.ssl.trust", "smtp.world4you.com");
+
+		if (senderProps.getUseSSL()) {
+
+			prop.put("mail.smtp.starttls.enable", "true");
+			prop.put("mail.smtp.ssl.trust", senderProps.getHost());
+		}
 
 		Session session = Session.getInstance(prop, new Authenticator() {
 			@Override
 			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication("show@retrieverclub.at", "?Show66");
+				return new PasswordAuthentication(senderProps.getAbsender(), senderProps.getPassword());
 			}
-		}); // show@retrieverclub.at ?Show66
+		});
 
 		for (int i = 0; i < hund.length; i++) {
 
 			System.out.println("mail an " + hund[i].getBesitzerEmail() + " vorbereitet");
 			Message message = new MimeMessage(session);
-			message.setFrom(new InternetAddress("show@retrieverclub.at"));
+			message.setFrom(new InternetAddress(senderProps.getAbsender()));
 
 			if (hund[i].getBesitzerEmail() == null || hund[i].getBesitzerEmail().isEmpty()) {
 				message.setRecipients(Message.RecipientType.TO,
@@ -151,28 +159,11 @@ public class ShowBewertungsBlatt extends CustomComponent {
 
 			message.setSubject("Bewertungsblatt und Urkunde");
 
-			StringBuilder msg = new StringBuilder();
-			msg.append("Werter Aussteller!");
-			msg.append("<br>");
-			msg.append("Im Anhang erhalten Sie das Bewertungsblatt und die Urkunde Ihres Hundes "
-					+ hund[i].getShowHundName() + " ");
-			msg.append("der Ausstellung " + show.getSchaubezeichnung());
-			msg.append("<br>");
-			msg.append("<br>");
-			msg.append(
-					"Wir danken für Ihren Besuch!<br>");
-			msg.append("<br>");
-			msg.append("Besuchen Sie doch auch das Retriever Festival am 25.09.2020!<br>");
-			msg.append("Nutzen Sie die Möglichkeit, bis zum 31. August 2020 noch vergünstigt zu melden!<br>");
-			msg.append("Meldungen sind unter <a href=\"www.hundeausstellungen.at\">www.hundeausstellungen.at</a> möglich!");
-			msg.append("<br>");
-			msg.append("<br>");
-			msg.append("mit freundlichen Grüßen<br>");
-			msg.append("<br>");
-			msg.append("Das ÖRC Show Referat");
+			String msg = senderProps.getMailText().replaceAll("XXX_HUNDENAME_XXX", hund[i].getShowHundName())
+					.replaceAll("XXX_SHOWNAME_XXX", show.getSchaubezeichnung());
 
 			MimeBodyPart mimeBodyPart = new MimeBodyPart();
-			mimeBodyPart.setContent(msg.toString(), "text/html; charset=UTF-8");
+			mimeBodyPart.setContent(msg, "text/html; charset=UTF-8");
 
 			Multipart multipart = new MimeMultipart();
 			multipart.addBodyPart(mimeBodyPart);
@@ -183,14 +174,13 @@ public class ShowBewertungsBlatt extends CustomComponent {
 			multipart.addBodyPart(attachmentBodyPart);
 
 			attachmentBodyPart = new MimeBodyPart();
-			bauPdfZertifikat(show, hund[i]);
+			bauPdfZertifikat(show, senderProps, hund[i]);
 			attachmentBodyPart.attachFile(new File(ZERTIFIKAT));
 			multipart.addBodyPart(attachmentBodyPart);
 
 			message.setContent(multipart);
 
 			Transport.send(message);
-			
 
 			System.out.println("mail verschickt");
 		}
@@ -202,9 +192,10 @@ public class ShowBewertungsBlatt extends CustomComponent {
 	// Name Hund#
 	//
 
-	private void bauPdfZertifikat(Show show, ShowHund... hund) throws Exception {
+	private void bauPdfZertifikat(Show show, ShowEmailSender props, ShowHund... hund) throws Exception {
 
 		PdfDocument pdfDoc = new PdfDocument(new PdfWriter(ZERTIFIKAT));
+
 		pdfDoc.initializeOutlines();
 
 		ByteArrayOutputStream baos;
@@ -212,21 +203,30 @@ public class ShowBewertungsBlatt extends CustomComponent {
 		Map<String, PdfFormField> fields;
 		PdfAcroForm form;
 
+		String vorlage = props.equals(ShowEmailSender.MAIL_ABSENDER_CSS) ? ZERTIFIKAT_VORLAGE : ZERTIFIKAT_FESTIVAL;
+
 		for (int i = 0; i < hund.length; i++) {
 			baos = new ByteArrayOutputStream();
-			pdfInnerDoc = new PdfDocument(new PdfReader(ZERTIFIKAT_VORLAGE), new PdfWriter(baos));
+			pdfInnerDoc = new PdfDocument(new PdfReader(vorlage), new PdfWriter(baos));
 			form = PdfAcroForm.getAcroForm(pdfInnerDoc, true);
 			fields = form.getFormFields();
 
 			fields.get("rasse").setValue(hund[i].getRasse().getRassenLangBezeichnung());
 
-			fields.get("katalognr").setValue("Kat.-Nr.: " + hund[i].getKatalognumer());
-
 			fields.get("hundename").setValue(hund[i].getShowHundName().trim());
 			fields.get("klasse").setValue(hund[i].getKlasse().getShowKlasseLangBezeichnung());
 			fields.get("besitzer").setValue(hund[i].getBesitzershow().trim());
-			Locale locale = new Locale("de", "DE");
-			fields.get("va-datum").setValue(new SimpleDateFormat("dd. MMMM yyyy", locale).format(show.getSchauDate()));
+
+			if (props.equals(ShowEmailSender.MAIL_ABSENDER_CSS)) {
+				Locale locale = new Locale("de", "DE");
+				fields.get("va-datum")
+						.setValue(new SimpleDateFormat("dd. MMMM yyyy", locale).format(show.getSchauDate()));
+				fields.get("katalognr").setValue("Kat.-Nr.: " + hund[i].getKatalognumer());
+
+			} else {
+				fields.get("katalognr").setValue(hund[i].getKatalognumer());
+
+			}
 
 			fields.get("formwert").setValue("Formwert: " + ShowPrintBewertungUebersicht.getFormwertText(show, hund[i]));
 			form.flattenFields();
@@ -390,6 +390,25 @@ public class ShowBewertungsBlatt extends CustomComponent {
 				}
 			}
 
+			if (!(hund[i].getVBOB() == null)) {
+				switch (hund[i].getVBOB()) {
+				case "J":
+					fields.get("VBOB").setValue("On");
+					break;
+				default:
+				}
+
+			}
+
+			if (!(hund[i].getJBOB() == null)) {
+				switch (hund[i].getJBOB()) {
+				case "J":
+					fields.get("JBOB").setValue("On");
+					break;
+				default:
+				}
+
+			}
 			fields.get("NAME DES RICHTERS").setValue(hund[i].getRichter());
 
 			fields.get("TITEL").setValue(show.getSchaubezeichnung());

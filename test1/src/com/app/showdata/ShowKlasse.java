@@ -11,6 +11,7 @@ public class ShowKlasse extends ShowRing  {
 	
 	private Rassen rasse;
 	private ShowKlassen klasse;
+	private String geschlecht;
 	private final List <ShowRing> hundeDerKlasse;
 	
 	public ShowKlasse (Rassen rasse, ShowKlassen klasse)  {
@@ -20,6 +21,23 @@ public class ShowKlasse extends ShowRing  {
 		hundeDerKlasse = new ArrayList<ShowRing>();
 	}
 	 
+	public ShowKlasse (Rassen rasse, ShowKlassen klasse,String geschlecht)  {
+		//super();
+		this.rasse = rasse;
+		this.klasse = klasse;
+		this.geschlecht = geschlecht;
+		hundeDerKlasse = new ArrayList<ShowRing>();
+	}
+
+	public String getGeschlecht() {
+		System.out.println(" geschlecht " + this.geschlecht);
+		return geschlecht;
+	}
+
+	public void setGeschlecht(String geschlecht) {
+		this.geschlecht = geschlecht;
+	}
+
 	public ShowKlasse() {
 		//super();
 

@@ -12,7 +12,14 @@ public class Show {
 	private String leiter;
 	private String schauTyp;
 	private List<ShowRing> ringe;
+	private Integer emailSenderID;
 	
+	public Integer getEmailSenderID() {
+		return emailSenderID;
+	}
+	public void setEmailSenderID(Integer emailSenderID) {
+		this.emailSenderID = emailSenderID;
+	}
 	public Integer getIdSchau() {
 		return idSchau;
 	}

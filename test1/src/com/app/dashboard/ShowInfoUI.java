@@ -70,7 +70,7 @@ public final class ShowInfoUI extends UI {
 
 		FormLayout infoFormLayout = new FormLayout();
 		infoFormLayout.addStyleName(ValoTheme.FORMLAYOUT_LIGHT);
-		infoFormLayout.setWidth(50.0f, Unit.PERCENTAGE);
+		infoFormLayout.setWidth(100.0f, Unit.PERCENTAGE);
 		infoFormLayout.setSpacing(true);
 		infoFormLayout.setMargin(true);
 

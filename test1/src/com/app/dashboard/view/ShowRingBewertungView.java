@@ -6,12 +6,14 @@ import java.util.List;
 import com.app.component.ShowGeschlechtAbschlussComponent;
 import com.app.component.ShowHundBewertungComponent;
 import com.app.component.ShowKlassenAbschlussComponent;
+import com.app.component.ShowRasseAbschlussComponent;
 import com.app.dashboard.event.DashBoardEventBus;
 import com.app.dbio.DBShowNeu;
 import com.app.showdata.Show;
 import com.app.showdata.ShowGeschlechtEnde;
 import com.app.showdata.ShowHund;
 import com.app.showdata.ShowKlasseEnde;
+import com.app.showdata.ShowRasseEnde;
 import com.app.showdata.ShowRing;
 import com.vaadin.event.Action;
 import com.vaadin.event.Action.Handler;
@@ -195,6 +197,12 @@ public class ShowRingBewertungView extends Panel implements View, Handler {
 					&& boxTest.getSelectedItem().get() instanceof ShowGeschlechtEnde) {
 				bewertungPart = new ShowGeschlechtAbschlussComponent(db, show,
 						(ShowGeschlechtEnde) boxTest.getSelectedItem().get());
+				mainVerticalLayout.addComponent(bewertungPart);
+
+			} else if (boxTest.getSelectedItem().isPresent()
+					&& boxTest.getSelectedItem().get() instanceof ShowRasseEnde) {
+				bewertungPart = new ShowRasseAbschlussComponent(db, show,
+						(ShowRasseEnde) boxTest.getSelectedItem().get());
 				mainVerticalLayout.addComponent(bewertungPart);
 
 			}

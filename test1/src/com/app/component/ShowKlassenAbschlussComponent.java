@@ -99,6 +99,8 @@ public class ShowKlassenAbschlussComponent extends Panel {
 			// panelContent.addComponent(blatt);
 			try {
 				blatt.sendBewertungAsEmail(show, arry);
+				Notification.show("Mails erfolgreich verschickt");
+
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -185,7 +187,6 @@ public class ShowKlassenAbschlussComponent extends Panel {
 		textField.addValueChangeListener(event -> {
 
 			if (!(hund[0] == null)) {
-				hund[0].setPlatzierung(null);
 				saveHund(hund[0]);
 
 			}
@@ -194,7 +195,6 @@ public class ShowKlassenAbschlussComponent extends Panel {
 
 			if (!(hund[0] == null)) {
 				// textField.setValue(hund[0].getKatalognumer());
-				System.out.println("hund " + hund[0].getShowHundName());
 				hundeName.setValue(hund[0].getShowHundName());
 				hund[0].setPlatzierung(platz);
 				saveHund(hund[0]);

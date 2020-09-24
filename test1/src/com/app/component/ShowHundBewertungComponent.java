@@ -45,6 +45,7 @@ public class ShowHundBewertungComponent extends Panel {
 	private CheckBox mitglied;
 
 	private CheckBox klubSieger;
+	private CheckBox jBobVBob;
 	private CheckBox veroeffentlichen;
 	private TextField besitzerEmail;
 
@@ -173,7 +174,7 @@ public class ShowHundBewertungComponent extends Panel {
 		ersteZeile.addComponent(veroeffentlichen);
 
 		veroeffentlichen.addValueChangeListener(event -> {
-			hund.setVeroeffentlichen(hundFehlt.getValue());
+			hund.setVeroeffentlichen(veroeffentlichen.getValue());
 			saveHund();
 		});
 
@@ -356,6 +357,29 @@ public class ShowHundBewertungComponent extends Panel {
 
 				layout.addComponent(bobButtonGroup);
 			}
+			
+			if (hund.getKlasse().equals(ShowKlassen.JUGENDKLASSE)) {
+				jBobVBob = new CheckBox("Junior-Bob");
+				jBobVBob
+						.setValue(hund.getJBOB() != null && hund.getJBOB().equals("J") ? true : false);
+				layout.addComponent(jBobVBob);
+
+				jBobVBob.addValueChangeListener(event -> {
+					hund.setJBOB(jBobVBob.getValue() == true ? "J" : "");
+					saveHund();
+				});
+
+			} else if (hund.getKlasse().equals(ShowKlassen.VETERANENKLASSE)) {
+				jBobVBob = new CheckBox("Veteranen-Bob");
+				jBobVBob
+						.setValue(hund.getVBOB() != null && hund.getVBOB().equals("J") ? true : false);
+				layout.addComponent(jBobVBob);
+
+				jBobVBob.addValueChangeListener(event -> {
+					hund.setVBOB(jBobVBob.getValue() == true ? "J" : "");
+					saveHund();
+				});
+			}
 
 			if (show.getSchauTyp().equals("C")) {
 				if (hund.getKlasse().equals(ShowKlassen.ZWISCHENKLASSE)
@@ -383,7 +407,7 @@ public class ShowHundBewertungComponent extends Panel {
 						saveHund();
 					});
 
-				} else if (hund.getKlasse().equals(ShowKlassen.JUGENDKLASSE)) {
+				} else if (hund.getKlasse().equals(ShowKlassen.VETERANENKLASSE)) {
 					klubSieger = new CheckBox("KlubVeteranenSieger");
 					klubSieger
 							.setValue(hund.getClubsieger() != null && hund.getClubsieger().equals("V") ? true : false);

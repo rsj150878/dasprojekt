@@ -1,26 +1,51 @@
 package com.app.enumdatatypes;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public enum ShowKlassen {
-	BABYKLASSE("WE", "Babyklasse", "J", "J"), 
-	JUENGSTENKLASSE("JÜ", "Jüngstenklasse", "J", "J"), 
-	JUGENDKLASSE("JU","Jugendklasse", "J", "J"), 
-	ZWISCHENKLASSE("ZK", "Zwischenklasse", "J", "J"), 
-	OFFENEKLASSE("OF", "Offene Klasse","J", "J"), 
-	GEBRAUCHSHUNDEKLASSE("GB", "Gebrauchshundeklasse", "J", "J"), 
-	CHAMPIONKLASSE("CH","Championklasse","J", "J"), 
-	VETERANENKLASSE("VE", "Veteranenklasse", "J", "J"), 
-	WESENSTEST("WT", "Wesenstest", "N", "N");
+	BABYKLASSE("WE", "Babyklasse", "J", "J",false,false), 
+	JUENGSTENKLASSE("JÜ", "Jüngstenklasse", "J", "J",false,false), 
+	JUGENDKLASSE("JU","Jugendklasse", "J", "J",false,true), 
+	ZWISCHENKLASSE("ZK", "Zwischenklasse", "J", "J",true,true), 
+	OFFENEKLASSE("OF", "Offene Klasse","J", "J",true,true), 
+	GEBRAUCHSHUNDEKLASSE("GB", "Gebrauchshundeklasse", "J", "J",true,true), 
+	CHAMPIONKLASSE("CH","Championklasse","J", "J",true,true), 
+	VETERANENKLASSE("VE", "Veteranenklasse", "J", "J",false,true), 
+	WESENSTEST("WT", "Wesenstest", "N", "N",false,false);
 
 	private final String showKlasseKurzBezeichnung;
 	private final String showKlasseLangBezeichnung;
 	private final String platzierungWirdBerechnet;
 	private final String printBewertungSummenBlatt;
+	private final Boolean istErwachsenenKlasse;
+	private final Boolean istBestDogKlasse;
 
-	private ShowKlassen(String kurzBezeichnung, String langBezeichnung, String platzierungWirdBerechnet, String printBewertungSummenBlatt) {
+	public String getShowKlasseKurzBezeichnung() {
+		return showKlasseKurzBezeichnung;
+	}
+
+	public String getPlatzierungWirdBerechnet() {
+		return platzierungWirdBerechnet;
+	}
+
+	public String getPrintBewertungSummenBlatt() {
+		return printBewertungSummenBlatt;
+	}
+
+	public Boolean getIstErwachsenenKlasse() {
+		return istErwachsenenKlasse;
+	}
+
+	private ShowKlassen(String kurzBezeichnung, String langBezeichnung, String platzierungWirdBerechnet, String printBewertungSummenBlatt,
+			Boolean istErwachsenenKlasse, Boolean istBestDogKlasse
+			) {
 		this.showKlasseKurzBezeichnung = kurzBezeichnung;
 		this.showKlasseLangBezeichnung = langBezeichnung;
 		this.platzierungWirdBerechnet = platzierungWirdBerechnet;
 		this.printBewertungSummenBlatt = printBewertungSummenBlatt;
+		this.istErwachsenenKlasse = istErwachsenenKlasse;
+		this.istBestDogKlasse = istBestDogKlasse;
 	}
 
 	public String getShowKlasseLangBezeichnung() {
@@ -65,6 +90,34 @@ public enum ShowKlassen {
 		}
 		return false;
 
+	}
+	
+	public static List<ShowKlassen> getErwachsenenKlassen() {
+		List<ShowKlassen> result = new ArrayList<>();
+
+		for (ShowKlassen o : ShowKlassen.values()) {
+			if (o.istErwachsenenKlasse) {
+				result.add(o);
+			}
+			
+		}
+		
+		return result;
+		
+	}
+	
+	public static List<ShowKlassen> getBestDogKlassen() {
+		List<ShowKlassen> result = new ArrayList<>();
+
+		for (ShowKlassen o : ShowKlassen.values()) {
+			if (o.istBestDogKlasse) {
+				result.add(o);
+			}
+			
+		}
+		
+		return result;
+		
 	}
 
 }

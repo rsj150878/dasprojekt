@@ -315,7 +315,7 @@ public class ShowPrintBewertungUebersicht extends CustomComponent {
 
 		try {
 			if (!(hund.getPlatzierung() == null) && new Integer(hund.getPlatzierung()).intValue() > 0) {
-				sb.append(hund.getPlatzierung());
+				sb.append(" " + hund.getPlatzierung());
 			}
 		} catch (NumberFormatException e) {
 
@@ -364,6 +364,27 @@ public class ShowPrintBewertungUebersicht extends CustomComponent {
 			}
 		}
 
+		if (!(hund.getVBOB() == null)) {
+			sb.append(", ");
+			switch (hund.getVBOB()) {
+			case "J":
+				sb.append("VBOB");
+				break;
+			default:
+			}
+		}
+		
+		if (!(hund.getJBOB() == null)) {
+			sb.append(", ");
+			switch (hund.getJBOB()) {
+			case "J":
+				sb.append("JBOB");
+				break;
+			default:
+			}
+		}
+	
+		
 		if (!(hund.getBOB() == null)) {
 			sb.append(", ");
 			switch (hund.getBOB()) {

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.app.enumdatatypes.Rassen;
+import com.app.enumdatatypes.ShowKlassen;
 
 public class ShowRing {
 
@@ -22,14 +23,35 @@ public class ShowRing {
 		this.klassenDesRings = new ArrayList<ShowRing>();
 	}
 
-	
 	public void resetKlassen() {
 		this.klassenDesRings.clear();
-		
+
 	}
-	
+
 	public void addShowKlasse(ShowKlasse klasse) {
 		klassenDesRings.add(klasse);
+
+	}
+
+	public List<ShowRing> getHundeDerKlasse(String geschlecht, Rassen rasse, ShowKlassen suchKlasse) {
+
+		for (ShowRing x : klassenDesRings) {
+
+			if (x instanceof ShowGeschlechtEnde) {
+
+			} else if (x instanceof ShowKlasse) {
+				System.out.println(x);
+				ShowKlasse y = (ShowKlasse) x;
+
+				System.out.println("Y " + y.getAnzahl() + " " + y.getKlasse().getShowKlassenKurzBezeichnung());
+				if (y.getGeschlecht().equals(geschlecht) && y.getRasse().equals(rasse)
+						&& y.getKlasse().equals(suchKlasse)) {
+					return y.getChilds();
+				}
+			}
+		}
+		return null;
+
 	}
 
 	public void addShowKlassen(List<ShowKlasse> klasse) {
@@ -101,6 +123,10 @@ public class ShowRing {
 	}
 
 	public String getClubsieger() {
+		return "";
+	}
+
+	public String getMitglied() {
 		return "";
 	}
 

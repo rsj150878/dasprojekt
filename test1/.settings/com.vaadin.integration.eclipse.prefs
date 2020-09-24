@@ -2,7 +2,7 @@
 <<<<<<<=HEAD
 >>>>>>>=branch 'master' of https\://github.com/rsj150878/dasprojekt.git
 com.vaadin.integration.eclipse.mavenAutoCompileWidgetset=null
-com.vaadin.integration.eclipse.mavenLatestVersionsUpgrade=["8.11.2"]
+com.vaadin.integration.eclipse.mavenLatestVersionsUpgrade=["8.11.3"]
 com.vaadin.integration.eclipse.previousCompileAction=both
 com.vaadin.integration.eclipse.useLatestNightly=false
 com.vaadin.integration.eclipse.widgetsetBuildsSuspended=true

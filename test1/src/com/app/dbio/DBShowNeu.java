@@ -15,6 +15,7 @@ import com.app.showdata.ShowGeschlechtEnde;
 import com.app.showdata.ShowHund;
 import com.app.showdata.ShowKlasse;
 import com.app.showdata.ShowKlasseEnde;
+import com.app.showdata.ShowRasseEnde;
 import com.app.showdata.ShowRing;
 import com.vaadin.server.VaadinSession;
 
@@ -44,6 +45,7 @@ public class DBShowNeu {
 			zwShow.setSchauDate(resultSetShow.getDate("datum"));
 			zwShow.setSchauKuerzel(resultSetShow.getString("schaukuerzel"));
 			zwShow.setSchauTyp(resultSetShow.getString("schautyp"));
+			zwShow.setEmailSenderID(resultSetShow.getInt("id_mail_sender"));
 
 			zwShow.setRinge(getRingeFuerShow(true, zwShow));
 
@@ -74,7 +76,8 @@ public class DBShowNeu {
 			zwShow.setSchauDate(resultSetShow.getDate("datum"));
 			zwShow.setSchauKuerzel(resultSetShow.getString("schaukuerzel"));
 			zwShow.setSchauTyp(resultSetShow.getString("schautyp"));
-
+			zwShow.setEmailSenderID(resultSetShow.getInt("id_mail_sender"));
+			
 			zwShow.setRinge(getRingeFuerShow(true, zwShow));
 
 			resultList.add(zwShow);
@@ -163,7 +166,7 @@ public class DBShowNeu {
 
 				}
 
-				ShowKlasse zw = new ShowKlasse(zwrasse, zwklasse);
+				ShowKlasse zw = new ShowKlasse(zwrasse, zwklasse,zwGeschlecht);
 				zw.setHundeDerKlasse(
 						getHundeForKlasse(zw, show, ring, resultSet.getString("klasse"), zwrasse, zwGeschlecht));
 				resultList.add(zw);
@@ -178,6 +181,13 @@ public class DBShowNeu {
 			ende.setRingGeschlechtEndeFor(ring);
 
 			resultList.add(ende);
+
+			ShowRasseEnde rasseEnde= new ShowRasseEnde();
+			rasseEnde.setRasse(zwrasse);
+			rasseEnde.setRasseEndeFor(ring);
+
+			//resultList.add(rasseEnde);
+
 
 		}
 		return resultList;
@@ -239,6 +249,9 @@ public class DBShowNeu {
 			zw.setVeroeffentlichen(resultSet.getBoolean("veroeffentlichen"));
 			zw.setBesitzerEmail(resultSet.getString("besitzeremail"));
 			zw.setZuechter(resultSet.getString("zuechter"));
+			zw.setBesterHund(resultSet.getString("bester_hund"));
+			zw.setJBOB(resultSet.getString("JBOB"));
+			zw.setVBOB(resultSet.getString("VBOB"));
 			resultList.add(zw);
 
 		}
@@ -293,7 +306,10 @@ public class DBShowNeu {
 			zw.setVeroeffentlichen(resultSet.getBoolean("veroeffentlichen"));
 			zw.setBesitzerEmail(resultSet.getString("besitzeremail"));
 			zw.setZuechter(resultSet.getString("zuechter"));
-			
+			zw.setBesterHund(resultSet.getString("bester_hund"));
+			zw.setJBOB(resultSet.getString("JBOB"));
+			zw.setVBOB(resultSet.getString("VBOB"));
+		
 			
 			resultList.add(zw);
 
@@ -334,6 +350,7 @@ public class DBShowNeu {
 		sb.append(", name = ?, wurftag = ?, zuchtbuchnummer = ?, katalognummer =?");
 		sb.append(",  rasse = ?, vater = ?, mutter = ?, ");
 		sb.append("besitzershow = ?, geschlecht = ?, sort_kat_nr = ?, idschauring = ?, chipnummer = ?, veroeffentlichen=?,besitzeremail=?");
+		sb.append(",bester_hund =?, JBOB =?, VBOB =?");
 		sb.append(" where idschauhund = ?");
 		PreparedStatement st = conn.prepareStatement(sb.toString());
 		st.setString(1, updateHund.getBewertung());
@@ -358,8 +375,11 @@ public class DBShowNeu {
 		st.setString(20,updateHund.getChipnummer());
 		st.setBoolean(21,updateHund.getVeroeffentlichen());
 		st.setString(22,updateHund.getBesitzerEmail());
+		st.setString(23,updateHund.getBesterHund());
+		st.setString(24, updateHund.getJBOB());
+		st.setString(25, updateHund.getVBOB());
 		
-		st.setInt(23, updateHund.getIdschauhund().intValue());
+		st.setInt(26, updateHund.getIdschauhund().intValue());
 
 		System.out.println("update showhund " + updateHund.getIdschauhund());
 
@@ -493,6 +513,9 @@ public class DBShowNeu {
 			result.setVeroeffentlichen(resultSet.getBoolean("veroeffentlichen"));
 			result.setBesitzerEmail(resultSet.getString("besitzeremail"));
 			result.setZuechter(resultSet.getString("zuechter"));
+			result.setBesterHund(resultSet.getString("bester_hund"));
+			result.setJBOB(resultSet.getString("JBOB"));
+			result.setVBOB(resultSet.getString("VBOB"));
 
 		} else {
 			StringBuilder insertSb = new StringBuilder();

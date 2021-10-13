@@ -9,7 +9,7 @@
 		<maven>3</maven>
 	</prerequisites>
 	<properties>
-		<vaadin.version>8.11.2</vaadin.version>
+		<vaadin.version>8.14.1</vaadin.version>
 		<itext.version>RELEASE</itext.version>
 		<vaadin.plugin.version>8.11.2</vaadin.plugin.version>
 		<jetty.plugin.version>9.2.3.v20140905</jetty.plugin.version>
